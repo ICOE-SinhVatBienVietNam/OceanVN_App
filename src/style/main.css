@@ -1,13 +1,18 @@
 @import "tailwindcss";
+/* @import "leaflet/dist/leaflet.css"; */
 
 @layer base {
     * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        color: black;
+        font-family: "Inter", sans-serif;
+        font-optical-sizing: auto;
     }
 
-    html, body {
+    html,
+    body {
         height: 100%;
         width: 100%;
     }
@@ -17,8 +22,52 @@
         width: 100%;
         background-color: white;
     }
+
+    .btn:hover {
+        filter: brightness(0.9);
+        cursor: grab;
+        transition: all linear 0.2s;
+    }
+
+    .btn:active {
+        filter: brightness(0.85);
+        cursor: grabbing;
+        transition: all linear 0.2s;
+    }
+
+    .mainShadow {
+        box-shadow: 0 0 5px #d3d3d3;
+    }
+
+    .csScroll::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .csScroll::-webkit-scrollbar-thumb {
+        background-color: #3e3f46;
+    }
 }
 
 @theme {
+    --color-light-background: ;
+    --color-mainRed: #FF4040;
+    --color-mainLightBlue: #35A8F6;
+    --color-mainDarkBlue: #0B5394;
+    --color-mainDark: #3e3f46;
+    --color-lime: #00FF00;
+    --color-gray: #808080;
+    --color-lightGray: #d3d3d3;
 
+    --text-csSmall: 10px;
+    --text-csNormal: 12px;
+    --text-csBig: 16px;
+    --text-csLarge: 20px;
+
+    --spacing-mainTwoSidePadding: 10px;
+    --spacing-twoSidePaddingIntroduction: 20px;
+    /* --spacing-topPadding: 40px;
+    --spacing-bottomPadding: 40px; */
+
+    --radius-main: 10px;
+    --radius-small: 5px;
 }

@@ -28,21 +28,25 @@ import '@ionic/react/css/display.css';
 /* import '@ionic/react/css/palettes/dark.always.css'; */
 /* import '@ionic/react/css/palettes/dark.class.css'; */
 import '@ionic/react/css/palettes/dark.system.css';
+import { lazy } from 'react';
+
+// Components
+const Introduction = lazy(() =>import("./ui/page/Introduction"))
+
+// Config
+import { routeConfig } from './config/routeConfig';
 
 setupIonicReact();
 
+// App
 const App: React.FC = () => (
   <IonApp>
-    {/* <IonReactRouter>
+    <IonReactRouter>
       <IonRouterOutlet>
-        <Route exact path="/home">
-
-        </Route>
-        <Route exact path="/">
-          <Redirect to="/home" />
-        </Route>
+        <Route exact path={routeConfig.intro.root} children={<Introduction />}></Route>
+        
       </IonRouterOutlet>
-    </IonReactRouter> */}
+    </IonReactRouter>
   </IonApp>
 );
 
