@@ -35,11 +35,16 @@ export const routeConfig = {
 
         }
     },
-    auth: {
-        root: "/auth",
+    login: {
+        root: "/login",
         endpoint: {
-            login: "/auth/login",
-            register: "/auth/register"
+
+        }
+    },
+    register: {
+        root: "/register",
+        endpoint: {
+
         }
     }
 }

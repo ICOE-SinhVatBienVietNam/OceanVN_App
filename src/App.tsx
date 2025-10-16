@@ -32,7 +32,9 @@ import { lazy, Suspense } from 'react';
 
 // Components
 const Introduction = lazy(() =>import("./ui/page/Introduction"))
-const AuthenLayout = lazy(() => import("./ui/layout/AuthenLayout"))
+const Login = lazy(() => import("./ui/page/Login"))
+const Register = lazy(() => import("./ui/page/Register"))
+import { ScreenSizeWarningPopup } from './hooks/DeviceCheck';
 
 // Config
 import { routeConfig } from './config/routeConfig';
@@ -42,11 +44,13 @@ setupIonicReact();
 // App
 const App: React.FC = () => (
   <IonApp>
+    <ScreenSizeWarningPopup />
     <IonReactRouter>
       <Suspense fallback={<div>Loading...</div>}>
         <IonRouterOutlet>
           <Route exact path={routeConfig.intro.root} children={<Introduction />}></Route>
-          <Route path="/auth*" children={<AuthenLayout />}></Route>
+          <Route path={routeConfig.login.root} children={<Login />}></Route>
+          <Route path={routeConfig.register.root} children={<Register />}></Route>
         </IonRouterOutlet>
       </Suspense>
     </IonReactRouter>
