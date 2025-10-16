@@ -12,7 +12,7 @@ const Introduction: React.FC = () => {
     return (
         <IonPage>
             <div className="relative h-full w-full flex flex-col justify-end-safe">
-                <div className="w-full flex flex-col items-center-safe gap-7.5 pb-7">
+                <div className="w-full flex flex-col items-center-safe gap-7.5 pb-7 pt-7">
                     <span className="flex flex-col justify-center-safe items-center-safe">
                         <img src={oceanvn_logo} className="w-[60%]" />
                         <h1 className="!text-csLarge text-mainLightBlue font-semibold">SINH VẬT BIỂN VIỆT NAM</h1>

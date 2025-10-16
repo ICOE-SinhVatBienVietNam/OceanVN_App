@@ -28,10 +28,11 @@ import '@ionic/react/css/display.css';
 /* import '@ionic/react/css/palettes/dark.always.css'; */
 /* import '@ionic/react/css/palettes/dark.class.css'; */
 import '@ionic/react/css/palettes/dark.system.css';
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 
 // Components
 const Introduction = lazy(() =>import("./ui/page/Introduction"))
+const AuthenLayout = lazy(() => import("./ui/layout/AuthenLayout"))
 
 // Config
 import { routeConfig } from './config/routeConfig';
@@ -42,10 +43,12 @@ setupIonicReact();
 const App: React.FC = () => (
   <IonApp>
     <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path={routeConfig.intro.root} children={<Introduction />}></Route>
-        
-      </IonRouterOutlet>
+      <Suspense fallback={<div>Loading...</div>}>
+        <IonRouterOutlet>
+          <Route exact path={routeConfig.intro.root} children={<Introduction />}></Route>
+          <Route path="/auth*" children={<AuthenLayout />}></Route>
+        </IonRouterOutlet>
+      </Suspense>
     </IonReactRouter>
   </IonApp>
 );
