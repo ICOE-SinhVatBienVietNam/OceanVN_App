@@ -6,31 +6,31 @@ export const routeConfig = {
         }
     },
     map: {
-        root: "/map",
+        root: "map",
         endpoint: {
 
         }
     },
     discover: {
-        root: "/discover",
+        root: "discover",
         endpoint: {
 
         }
     },
     camera: {
-        root: "/camera",
+        root: "camera",
         endpoint: {
 
         }
     },
     quest: {
-        root: "/quest",
+        root: "quest",
         endpoint: {
 
         }
     },
     moreInfo: {
-        root: "/more-info",
+        root: "more-info",
         endpoint: {
 
         }

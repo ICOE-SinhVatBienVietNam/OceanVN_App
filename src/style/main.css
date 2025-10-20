@@ -1,5 +1,5 @@
 @import "tailwindcss";
-/* @import "leaflet/dist/leaflet.css"; */
+@import "leaflet/dist/leaflet.css";
 
 @layer base {
     * {
@@ -38,9 +38,9 @@
     .mainShadow {
         box-shadow: 0 0 5px #d3d3d3;
     }
-    
+
     .shadowForm {
-        box-shadow: 0 0 10px 1px rgba(0,0,0,0.25);
+        box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.25);
     }
 
     .csScroll::-webkit-scrollbar {
@@ -50,12 +50,18 @@
     .csScroll::-webkit-scrollbar-thumb {
         background-color: #3e3f46;
     }
+
+    /* Leaflet */
+    .leaflet-control-attribution {
+        font-size: 8px;
+    }
 }
 
 @theme {
     --color-light-background: ;
     --color-mainRed: #FF4040;
     --color-mainLightBlue: #35A8F6;
+    --color-mainLightBlueRGB: rgba(53, 168, 246, 0.2);
     --color-mainDarkBlue: #0B5394;
     --color-mainDark: #3e3f46;
     --color-lime: #00FF00;

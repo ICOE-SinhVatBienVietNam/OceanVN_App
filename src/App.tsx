@@ -31,10 +31,12 @@ import '@ionic/react/css/palettes/dark.system.css';
 import { lazy, Suspense } from 'react';
 
 // Components
-const Introduction = lazy(() =>import("./ui/page/Introduction"))
+import { ScreenSizeWarningPopup } from './hooks/DeviceCheck';
+const Introduction = lazy(() => import("./ui/page/Introduction"))
 const Login = lazy(() => import("./ui/page/Login"))
 const Register = lazy(() => import("./ui/page/Register"))
-import { ScreenSizeWarningPopup } from './hooks/DeviceCheck';
+// const Map = lazy(() => import("./ui/page/Map"))
+import MainLayout from './ui/layout/MainLayout';
 
 // Config
 import { routeConfig } from './config/routeConfig';
@@ -48,9 +50,21 @@ const App: React.FC = () => (
     <IonReactRouter>
       <Suspense fallback={<div>Loading...</div>}>
         <IonRouterOutlet>
+          {/* Starter */}
           <Route exact path={routeConfig.intro.root} children={<Introduction />}></Route>
+
+          {/* Auth */}
           <Route path={routeConfig.login.root} children={<Login />}></Route>
           <Route path={routeConfig.register.root} children={<Register />}></Route>
+
+          {/* Main */}
+          {/* <Route path={routeConfig.map.root} children={<Map />}></Route>
+          <Route path={routeConfig.discover.root} children={<Map />}></Route>
+          <Route path={routeConfig.camera.root} children={<Map />}></Route>
+          <Route path={routeConfig.quest.root} children={<Map />}></Route>
+          <Route path={routeConfig.moreInfo.root} children={<Map />}></Route> */}
+          <Route path="/main/*" children={<MainLayout />}></Route>
+
         </IonRouterOutlet>
       </Suspense>
     </IonReactRouter>
