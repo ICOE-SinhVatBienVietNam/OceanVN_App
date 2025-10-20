@@ -63,7 +63,7 @@ const MainLayout: React.FC = () => {
                             </svg>
                         </span>
                         </span>
-                        <p className="!w-fit text-csNormal">Hỏi đáp</p>
+                        <p className="!w-fit text-csNormal">C.hỏi</p>
                     </IonTabButton>
 
                     <IonTabButton tab="more-info" href={routeConfig.main.moreInfo} className="bg-white flex h-full flex-1 flex-col items-center justify-center rounded-main py-2 hover:bg-[rgba(128,128,128,0.2)]">
