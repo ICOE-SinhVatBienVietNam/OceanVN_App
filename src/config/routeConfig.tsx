@@ -1,50 +1,19 @@
 export const routeConfig = {
     intro: {
-        root: "/",
-        endpoint: {
-
-        }
+        root: "/"
     },
-    map: {
-        root: "map",
-        endpoint: {
-
-        }
-    },
-    discover: {
-        root: "discover",
-        endpoint: {
-
-        }
-    },
-    camera: {
-        root: "camera",
-        endpoint: {
-
-        }
-    },
-    quest: {
-        root: "quest",
-        endpoint: {
-
-        }
-    },
-    moreInfo: {
-        root: "more-info",
-        endpoint: {
-
-        }
+    main: {
+        root: "/main",
+        map: "/main/map",
+        discover: "/main/discover",
+        camera: "/main/camera",
+        quest: "/main/quest",
+        moreInfo: "/main/more-info",
     },
     login: {
-        root: "/login",
-        endpoint: {
-
-        }
+        root: "/login"
     },
     register: {
-        root: "/register",
-        endpoint: {
-
-        }
+        root: "/register"
     }
 }

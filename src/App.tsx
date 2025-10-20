@@ -58,13 +58,8 @@ const App: React.FC = () => (
           <Route path={routeConfig.register.root} children={<Register />}></Route>
 
           {/* Main */}
-          {/* <Route path={routeConfig.map.root} children={<Map />}></Route>
-          <Route path={routeConfig.discover.root} children={<Map />}></Route>
-          <Route path={routeConfig.camera.root} children={<Map />}></Route>
-          <Route path={routeConfig.quest.root} children={<Map />}></Route>
-          <Route path={routeConfig.moreInfo.root} children={<Map />}></Route> */}
           <Route path="/main/*" children={<MainLayout />}></Route>
-
+          <Redirect exact path='/main' to={routeConfig.main.map} />
         </IonRouterOutlet>
       </Suspense>
     </IonReactRouter>

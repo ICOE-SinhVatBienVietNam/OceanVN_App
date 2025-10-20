@@ -1,11 +1,13 @@
 // Import libraries
-import { IonNavLink, IonPage } from "@ionic/react"
+import { IonPage, IonRouterLink } from "@ionic/react"
 import React from "react"
 
 // Images
 import wave from "../../assets/Wave.png"
 import oceanvn_logo from "../../assets/SinhVatBienVN.png"
-import { Link } from "react-router-dom"
+
+// Config
+import { routeConfig } from "../../config/routeConfig"
 
 // Main component
 const Introduction: React.FC = () => {
@@ -22,12 +24,9 @@ const Introduction: React.FC = () => {
                     </span>
 
                     <span className="w-full flex flex-col items-center-safe gap-2.5">
-                        <Link to="/home" className="flex w-[80%] h-[40px] text-csNormal !text-white !bg-mainLightBlue justify-center-safe items-center-safe rounded-main">
+                        <IonRouterLink href={routeConfig.main.map} className="flex w-[80%] h-[50px] text-csNormal !text-white !bg-mainLightBlue justify-center-safe items-center-safe rounded-main">
                             Bắt đầu hành trình khám phá
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="size-4 stroke-white">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                            </svg>
-                        </Link>
+                        </IonRouterLink>
 
                         <a
                             href="https://sinhvatbienvietnam.zoo.id.vn/gi%E1%BB%9Bi-thi%E1%BB%87u/v%E1%BB%81-ch%C3%BAng-t%C3%B4i"

@@ -1,9 +1,8 @@
 // Import libraries
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const DESKTOP_BREAKPOINT = 414;
+const DESKTOP_BREAKPOINT = 640;
 
 export const useScreenSizeCheck = (): boolean => {
     const [width, setWidth] = useState(window.innerWidth);
