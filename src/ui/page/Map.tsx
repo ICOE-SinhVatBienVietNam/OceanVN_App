@@ -6,18 +6,19 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet"
 
 // Component
 import SpeciesList from "../component/SpeciesList"
-import SpeciesLocationList from "../component/SpeciesDetail"
+import SpeciesDetail from "../component/SpeciesDetail"
+import SpeciesLocationList from "../component/SpeciesLocationList"
 
 // 
 const ZoomButton: React.FC = () => {
     const map = useMap()
     return (
         <span className="flex flex-col gap-2.5">
-            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-2.5" onClick={() => {map.zoomIn()}}>
+            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-2.5" onClick={() => { map.zoomIn() }}>
                 <i className="fas fa-plus"></i>
             </button>
 
-            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-2.5" onClick={() => {map.zoomOut()}}>
+            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-2.5" onClick={() => { map.zoomOut() }}>
                 <i className="fas fa-minus"></i>
             </button>
         </span>
@@ -27,8 +28,26 @@ const ZoomButton: React.FC = () => {
 const Map: React.FC = () => {
     // SpeciesDetail
     const [isSpeciesDetail, setIsSpeciesDeatail] = useState<boolean>(false)
+
     const toggleSpeciesDetail = () => {
         setIsSpeciesDeatail(!isSpeciesDetail)
+    }
+
+    // SpeciesLocation
+    const [isSpeciesLocation, setIsSpeciesLocation] = useState<boolean>(false)
+
+    const toggleSpeciesLocation = () => {
+        if (!isSpeciesLocation) {
+            setIsSpeciesDeatail(false)
+            setIsDiscover(false)
+        }
+
+        setIsSpeciesLocation(!isSpeciesLocation)
+    }
+    
+    const backToSpeciesList = () => {
+        setIsDiscover(true)
+        setIsSpeciesLocation(false)
     }
 
     // Discover
@@ -42,7 +61,7 @@ const Map: React.FC = () => {
         <div className="relative !z-0 h-full w-full">
             <MapContainer
                 center={[10.8231, 106.6297]}
-                zoom={21}
+                zoom={12}
                 style={{ height: "100%", width: "100%", position: "relative" }}
                 className="z-0"
                 // ref={mapRef}
@@ -76,7 +95,7 @@ const Map: React.FC = () => {
 
 
             <span className="absolute bottom-2.5 left-1/2 translate-x-[-50%]">
-                {!isDiscover && (
+                {!isDiscover && !isSpeciesLocation && (
 
                     <button
                         onClick={toggleDiscover}
@@ -93,7 +112,8 @@ const Map: React.FC = () => {
 
             {/* Popup */}
             {isDiscover && (<SpeciesList closeSpeciesList={toggleDiscover} speciesDeatail={toggleSpeciesDetail} />)}
-            {isSpeciesDetail && (<SpeciesLocationList closeSpeciesDeatail={toggleSpeciesDetail} />)}
+            {isSpeciesLocation && (<SpeciesLocationList speciesDeatail={toggleSpeciesDetail} closeSpeciesLocationList={toggleSpeciesLocation} backToSpeciesList={backToSpeciesList} />)}
+            {isSpeciesDetail && (<SpeciesDetail closeSpeciesDeatail={toggleSpeciesDetail} speciesLocation={toggleSpeciesLocation} />)}
         </div>
     )
 }

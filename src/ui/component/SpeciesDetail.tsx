@@ -5,20 +5,21 @@ import React from "react"
 import Logo from "../../assets/SinhVatBienVN.png"
 
 interface SpeciesDetail_interface {
-    closeSpeciesDeatail: () => void
+    closeSpeciesDeatail: () => void,
+    speciesLocation: () => void
 }
 
-const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail }) => {
+const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail, speciesLocation }) => {
     return (
-        <div className="mainShadow absolute z-10 bottom-0 left-0 h-full w-full bg-white flex flex-col gap-5 pt-2.5 px-mainTwoSidePadding">
-            <span className="flex justify-between items-center">
+        <div className="mainShadow absolute z-10 bottom-0 left-0 h-full w-full bg-white flex flex-col gap-5 pt-2.5">
+            <span className="flex justify-between items-center px-mainTwoSidePadding">
                 <button className="mainShadow flex justify-center-safe items-center-safe h-7.5 aspect-square !rounded-full" onClick={closeSpeciesDeatail}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                     </svg>
                 </button>
 
-                <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small">
+                <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small" onClick={speciesLocation}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159-1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
                     </svg>
@@ -27,7 +28,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail 
                 </button>
             </span>
 
-            <span className="flex-1 h-0 flex flex-col overflow-y-auto gap-2.5 pb-2.5 px-0.5">
+            <span className="flex-1 h-0 flex flex-col overflow-y-auto gap-2.5 pb-2.5 pt-0.5 px-mainTwoSidePadding">
                 <div className="flex flex-wrap gap-2.5 mb-2.5">
                     <button className="mainShadow text-csNormal !py-1 !px-2.5 !rounded-small">Tên bộ (30)</button>
                     <button className="mainShadow text-csNormal !py-1 !px-2.5 !rounded-small">Tên họ (15)</button>
