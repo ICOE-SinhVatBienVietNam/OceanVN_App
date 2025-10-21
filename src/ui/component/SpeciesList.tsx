@@ -11,9 +11,16 @@ type CardProp = {
     thumbnail: string | string[]
 }
 
-const Tag: React.FC = () => {
+interface Card_interface {
+    speciesDeatail: () => void
+}
+
+const Tag: React.FC<Card_interface> = ({ speciesDeatail }) => {
     return (
-        <div className="w-full flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-3 rounded-main">
+        <div
+            onClick={speciesDeatail}
+            className="w-full flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-3 rounded-main"
+        >
             <span className="mainShadow h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-full">
                 <img src={Logo} className="h-[60px]" />
             </span>
@@ -29,14 +36,19 @@ const Tag: React.FC = () => {
                 </p>
             </span>
 
-            <p className="text-csNormal">Xem chi tiết</p>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 stroke-mainDarkBlue">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+            </svg>
         </div>
     )
 }
 
-const Card: React.FC = () => {
+const Card: React.FC<Card_interface> = ({ speciesDeatail }) => {
     return (
-        <div className="mainShadow min-w-[30%] flex-1 flex flex-col items-center p-2.5 rounded-main gap-2.5">
+        <div
+            onClick={speciesDeatail}
+            className="mainShadow min-w-[30%] flex-1 flex flex-col items-center p-2.5 rounded-main gap-2.5"
+        >
             <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-full">
                 <img src={Logo} />
             </span>
@@ -49,18 +61,19 @@ const Card: React.FC = () => {
 
 // Main component
 interface SpeciesList_interface {
-    closeSpeciesList: () => void
+    closeSpeciesList: () => void,
+    speciesDeatail: () => void
 }
 
 const SpeciesList: React.FC<SpeciesList_interface> = ({
-    closeSpeciesList
+    closeSpeciesList, speciesDeatail
 }) => {
     // State
     const [isCard, setIsCard] = useState<boolean>(false) // Change style list
     const [isList, setIsList] = useState<boolean>(true)
 
     return (
-        <div className={`mainShadow absolute z-10 bottom-0 left-0 ${isList ? "h-2/3" : "h-0"} flex w-full bg-white flex-col gap-2.5 pt-2.5`}>
+        <div className={`mainShadow absolute z-10 bottom-0 left-0 ${isList ? "h-3/4" : "h-0"} flex w-full bg-white flex-col gap-2.5 pt-2.5`}>
             <button
                 onClick={() => { setIsList(!isList) }}
                 className={`absolute top-0 left-1/2 translate-y-[-120%] translate-x-[-50%] mainShadow ${isList ? "bg-white" : "bg-mainRed"} !px-2.5 !py-2.5 !rounded-small`}
@@ -99,14 +112,14 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
 
                 <p className="text-mainRed text-csNormal">Số lượng: 500 loài</p>
 
-                <span className="w-full flex-1 h-0 overflow-auto flex flex-wrap gap-2.5 py-2.5 px-1.5">
+                <span className="w-full flex-1 h-0 overflow-auto flex flex-wrap gap-2.5 py-2.5 px-0.5">
                     {isCard
                         ? Array(20)
                             .fill(0)
-                            .map((_, i) => <Card key={i} />)
+                            .map((_, i) => <Card key={i} speciesDeatail={speciesDeatail} />)
                         : Array(20)
                             .fill(0)
-                            .map((_, i) => <Tag key={i} />)}
+                            .map((_, i) => <Tag key={i} speciesDeatail={speciesDeatail} />)}
                 </span>
             </div>
         </div>

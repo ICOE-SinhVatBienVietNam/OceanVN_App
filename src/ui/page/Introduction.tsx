@@ -29,7 +29,7 @@ const Introduction: React.FC = () => {
                         </IonRouterLink>
 
                         <a
-                            href="https://sinhvatbienvietnam.zoo.id.vn/gi%E1%BB%9Bi-thi%E1%BB%87u/v%E1%BB%81-ch%C3%BAng-t%C3%B4i"
+                            href="https://sinhvatbienvietnam.zoo.id.vn/trang-ch%E1%BB%A7"
                             target="_blank"
                             className="!text-mainDarkBlue text-csNormal font-semibold underline italic"
                         >
