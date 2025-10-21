@@ -41,7 +41,6 @@ const Map: React.FC = () => {
             setIsSpeciesDeatail(false)
             setIsDiscover(false)
         }
-
         setIsSpeciesLocation(!isSpeciesLocation)
     }
     
@@ -113,7 +112,7 @@ const Map: React.FC = () => {
             {/* Popup */}
             {isDiscover && (<SpeciesList closeSpeciesList={toggleDiscover} speciesDeatail={toggleSpeciesDetail} />)}
             {isSpeciesLocation && (<SpeciesLocationList speciesDeatail={toggleSpeciesDetail} closeSpeciesLocationList={toggleSpeciesLocation} backToSpeciesList={backToSpeciesList} />)}
-            {isSpeciesDetail && (<SpeciesDetail closeSpeciesDeatail={toggleSpeciesDetail} speciesLocation={toggleSpeciesLocation} />)}
+            {isSpeciesDetail && (<SpeciesDetail isShowLocation={isSpeciesLocation} closeSpeciesDeatail={toggleSpeciesDetail} speciesLocation={toggleSpeciesLocation} />)}
         </div>
     )
 }
