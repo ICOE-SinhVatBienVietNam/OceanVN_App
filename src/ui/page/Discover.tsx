@@ -101,7 +101,7 @@ const Discover: React.FC = () => {
                     </span>
                 </div>
 
-                <div className="w-full flex flex-col">
+                <div className="w-full h-full flex flex-col">
                     <span className="sticky top-0 left-0 flex flex-col bg-white pb-2.5">
                         <span className="w-full">
                             <h2 className="">Dữ liệu sinh vật biển</h2>
@@ -128,7 +128,7 @@ const Discover: React.FC = () => {
                         </span>
                     </span>
 
-                    <span className="w-full h-[1000px] overflow-auto flex flex-wrap justify-between gap-2.5 px-0.5 py-2.5">
+                    <span className="w-full flex-1 overflow-auto flex flex-wrap justify-between gap-2.5 px-0.5 py-2.5">
                         {Array(20).fill(0).map((_, index) => {
                             return <Discover_Card key={index} speciesDeatail={toggleSpeciesDetail} />
                         })}

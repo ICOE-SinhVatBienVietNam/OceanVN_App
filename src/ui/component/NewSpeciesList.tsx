@@ -34,7 +34,7 @@ const NewSpeciesList: React.FC<NewSpeciesList_interface> = ({ closeNewSpeciesLis
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-0 left-0 h-full w-full bg-white px-mainTwoSidePadding pt-2.5"
+            className="absolute top-0 left-0 h-full w-full flex flex-col bg-white px-mainTwoSidePadding pt-2.5"
         >
             <span className="sticky top-0 left-0 flex flex-col bg-white gap-2.5 pb-2.5">
                 <span className="w-full">
@@ -69,7 +69,7 @@ const NewSpeciesList: React.FC<NewSpeciesList_interface> = ({ closeNewSpeciesLis
                 </span>
             </span>
 
-            <span className="w-full h-[1000px] overflow-auto flex flex-wrap justify-between gap-2.5 px-0.5 py-2.5">
+            <span className="w-full flex-1 overflow-auto flex flex-wrap justify-between gap-2.5 px-0.5 py-2.5">
                 {Array(20).fill(0).map((_, index) => {
                     return <Discover_Card key={index} speciesDeatail={toggleSpeciesDetail} />
                 })}
