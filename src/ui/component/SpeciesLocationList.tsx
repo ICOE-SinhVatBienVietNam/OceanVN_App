@@ -109,7 +109,7 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
     const closeSpeciesList = () => {
         if (!(location.pathname === routeConfig.main.map)) {
             router.push(routeConfig.main.map)
-        }
+        } else {closeSpeciesLocationList}
     }
 
     return (
