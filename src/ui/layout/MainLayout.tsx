@@ -1,4 +1,4 @@
-import { IonPage, IonRouterLink, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs } from "@ionic/react";
+import { IonPage, IonRouterLink, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, useIonRouter } from "@ionic/react";
 import React, { lazy } from "react"
 import { Route, useLocation } from "react-router";
 import { IonReactRouter } from "@ionic/react-router";
@@ -14,21 +14,44 @@ import Quest from "../page/Quest";
 import MoreInfo from "../page/MoreInfo";
 
 const MainLayout: React.FC = () => {
-    
-    
+    // Map root
+    const router = useIonRouter();
+
+    const goToMapTabRoot = () => {
+        router.push("/main/map", "root"); // reset stack tab map
+    };
+
     return (
         <IonReactRouter>
             <IonTabs>
                 <IonRouterOutlet className="z-0">
-                    <Route path={routeConfig.main.map} component={Map} exact/>
-                    <Route path={routeConfig.main.discover} component={Discover} exact />
-                    <Route path={routeConfig.main.camera} component={Camera} exact />
-                    <Route path={routeConfig.main.quest} component={Quest} exact />
-                    <Route path={routeConfig.main.moreInfo} component={MoreInfo} exact />
+                    {/* Map */}
+                    <Route path={routeConfig.main.map} children={<Map />} exact />
+                    <Route path={routeConfig.mainSlug.map.getPosition} children={<Map />} exact />
+
+                    {/* Discover */}
+                    <Route path={routeConfig.main.discover} children={<Discover />} exact />
+
+                    {/* Camera */}
+                    <Route path={routeConfig.main.camera} children={<Camera />} exact />
+
+                    {/* Quest */}
+                    <Route path={routeConfig.main.quest} children={<Quest />} exact />
+
+                    {/* More Info */}
+                    <Route path={routeConfig.main.moreInfo} children={<MoreInfo />} exact />
                 </IonRouterOutlet>
 
                 <IonTabBar className="mainShadow z-50 bg-white flex py-1" slot="bottom">
-                    <IonTabButton tab="map" href={routeConfig.main.map} className="bg-white flex h-full flex-1 flex-col items-center justify-center rounded-main py-2 hover:bg-[rgba(128,128,128,0.2)]">
+                    <IonTabButton
+                        tab="map"
+                        className="bg-white flex h-full flex-1 flex-col items-center justify-center rounded-main py-2 hover:bg-[rgba(128,128,128,0.2)]"
+                        href={routeConfig.main.map}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            router.push("/main/map", "root");
+                        }}
+                    >
                         <span className="flex justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
@@ -58,10 +81,10 @@ const MainLayout: React.FC = () => {
                     <IonTabButton tab="quest" href={routeConfig.main.quest} className="bg-white flex h-full flex-1 flex-col items-center justify-center rounded-main py-2 hover:bg-[rgba(128,128,128,0.2)]">
                         <span className="flex justify-center">
                             <span className="flex justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-                            </svg>
-                        </span>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 9.75a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
+                                </svg>
+                            </span>
                         </span>
                         <p className="!w-fit text-csNormal">C.hỏi</p>
                     </IonTabButton>

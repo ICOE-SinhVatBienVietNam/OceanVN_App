@@ -1,5 +1,5 @@
 // Import librarise
-import React, { useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 // Leaflet
 import { MapContainer, TileLayer, useMap } from "react-leaflet"
@@ -8,17 +8,20 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet"
 import SpeciesList from "../component/SpeciesList"
 import SpeciesDetail from "../component/SpeciesDetail"
 import SpeciesLocationList from "../component/SpeciesLocationList"
+import { useParams } from "react-router"
+import { useIonRouter } from "@ionic/react"
 
 // 
 const ZoomButton: React.FC = () => {
     const map = useMap()
+
     return (
         <span className="flex flex-col gap-2.5">
-            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-2.5" onClick={() => { map.zoomIn() }}>
+            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-3.5" onClick={() => { map.zoomIn() }}>
                 <i className="fas fa-plus"></i>
             </button>
 
-            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-2.5" onClick={() => { map.zoomOut() }}>
+            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-3.5" onClick={() => { map.zoomOut() }}>
                 <i className="fas fa-minus"></i>
             </button>
         </span>
@@ -26,6 +29,22 @@ const ZoomButton: React.FC = () => {
 }
 
 const Map: React.FC = () => {
+    // Layer
+    const [layer, setLayer] = useState<number>(0)
+
+    const mapLayers = useRef<Array<{ layer: string, attribution: string }>>([
+        { layer: "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", attribution: "&copy; OpenStreetMap contributors &copy; CARTO" },
+        { layer: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", attribution: "&copy; OpenStreetMap contributors" }
+    ])
+
+    const changeLayer = () => {
+        if (layer === mapLayers.current.length - 1) {
+            setLayer(0)
+        } else {
+            setLayer(layer + 1)
+        }
+    }
+
     // SpeciesDetail
     const [isSpeciesDetail, setIsSpeciesDeatail] = useState<boolean>(false)
 
@@ -43,7 +62,7 @@ const Map: React.FC = () => {
         }
         setIsSpeciesLocation(!isSpeciesLocation)
     }
-    
+
     const backToSpeciesList = () => {
         setIsDiscover(true)
         setIsSpeciesLocation(false)
@@ -56,6 +75,16 @@ const Map: React.FC = () => {
         setIsDiscover(!isDiscover)
     }
 
+    // Get slug
+    const { id } = useParams<{ id: string }>()
+
+    useEffect(() => {
+        if (id) {
+            setIsSpeciesLocation(true)
+        }
+        // window.location.pathname = "/main/map"
+    }, [])
+
     return (
         <div className="relative !z-0 h-full w-full">
             <MapContainer
@@ -67,25 +96,25 @@ const Map: React.FC = () => {
                 zoomControl={false}
             >
                 <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                    attribution="&copy; OpenStreetMap contributors &copy; CARTO"
+                    url={mapLayers.current[layer].layer}
+                    attribution={mapLayers.current[layer].attribution}
                 />
 
                 {/* Option */}
                 <span className="absolute z-[1000] bottom-10 right-2.5 flex flex-col gap-7.5">
                     <ZoomButton />
                     <span className="flex flex-col gap-2.5">
-                        <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-2.5">
+                        <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-3.5">
                             <i className="fas fa-fish"></i>
                         </button>
                     </span>
 
                     <span className="flex flex-col gap-2.5">
-                        <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-2.5">
+                        <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-3.5" onClick={changeLayer}>
                             <i className="fas fa-layer-group"></i>
                         </button>
 
-                        <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-2.5">
+                        <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-3.5">
                             <i className="fas fa-crosshairs"></i>
                         </button>
                     </span>

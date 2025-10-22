@@ -1,18 +1,47 @@
 // Import libraries
 import React from "react"
+import { motion } from "framer-motion"
+import { useLocation } from "react-router"
+
+// Config
+import { routeConfig } from "../../config/routeConfig"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
+import { useIonRouter } from "@ionic/react"
 
 interface SpeciesDetail_interface {
     isShowLocation: boolean,
     closeSpeciesDeatail: () => void,
-    speciesLocation: () => void
+    speciesLocation?: () => void
 }
 
 const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, closeSpeciesDeatail, speciesLocation }) => {
+    const location = useLocation()
+    const router = useIonRouter()
+
+    const viewMorePosition = () => {
+        switch (location.pathname) {
+            case routeConfig.main.discover:
+                router.push(routeConfig.main.map + "/123")
+                break;
+
+            default:
+                if (speciesLocation) {
+                    speciesLocation()
+                }
+                break;
+        }
+    }
+
     return (
-        <div className="mainShadow absolute z-10 bottom-0 left-0 h-full w-full bg-white flex flex-col gap-5 pt-2.5">
+        <motion.div
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="mainShadow absolute z-10 bottom-0 left-0 h-full w-full bg-white flex flex-col gap-5 pt-2.5"
+        >
             <span className="flex justify-between items-center px-mainTwoSidePadding">
                 <button className="mainShadow flex justify-center-safe items-center-safe h-7.5 aspect-square !rounded-full" onClick={closeSpeciesDeatail}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
@@ -21,7 +50,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                 </button>
 
                 {!isShowLocation && (
-                    <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small" onClick={speciesLocation}>
+                    <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small" onClick={viewMorePosition}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159-1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
                         </svg>
@@ -93,7 +122,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                     </span>
                 </span>
             </span>
-        </div>
+        </motion.div>
     )
 }
 

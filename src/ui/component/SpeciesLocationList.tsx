@@ -1,5 +1,9 @@
 // Libraries
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import { motion } from "framer-motion"
+
+// Config
+import { routeConfig } from "../../config/routeConfig"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
@@ -7,6 +11,8 @@ import uniqolor from "uniqolor"
 
 // Component
 import Funnel from "./Funnel"
+import { useLocation, useParams } from "react-router"
+import { useIonRouter } from "@ionic/react"
 
 // Card
 type CardProp = {
@@ -87,6 +93,7 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
     // State
     const [isCard, setIsCard] = useState<boolean>(false) // Change style list
     const [isList, setIsList] = useState<boolean>(true)
+    const animatedHeight = isList ? "75vh" : "0vh"
     const [isFunnel, setIsFunnel] = useState<boolean>(false)
 
     // Toggle
@@ -94,10 +101,26 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
         setIsFunnel(!isFunnel)
     }
 
+    // Get slug
+    const router = useIonRouter()
+    const location = useLocation()
+    const { id } = useParams<{ id: string }>()
+
+    const closeSpeciesList = () => {
+        if (!(location.pathname === routeConfig.main.map)) {
+            router.push(routeConfig.main.map)
+        }
+    }
+
     return (
         <>
-
-            <div className={`mainShadow absolute z-10 bottom-0 left-0 ${isList ? "h-3/4" : "h-0"} flex w-full bg-white flex-col gap-2.5 pt-2.5`}>
+            <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0, height: animatedHeight }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="mainShadow absolute z-10 bottom-0 left-0  flex w-full bg-white flex-col gap-2.5 pt-2.5"
+            >
                 <button
                     onClick={() => { setIsList(!isList) }}
                     className={`absolute top-0 left-1/2 translate-y-[-120%] translate-x-[-50%] mainShadow ${isList ? "bg-white" : "bg-mainRed"} !px-2.5 !py-2.5 !rounded-small`}
@@ -109,18 +132,20 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
                 </button>
 
                 <div className="w-full flex justify-center-safe gap-2.5">
-                    <button
-                        onClick={backToSpeciesList}
-                        className="mainShadow w-1/2 text-csNormal flex items-center-safe justify-center-safe gap-1.5 !px-2.5 !rounded-small"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
-                            <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z" clipRule="evenodd" />
-                        </svg>
+                    {!id && (
+                        <button
+                            onClick={backToSpeciesList}
+                            className="mainShadow w-1/2 text-csNormal flex items-center-safe justify-center-safe gap-1.5 !px-2.5 !rounded-small"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+                                <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z" clipRule="evenodd" />
+                            </svg>
 
-                        Danh sách sinh vật
-                    </button>
+                            Danh sách sinh vật
+                        </button>
+                    )}
 
-                    <button className="w-1/5 bg-mainRedRGB text-mainRed !py-2.5 !rounded-small" onClick={closeSpeciesLocationList}>X</button>
+                    <button className="w-1/5 bg-mainRedRGB text-mainRed !py-2.5 !rounded-small" onClick={closeSpeciesList}>X</button>
                 </div>
 
                 <div className="flex-1 w-full h-0 gap-2.5 flex flex-col px-mainTwoSidePadding">
@@ -157,7 +182,7 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
                                 .map((_, i) => <Tag key={i} speciesDeatail={speciesDeatail} />)}
                     </span>
                 </div>
-            </div>
+            </motion.div>
 
             {isFunnel && (<Funnel closeFunnel={toggleFunnel} />)}
         </>

@@ -10,6 +10,20 @@ export const routeConfig = {
         quest: "/main/quest",
         moreInfo: "/main/more-info",
     },
+    mainSlug: {
+        map: {
+            getPosition: "/main/map/:id"
+        },
+        discover: {
+
+        },
+        camera: {
+
+        },
+        quest: {
+
+        },
+    },
     login: {
         root: "/login"
     },

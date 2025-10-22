@@ -1,5 +1,6 @@
 // Libraries
 import React, { useState } from "react"
+import { motion } from "framer-motion"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
@@ -74,6 +75,7 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
     // State
     const [isCard, setIsCard] = useState<boolean>(false) // Change style list
     const [isList, setIsList] = useState<boolean>(true)
+    const animatedHeight = isList ? "75vh" : "0vh"
     const [isFunnel, setIsFunnel] = useState<boolean>(false)
 
     // Toggle
@@ -83,7 +85,13 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
 
     return (
         <>
-            <div className={`mainShadow absolute z-10 bottom-0 left-0 ${isList ? "h-3/4" : "h-0"} flex w-full bg-white flex-col gap-2.5 pt-2.5`}>
+            <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0, height: animatedHeight }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="mainShadow absolute z-10 bottom-0 left-0 flex w-full bg-white flex-col gap-2.5 pt-2.5"
+            >
                 <button
                     onClick={() => { setIsList(!isList) }}
                     className={`absolute top-0 left-1/2 translate-y-[-120%] translate-x-[-50%] mainShadow ${isList ? "bg-white" : "bg-mainRed"} !px-2.5 !py-2.5 !rounded-small`}
@@ -132,7 +140,7 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
                                 .map((_, i) => <Tag key={i} speciesDeatail={speciesDeatail} />)}
                     </span>
                 </div>
-            </div>
+            </motion.div>
 
             {isFunnel && (<Funnel closeFunnel={toggleFunnel} />)}
         </>
