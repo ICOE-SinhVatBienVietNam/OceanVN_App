@@ -9,7 +9,6 @@ import SpeciesList from "../component/SpeciesList"
 import SpeciesDetail from "../component/SpeciesDetail"
 import SpeciesLocationList from "../component/SpeciesLocationList"
 import { useParams } from "react-router"
-import { useIonRouter } from "@ionic/react"
 
 // 
 const ZoomButton: React.FC = () => {
