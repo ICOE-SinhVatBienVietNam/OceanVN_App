@@ -73,7 +73,10 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm }) 
     const handleContribute = () => {
         setIsContribute(false)
         setIsSnapMap(false)
-        toggleForm()
+        toggleForm({
+            toastMessage: "Đã đóng góp",
+            toastType: "success"
+        })
     }
 
     // ConfirmForm
@@ -87,13 +90,13 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm }) 
             }
 
             if (type === "myLocation") {
+                toggleForm({
+                    toastMessage: "Đã đóng góp",
+                    toastType: "success"
+                })
             }
-
+            
             setIsConfirmForm(!isConfirmForm)
-            toggleForm({
-                toastMessage: "Đã đóng góp",
-                toastType: "success"
-            })
         } else toggleForm({
             toastMessage: "Đã lưu ảnh",
             toastType: "success"
