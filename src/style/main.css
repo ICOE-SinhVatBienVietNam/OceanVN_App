@@ -23,6 +23,19 @@
         background-color: white;
     }
 
+    /* Toast */
+    .Toastify__toast-container {
+        z-index: 999999 !important;
+    }
+    
+    /* ====== Toast Box ====== */
+    .Toastify__toast {
+        width: 80% !important;
+        font-size: 15px !important;
+    }
+
+    /* -------- */
+
     .btn:hover {
         filter: brightness(0.9);
         cursor: grab;

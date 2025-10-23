@@ -35,7 +35,7 @@ import { ScreenSizeWarningPopup } from './hooks/DeviceCheck';
 const Introduction = lazy(() => import("./ui/page/Introduction"))
 const Login = lazy(() => import("./ui/page/Login"))
 const Register = lazy(() => import("./ui/page/Register"))
-// const Map = lazy(() => import("./ui/page/Map"))
+import 'react-toastify/dist/ReactToastify.css';
 import MainLayout from './ui/layout/MainLayout';
 
 // Config

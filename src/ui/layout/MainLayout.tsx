@@ -1,6 +1,6 @@
 import { IonPage, IonRouterLink, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, useIonRouter } from "@ionic/react";
 import React, { lazy } from "react"
-import { Route, useLocation } from "react-router";
+import { Route } from "react-router";
 import { IonReactRouter } from "@ionic/react-router";
 
 // Config
@@ -13,13 +13,16 @@ import Camera from "../page/Camera";
 import Quest from "../page/Quest";
 import MoreInfo from "../page/MoreInfo";
 
+// Toast
+import { Bounce, ToastContainer } from "react-toastify";
+export type ToastType = {
+    toastMessage: string,
+    toastType: "info" | "success" | "warn" | "error",
+}
+
 const MainLayout: React.FC = () => {
     // Map root
     const router = useIonRouter();
-
-    const goToMapTabRoot = () => {
-        router.push("/main/map", "root"); // reset stack tab map
-    };
 
     return (
         <IonReactRouter>
@@ -99,6 +102,21 @@ const MainLayout: React.FC = () => {
                     </IonTabButton>
                 </IonTabBar>
             </IonTabs>
+            
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                limit={4}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Bounce}
+            />
         </IonReactRouter>
     )
 }

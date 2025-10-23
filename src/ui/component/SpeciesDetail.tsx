@@ -1,10 +1,11 @@
 // Import libraries
-import React from "react"
+import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { useLocation } from "react-router"
 
 // Config
 import { routeConfig } from "../../config/routeConfig"
+import { threatenedSpecies } from "../../config/threatenedSpecies"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
@@ -17,6 +18,10 @@ interface SpeciesDetail_interface {
 }
 
 const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, closeSpeciesDeatail, speciesLocation }) => {
+    // threatenedSpecies
+    const [threatenedLevel, setThreatenedLevel] = useState<number>(5)
+
+    // Location path
     const location = useLocation()
     const router = useIonRouter()
 
@@ -83,6 +88,21 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                     </p>
                 </span>
 
+                <span className="w-full flex border-[0.5px] border-lightGray mt-5">
+                    {threatenedSpecies.map((level, index) => {
+                        return (
+                            <span key={index} className={`relative flex-1 h-3.5 ${level.color} ${(index !== threatenedLevel) && "opacity-20"}`}>
+                                {index === threatenedLevel && (
+                                    <>
+                                        <p className="absolute bottom-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[-20%] text-nowrap font-medium text-csNormal">{level.code}</p>
+                                        <p className="absolute top-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[20%] text-nowrap font-medium text-csNormal">{level.label}</p>
+                                    </>
+                                )}
+                            </span>
+                        )
+                    })}
+                </span>
+
                 <span className="flex flex-col gap-2.5 text-csNormal">
                     <span className="flex flex-col">
                         <h5 className="font-semibold text-lg">Mô tả</h5>
@@ -92,6 +112,11 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                     <span className="flex flex-col">
                         <h5 className="font-semibold text-lg">Đặc điểm</h5>
                         <p className="text-gray text-justify pl-2.5">Loài này có những đặc điểm nổi bật như màu sắc, kích thước, và các bộ phận đặc trưng giúp nhận dạng.</p>
+                    </span>
+
+                    <span className="flex flex-col">
+                        <h5 className="font-semibold text-lg">Lợi ích</h5>
+                        <p className="text-gray text-justify pl-2.5">Loài này có những lợi ích cho con người, cho môi trường biển...</p>
                     </span>
 
                     <span className="flex flex-col">
@@ -106,9 +131,9 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                     <span className="flex flex-col">
                         <h5 className="font-semibold text-lg">Tên gọi khác</h5>
                         <ul className="list-none text-gray pl-2.5">
-                            <li className="text-gray"><span className="font-bold text-gray">Bộ:</span> Tên bộ</li>
-                            <li className="text-gray"><span className="font-bold text-gray">Họ:</span> Tên họ</li>
-                            <li className="text-gray"><span className="font-bold text-gray">Loài:</span> Tên loài</li>
+                            <li className="text-gray"><span className="font-bold text-gray">Miền Bắc:</span> Tên gọi</li>
+                            <li className="text-gray"><span className="font-bold text-gray">Miền Trung:</span> Tên gọi</li>
+                            <li className="text-gray"><span className="font-bold text-gray">Miền Nam:</span> Tên gọi</li>
                         </ul>
                     </span>
 

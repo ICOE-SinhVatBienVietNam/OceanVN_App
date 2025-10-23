@@ -7,6 +7,10 @@ import Logo from "../../assets/SinhVatBienVN.png"
 // Components
 import ContributionForm from "../component/ContributionForm"
 
+// Toast interface
+import { ToastType } from "../layout/MainLayout"
+import { toastConfig } from "../../config/toastConfig"
+
 const StorageCard: React.FC = () => {
     return (
         <span className="mainShadow flex-shrink-0 w-[48%] h-fit flex flex-col gap-2.5 rounded-main px-2.5 py-5">
@@ -52,8 +56,12 @@ const Camera: React.FC = () => {
         setIsSaved(!isSaved)
     }
 
-    const toggleForm = () => {
+    const toggleForm = (toast?: ToastType) => {
         setIsNew(!isNew)
+
+        if (toast) {
+            toastConfig(toast)
+        }
     }
 
     return (
@@ -111,7 +119,7 @@ const Camera: React.FC = () => {
             </span>
 
             <span className="absolute bottom-5 right-mainTwoSidePadding">
-                <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={toggleForm}>
+                <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={() => { toggleForm() }}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 stroke-white fill-white">
                         <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
                     </svg>
