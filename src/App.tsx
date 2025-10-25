@@ -37,6 +37,7 @@ const Login = lazy(() => import("./ui/page/Login"))
 const Register = lazy(() => import("./ui/page/Register"))
 import 'react-toastify/dist/ReactToastify.css';
 import MainLayout from './ui/layout/MainLayout';
+import { ConfirmProvider } from './hooks/ConfirmForm';
 
 // Config
 import { routeConfig } from './config/routeConfig';
@@ -46,23 +47,25 @@ setupIonicReact();
 // App
 const App: React.FC = () => (
   <IonApp>
-    <ScreenSizeWarningPopup />
-    <IonReactRouter>
-      <Suspense fallback={<div>Loading...</div>}>
-        <IonRouterOutlet>
-          {/* Starter */}
-          <Route exact path={routeConfig.intro.root} children={<Introduction />}></Route>
+    <ConfirmProvider>
+      <ScreenSizeWarningPopup />
+      <IonReactRouter>
+        <Suspense fallback={<div>Loading...</div>}>
+          <IonRouterOutlet>
+            {/* Starter */}
+            <Route exact path={routeConfig.intro.root} children={<Introduction />}></Route>
 
-          {/* Auth */}
-          <Route path={routeConfig.login.root} children={<Login />}></Route>
-          <Route path={routeConfig.register.root} children={<Register />}></Route>
+            {/* Auth */}
+            <Route path={routeConfig.login.root} children={<Login />}></Route>
+            <Route path={routeConfig.register.root} children={<Register />}></Route>
 
-          {/* Main */}
-          <Route path="/main/*" children={<MainLayout />}></Route>
-          <Redirect exact path='/main' to={routeConfig.main.map} />
-        </IonRouterOutlet>
-      </Suspense>
-    </IonReactRouter>
+            {/* Main */}
+            <Route path="/main/*" children={<MainLayout />}></Route>
+            <Redirect exact path='/main' to={routeConfig.main.map} />
+          </IonRouterOutlet>
+        </Suspense>
+      </IonReactRouter>
+    </ConfirmProvider>
   </IonApp>
 );
 

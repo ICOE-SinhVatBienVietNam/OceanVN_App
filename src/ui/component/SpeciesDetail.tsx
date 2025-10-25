@@ -90,16 +90,18 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
 
                 <span className="w-full flex border-[0.5px] border-lightGray mt-5">
                     {threatenedSpecies.map((level, index) => {
-                        return (
-                            <span key={index} className={`relative flex-1 h-3.5 ${level.color} ${(index !== threatenedLevel) && "opacity-20"}`}>
-                                {index === threatenedLevel && (
-                                    <>
-                                        <p className="absolute bottom-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[-20%] text-nowrap font-medium text-csNormal">{level.code}</p>
-                                        <p className="absolute top-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[20%] text-nowrap font-medium text-csNormal">{level.label}</p>
-                                    </>
-                                )}
-                            </span>
-                        )
+                        if (index <= threatenedLevel) {
+                            return (
+                                <span key={index} className={`relative flex-1 h-3.5 ${level.color} `}>
+                                    {index === threatenedLevel && (
+                                        <>
+                                            <p className="absolute bottom-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[-20%] text-nowrap font-medium text-csNormal">{level.code}</p>
+                                            <p className="absolute top-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[20%] text-nowrap font-medium text-csNormal">{level.label}</p>
+                                        </>
+                                    )}
+                                </span>
+                            )
+                        }
                     })}
                 </span>
 
@@ -115,7 +117,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                     </span>
 
                     <span className="flex flex-col">
-                        <h5 className="font-semibold text-lg">Lợi ích</h5>
+                        <h5 className="font-semibold text-lg">Vai trò</h5>
                         <p className="text-gray text-justify pl-2.5">Loài này có những lợi ích cho con người, cho môi trường biển...</p>
                     </span>
 

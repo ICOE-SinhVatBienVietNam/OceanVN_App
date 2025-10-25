@@ -1,33 +1,74 @@
 // Import libraries
-import React, { useState } from "react"
+import React, { lazy, useState } from "react"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
 
 // Components
 import ContributionForm from "../component/ContributionForm"
+const CameraStorageDetail = lazy(() => import('../component/CameraStorageDetail'))
 
 // Toast interface
 import { ToastType } from "../layout/MainLayout"
 import { toastConfig } from "../../config/toastConfig"
 
-const StorageCard: React.FC = () => {
-    return (
-        <span className="mainShadow flex-shrink-0 w-[48%] h-fit flex flex-col gap-2.5 rounded-main px-2.5 py-5">
-            <span className="w-full h-[100px] flex justify-center-safe items-center-safe">
-                <img src={Logo} className="!h-full" />
-            </span>
+const StorageCard: React.FC<{
+    id: number,
+    isDeleting: boolean,
+    isSelected: boolean,
+    onSelect: (id: number) => void,
+    toggleCameraStorageDetail: () => void
+}> = ({ id, isDeleting, isSelected, onSelect, toggleCameraStorageDetail }) => {
+    const handleClick = () => {
+        if (isDeleting) {
+            onSelect(id)
+        } else {
+            toggleCameraStorageDetail()
+        }
+    }
 
-            <span className="w-full flex flex-col items-center-safe gap-2.5">
-                <p className="text-csNormal text-center">Tiêu đề hình ảnh</p>
+    return (
+        <span className="relative mainShadow flex-shrink-0 min-w-[30%] flex-1 h-fit flex flex-col gap-2.5 rounded-main px-2.5 py-5" onClick={handleClick}>
+            {isDeleting && (
+                <input
+                    type="checkbox"
+                    checked={isSelected}
+                    readOnly
+                    className="absolute top-2 left-2 w-4 h-4 accent-mainBlue"
+                />
+            )}
+            <span className="w-full flex justify-center-safe items-center-safe">
+                <img src={Logo} className="!h-full" />
             </span>
         </span>
     )
 }
 
-const ContributeCard: React.FC = () => {
+const ContributeCard: React.FC<{
+    id: number,
+    isDeleting: boolean,
+    isSelected: boolean,
+    onSelect: (id: number) => void,
+    toggleCameraStorageDetail: () => void
+}> = ({ id, isDeleting, isSelected, onSelect, toggleCameraStorageDetail }) => {
+    const handleClick = () => {
+        if (isDeleting) {
+            onSelect(id)
+        } else {
+            toggleCameraStorageDetail()
+        }
+    }
+
     return (
-        <span className="mainShadow flex-shrink-0 w-[48%] h-fit flex flex-col gap-2.5 rounded-main px-2.5 py-5">
+        <span className="relative mainShadow flex-shrink-0 w-[48%] h-fit flex flex-col gap-2.5 rounded-main px-2.5 py-5" onClick={handleClick}>
+            {isDeleting && (
+                <input
+                    type="checkbox"
+                    checked={isSelected}
+                    readOnly
+                    className="absolute top-2 left-2 w-4 h-4 accent-mainBlue"
+                />
+            )}
             <span className="w-full h-[100px] flex justify-center-safe items-center-safe">
                 <img src={Logo} className="!h-full" />
             </span>
@@ -51,6 +92,9 @@ const Camera: React.FC = () => {
     // State 
     const [isSaved, setIsSaved] = useState<boolean>(true)
     const [isNew, setIsNew] = useState<boolean>(false)
+    const [isCameraStorageDetail, setIsCameraStorageDetail] = useState<boolean>(false)
+    const [isDeleting, setIsDeleting] = useState<boolean>(false)
+    const [selectedItems, setSelectedItems] = useState<number[]>([])
 
     const changeList = () => {
         setIsSaved(!isSaved)
@@ -62,6 +106,32 @@ const Camera: React.FC = () => {
         if (toast) {
             toastConfig(toast)
         }
+    }
+
+    const toggleCameraStorageDetail = () => {
+        setIsCameraStorageDetail(!isCameraStorageDetail)
+    }
+
+    const toggleIsDeleting = () => {
+        setIsDeleting(!isDeleting)
+        setSelectedItems([])
+    }
+
+    const handleSelectItem = (id: number) => {
+        setSelectedItems(prev =>
+            prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
+        )
+    }
+
+    const handleDelete = () => {
+        console.log("Xóa các mục:", selectedItems)
+
+        toastConfig({
+            toastType: "success",
+            toastMessage: `Đã xóa ${selectedItems.length} mục thành công`
+        })
+
+        toggleIsDeleting()
     }
 
     return (
@@ -103,6 +173,14 @@ const Camera: React.FC = () => {
                                 placeholder="Tìm kiếm..."
                             />
                         </span>
+
+                        {!isDeleting && (
+                            <button className="mainShadow w-[40px] h-[40px] flex justify-center-safe items-center-safe rounded-small" onClick={toggleIsDeleting}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.124-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.077-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                </svg>
+                            </button>
+                        )}
                     </span>
                 </span>
 
@@ -110,23 +188,46 @@ const Camera: React.FC = () => {
                     {isSaved
                         ? Array(20)
                             .fill(0)
-                            .map((_, i) => <StorageCard key={i} />)
+                            .map((_, i) => <StorageCard key={i} id={i} isDeleting={isDeleting} isSelected={selectedItems.includes(i)} onSelect={handleSelectItem} toggleCameraStorageDetail={toggleCameraStorageDetail} />)
                         : Array(20)
                             .fill(0)
-                            .map((_, i) => <ContributeCard key={i} />)
+                            .map((_, i) => <ContributeCard key={i} id={i} isDeleting={isDeleting} isSelected={selectedItems.includes(i)} onSelect={handleSelectItem} toggleCameraStorageDetail={toggleCameraStorageDetail} />)
                     }
                 </div>
             </span>
 
-            <span className="absolute bottom-5 right-mainTwoSidePadding">
-                <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={() => { toggleForm() }}>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 stroke-white fill-white">
-                        <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
-                    </svg>
-                </button>
-            </span>
+            {!isDeleting && (
+                <span className="absolute bottom-5 right-mainTwoSidePadding">
+                    <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={() => { toggleForm() }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 stroke-white fill-white">
+                            <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
+                        </svg>
+                    </button>
+                </span>
+            )}
+
+            {isDeleting && (
+                <div className="absolute bottom-0 w-full px-mainTwoSidePadding py-2.5 bg-white drop-shadow-[0_-2px_4px_rgba(0,0,0,0.05)]">
+                    <div className="w-full flex justify-center-safe items-center-safe gap-5">
+                        <button
+                            onClick={toggleIsDeleting}
+                            className="mainShadow w-full h-[45px] bg-lightGray rounded-main text-csNormal font-semibold"
+                        >
+                            Hủy
+                        </button>
+                        <button
+                            onClick={handleDelete}
+                            disabled={selectedItems.length === 0}
+                            className="mainShadow w-full h-[45px] bg-mainRed rounded-main text-csNormal font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {`Xóa(${selectedItems.length})`}
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {isNew && (<ContributionForm toggleForm={toggleForm} />)}
+            {isCameraStorageDetail && (<CameraStorageDetail toggleCameraStorageDetail={toggleCameraStorageDetail} />)}
         </div>
     )
 }

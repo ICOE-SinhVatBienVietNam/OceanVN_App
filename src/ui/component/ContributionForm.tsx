@@ -116,7 +116,7 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm }) 
             <span className="flex-1 h-0 px-mainTwoSidePadding overflow-auto">
                 <form>
                     <span className="">
-                        <h2 className="!leading-0 py-2.5">Thông tin loài</h2>
+                        <h2 className="!leading-0 py-2.5">Thông tin bức ảnh</h2>
                     </span>
 
                     <span className="w-full flex flex-col gap-5">
@@ -155,7 +155,7 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm }) 
 
                             <span className="w-full">
                                 <span className="w-full flex items-center justify-between">
-                                    <p className="text-csMedium font-medium">Tên bức ảnh</p>
+                                    <p className="text-csMedium font-medium">Mô tả bức ảnh</p>
                                     <p className="text-csSmall text-gray">0/50 từ</p>
                                 </span>
 
