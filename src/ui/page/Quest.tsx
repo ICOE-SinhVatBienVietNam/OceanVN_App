@@ -13,6 +13,7 @@ import { toastConfig } from "../../config/toastConfig"
 // Component
 import QuestCommunity from "../component/QuestCommunity"
 import QuestDetail from "../component/QuestDetail"
+import QuestionForm from "../component/QuestionForm"
 
 const QuestionCard: React.FC<{
     id: number,
@@ -73,7 +74,6 @@ const Quest: React.FC = () => {
     // State
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [selectedItems, setSelectedItems] = useState<number[]>([])
-    const [isQuestDetailForm, setIsQuestDetailForm] = useState<boolean>(false)
 
     // Different connection
     const differentConnections = useRef<differentConnections[]>([
@@ -96,6 +96,11 @@ const Quest: React.FC = () => {
     const [isQuestDetail, setIsQuestDetail] = useState<boolean>(false)
     const toggleQuestDetail = () => {
         setIsQuestDetail(!isQuestDetail)
+    }
+
+    const [isQuestionForm, setIsQuestionForm] = useState<boolean>(false)
+    const toggleQuestionForm = () => {
+        setIsQuestionForm(!isQuestionForm)
     }
 
     // Handler
@@ -188,7 +193,7 @@ const Quest: React.FC = () => {
 
                     {!isDeleting && (
                         <span className="absolute bottom-5 right-mainTwoSidePadding">
-                            <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full">
+                            <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={toggleQuestionForm}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 stroke-white fill-white">
                                     <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
                                 </svg>
@@ -220,6 +225,7 @@ const Quest: React.FC = () => {
 
             {isCommunity && (<QuestCommunity toggleQuestCommunity={toggleQuestCommunity} openDetail={toggleQuestDetail} />)}
             {isQuestDetail && (<QuestDetail toggleQuestDetail={toggleQuestDetail} />)}
+            {isQuestionForm && (<QuestionForm toggleForm={toggleQuestionForm} />)}
         </div>
     )
 }
