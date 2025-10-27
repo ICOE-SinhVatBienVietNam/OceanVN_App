@@ -39,16 +39,24 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
         }
     }
 
+    const [isCloseSpeciesDeatail, setIsCloseSpeciesDeatail] = useState<boolean>(false)
+    const handleCloseSpeciesDetail = () => {
+        setIsCloseSpeciesDeatail(true)
+        setTimeout(() => {
+            closeSpeciesDeatail()
+        }, 200)
+    }
+
     return (
         <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
+            initial={{ x: !isCloseSpeciesDeatail ? "100%" : 0 }}
+            animate={{ x: !isCloseSpeciesDeatail ? 0 : "100%" }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className="mainShadow absolute z-10 bottom-0 left-0 h-full w-full bg-white flex flex-col gap-5 pt-2.5"
         >
             <span className="flex justify-between items-center px-mainTwoSidePadding">
-                <button className="mainShadow flex justify-center-safe items-center-safe h-7.5 aspect-square !rounded-full" onClick={closeSpeciesDeatail}>
+                <button className="mainShadow flex justify-center-safe items-center-safe h-7.5 aspect-square !rounded-full" onClick={handleCloseSpeciesDetail}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                     </svg>

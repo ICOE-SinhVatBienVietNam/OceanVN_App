@@ -9,13 +9,11 @@ import Logo from "../../assets/SinhVatBienVN.png"
 // Component
 const QuestionCard: React.FC<{
     id: number,
-}> = ({ id }) => {
-    const handleClick = () => {
-        console.log("Chưa có gì hẹ hẹ :v")
-    }
+    openDetail: () => void
+}> = ({ id, openDetail }) => {
 
     return (
-        <span className="relative mainShadow h-[120px] min-w-[30%] flex-1 flex gap-2.5 rounded-small px-2.5" onClick={handleClick}>
+        <span className="relative mainShadow h-[120px] min-w-[30%] flex-1 flex gap-2.5 rounded-small px-2.5" onClick={openDetail}>
             <span className="h-full w-[70px] shrink-0 flex justify-center-safe items-center-safe">
                 <img src={Logo} className="w-full" />
             </span>
@@ -49,10 +47,11 @@ const QuestionCard: React.FC<{
 }
 
 interface QuestCommunity_interface {
-    toggleQuestCommunity: () => void
+    toggleQuestCommunity: () => void,
+    openDetail: () => void
 }
 
-const QuestCommunity: React.FC<QuestCommunity_interface> = ({ toggleQuestCommunity }) => {
+const QuestCommunity: React.FC<QuestCommunity_interface> = ({ toggleQuestCommunity, openDetail }) => {
     const [isCloseQuestCommunity, setIsCloseQuestCommunity] = useState<boolean>(false)
     const closeQuestCommunity = () => {
         setIsCloseQuestCommunity(true)
@@ -103,7 +102,7 @@ const QuestCommunity: React.FC<QuestCommunity_interface> = ({ toggleQuestCommuni
 
                 <span className="w-full flex-1 h-0 overflow-auto flex flex-col justify-between gap-2.5 px-0.5 py-2.5">
                     {Array(20).fill(0).map((_, index) => {
-                        return <QuestionCard key={index} id={index} />
+                        return <QuestionCard key={index} id={index} openDetail={openDetail} />
                     })}
                 </span>
             </div>

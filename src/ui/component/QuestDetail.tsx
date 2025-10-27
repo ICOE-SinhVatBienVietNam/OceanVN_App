@@ -18,8 +18,6 @@ interface Comment_interface {
 const Comment: React.FC<Comment_interface> = ({ toggleCommentForm }) => {
     const confirmPopup = useConfirm()
     // State
-    const [isAuth, setIsAuth] = useState<boolean>(false)
-
     const [commentBody, setCommentBody] = useState<string>("")
 
     const toggleComment = async () => {
@@ -98,12 +96,12 @@ const QuestDetail: React.FC<QuestDetail_interface> = ({ toggleQuestDetail }) => 
     ]
     // State
     const [isCommentForm, setIsCommentForm] = useState<boolean>(false)
-    const [isPersonal, setIsPersonal] = useState<boolean>(false) // True => No login
     const [isCloseQuestDetail, setIsCloseQuestDetail] = useState<boolean>(false)
+    const [isAuth, setIsAuth] = useState<boolean>(true) // True => No login
 
     // Toggle
     const toggleCommentForm = () => {
-        if (!isPersonal) {
+        if (!isAuth) {
             setIsCommentForm(!isCommentForm)
         } else {
             authCheckPopup()
@@ -120,7 +118,7 @@ const QuestDetail: React.FC<QuestDetail_interface> = ({ toggleQuestDetail }) => 
 
     return (
         <motion.div
-            initial={{ x: !isCloseQuestDetail ? "100%": 0 }}
+            initial={{ x: !isCloseQuestDetail ? "100%" : 0 }}
             animate={{ x: !isCloseQuestDetail ? 0 : "100%" }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -185,7 +183,7 @@ const QuestDetail: React.FC<QuestDetail_interface> = ({ toggleQuestDetail }) => 
                         )}
                     </span>
 
-                    <span className="f-fit w-full flex flex-col gap-2.5">
+                    <span className="f-fit w-full flex flex-col gap-2.5 px-0.5">
                         {answers.map((answer, index) => {
                             return (
                                 <span key={index} className="h-fit flex flex-col gap-1.5 p-3.5 border-[0.5px] border-lightGray rounded-main rounded-tl-none">
