@@ -10,6 +10,9 @@ import Gmail_logo from "../../assets/Gmail.png"
 // Config
 import { toastConfig } from "../../config/toastConfig"
 
+// Component
+import QuestCommunity from "../component/QuestCommunity"
+
 const QuestionCard: React.FC<{
     id: number,
     isDeleting: boolean,
@@ -84,6 +87,11 @@ const Quest: React.FC = () => {
         setSelectedItems([])
     }
 
+    const [isCommunity, setIsCommunity] = useState<boolean>(false)
+    const toggleQuestCommunity = () => {
+        setIsCommunity(!isCommunity)
+    }
+
     // Handler
     const handleSelectItem = (id: number) => {
         setSelectedItems(prev =>
@@ -107,7 +115,7 @@ const Quest: React.FC = () => {
     }
 
     return (
-        <div className="h-full w-full flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto">
+        <div className="relative h-full w-full flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto">
             <>
                 <div className="w-full flex-col">
                     <span className="flex items-center justify-between">
@@ -138,7 +146,12 @@ const Quest: React.FC = () => {
                             </span>
 
                             <span className="h-fit w-fit">
-                                <button className="bg-mainLightBlueRGB text-csNormal text-mainLightBlue font-medium px-2.5! py-2.5! rounded-small!">Cộng đồng</button>
+                                <button
+                                onClick={toggleQuestCommunity}
+                                    className="bg-mainLightBlueRGB text-csNormal text-mainLightBlue font-medium px-2.5! py-2.5! rounded-small!"
+                                >
+                                    Cộng đồng
+                                </button>
                             </span>
                         </span>
 
@@ -202,6 +215,8 @@ const Quest: React.FC = () => {
                     )}
                 </div>
             </>
+
+            {isCommunity && (<QuestCommunity toggleQuestCommunity={toggleQuestCommunity} />)}
         </div>
     )
 }
