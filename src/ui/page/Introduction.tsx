@@ -1,5 +1,5 @@
 // Import libraries
-import { IonPage, IonRouterLink } from "@ionic/react"
+import { IonPage, IonRouterLink, useIonRouter } from "@ionic/react"
 import React from "react"
 
 // Images
@@ -11,6 +11,7 @@ import { routeConfig } from "../../config/routeConfig"
 
 // Main component
 const Introduction: React.FC = () => {
+    const router = useIonRouter()
     return (
         <IonPage>
             <div className="relative h-full w-full flex flex-col justify-end-safe">
@@ -24,14 +25,17 @@ const Introduction: React.FC = () => {
                     </span>
 
                     <span className="w-full flex flex-col items-center-safe gap-2.5">
-                        <IonRouterLink href={routeConfig.main.map} className="flex w-[80%] h-[50px] text-csNormal !text-white !bg-mainLightBlue justify-center-safe items-center-safe rounded-main">
+                        <button
+                            onClick={() => { router.push(routeConfig.main.map, "root") }}
+                            className="flex w-[80%] text-csMedium !text-white !bg-mainLightBlue justify-center-safe items-center-safe rounded-main! py-3.5!"
+                        >
                             Bắt đầu hành trình khám phá
-                        </IonRouterLink>
+                        </button>
 
                         <a
                             href="https://sinhvatbienvietnam.zoo.id.vn/trang-ch%E1%BB%A7"
                             target="_blank"
-                            className="!text-mainDarkBlue text-csNormal font-semibold underline italic"
+                            className="!text-mainDarkBlue text-csSmall font-semibold underline italic"
                         >
                             Tìm hiểu Nhóm Sinh Vật Biển Việt Nam
                         </a>

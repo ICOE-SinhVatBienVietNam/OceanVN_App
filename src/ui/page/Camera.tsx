@@ -211,14 +211,14 @@ const Camera: React.FC = () => {
                     <div className="w-full flex justify-center-safe items-center-safe gap-5">
                         <button
                             onClick={toggleIsDeleting}
-                            className="mainShadow w-full h-[45px] bg-lightGray rounded-main text-csNormal font-semibold"
+                            className="mainShadow w-full h-fit py-2.5! bg-lightGray rounded-main text-csNormal font-semibold"
                         >
                             Hủy
                         </button>
                         <button
                             onClick={handleDelete}
                             disabled={selectedItems.length === 0}
-                            className="mainShadow w-full h-[45px] bg-mainRed rounded-main text-csNormal font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="mainShadow w-full h-fit py-2.5! bg-mainRed rounded-main text-csNormal font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {`Xóa(${selectedItems.length})`}
                         </button>
