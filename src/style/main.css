@@ -23,6 +23,10 @@
         background-color: white;
     }
 
+    input {
+        background-color: white !important;
+    }
+
     /* Toast */
     .Toastify__toast-container {
         z-index: 999999 !important;

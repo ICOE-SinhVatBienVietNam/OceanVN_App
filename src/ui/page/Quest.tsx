@@ -12,19 +12,20 @@ import { toastConfig } from "../../config/toastConfig"
 
 // Component
 import QuestCommunity from "../component/QuestCommunity"
+import QuestDetail from "../component/QuestDetail"
 
 const QuestionCard: React.FC<{
     id: number,
     isDeleting: boolean,
     isSelected: boolean,
     onSelect: (id: number) => void,
-    toggleCameraStorageDetail: () => void
-}> = ({ id, isDeleting, isSelected, onSelect, toggleCameraStorageDetail }) => {
+    toggleQuestDetailForm: () => void
+}> = ({ id, isDeleting, isSelected, onSelect, toggleQuestDetailForm }) => {
     const handleClick = () => {
         if (isDeleting) {
             onSelect(id)
         } else {
-            toggleCameraStorageDetail()
+            toggleQuestDetailForm()
         }
     }
 
@@ -72,7 +73,7 @@ const Quest: React.FC = () => {
     // State
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [selectedItems, setSelectedItems] = useState<number[]>([])
-    const [isCameraStorageDetail, setIsCameraStorageDetail] = useState<boolean>(false)
+    const [isQuestDetailForm, setIsQuestDetailForm] = useState<boolean>(false)
 
     // Different connection
     const differentConnections = useRef<differentConnections[]>([
@@ -92,15 +93,16 @@ const Quest: React.FC = () => {
         setIsCommunity(!isCommunity)
     }
 
+    const [isQuestDetail, setIsQuestDetail] = useState<boolean>(false)
+    const toggleQuestDetail = () => {
+        setIsQuestDetail(!isQuestDetail)
+    }
+
     // Handler
     const handleSelectItem = (id: number) => {
         setSelectedItems(prev =>
             prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
         )
-    }
-
-    const toggleCameraStorageDetail = () => {
-        setIsCameraStorageDetail(!isCameraStorageDetail)
     }
 
     const handleDelete = () => {
@@ -180,7 +182,7 @@ const Quest: React.FC = () => {
 
                     <span className="w-full flex-1 h-0 overflow-auto flex flex-col justify-between gap-2.5 px-0.5 py-2.5">
                         {Array(20).fill(0).map((_, index) => {
-                            return <QuestionCard key={index} id={index} isDeleting={isDeleting} isSelected={selectedItems.includes(index)} onSelect={handleSelectItem} toggleCameraStorageDetail={toggleCameraStorageDetail} />
+                            return <QuestionCard key={index} id={index} isDeleting={isDeleting} isSelected={selectedItems.includes(index)} onSelect={handleSelectItem} toggleQuestDetailForm={toggleQuestDetail} />
                         })}
                     </span>
 
@@ -217,6 +219,7 @@ const Quest: React.FC = () => {
             </>
 
             {isCommunity && (<QuestCommunity toggleQuestCommunity={toggleQuestCommunity} />)}
+            {isQuestDetail && (<QuestDetail toggleQuestDetail={toggleQuestDetail} />)}
         </div>
     )
 }

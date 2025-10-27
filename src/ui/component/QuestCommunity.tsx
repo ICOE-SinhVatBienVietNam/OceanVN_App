@@ -36,6 +36,7 @@ const QuestionCard: React.FC<{
 
                         27/10/2025
                     </p>
+
                     <span className="w-fit h-fit flex items-center gap-1.5">
                         <i className="fas fa-user text-csTiny"></i>
                         <p className="h-fit flex-1 flex items-center-safe gap-1.5 text-csSmall text-mainRed font-medium">Nguyen Van A</p>
