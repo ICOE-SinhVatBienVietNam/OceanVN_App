@@ -224,7 +224,7 @@ const Quest: React.FC = () => {
             </>
 
             {isCommunity && (<QuestCommunity toggleQuestCommunity={toggleQuestCommunity} openDetail={toggleQuestDetail} />)}
-            {isQuestDetail && (<QuestDetail toggleQuestDetail={toggleQuestDetail} />)}
+            {isQuestDetail && (<QuestDetail toggleQuestDetail={toggleQuestDetail} createQuestion={toggleQuestionForm} />)}
             {isQuestionForm && (<QuestionForm toggleForm={toggleQuestionForm} />)}
         </div>
     )

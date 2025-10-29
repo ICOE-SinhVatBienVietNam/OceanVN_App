@@ -83,10 +83,11 @@ const Comment: React.FC<Comment_interface> = ({ toggleCommentForm }) => {
 
 // Main component
 interface QuestDetail_interface {
-    toggleQuestDetail: () => void
+    toggleQuestDetail: () => void,
+    createQuestion: () => void
 }
 
-const QuestDetail: React.FC<QuestDetail_interface> = ({ toggleQuestDetail }) => {
+const QuestDetail: React.FC<QuestDetail_interface> = ({ toggleQuestDetail, createQuestion }) => {
     const authCheckPopup = useAuthCheckPopup()
     const answers = [
         { user: "Nguyen Van A", date: "27/10/2025", role: "user", body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book." },
@@ -115,6 +116,11 @@ const QuestDetail: React.FC<QuestDetail_interface> = ({ toggleQuestDetail }) => 
         }, 200)
     }
 
+    const handleCreateQuestion = () => {
+        handleClose()
+        createQuestion()
+    }
+
 
     return (
         <motion.div
@@ -134,7 +140,9 @@ const QuestDetail: React.FC<QuestDetail_interface> = ({ toggleQuestDetail }) => 
                     </svg>
                 </button>
 
-                <button className="h-fit bg-mainLightBlue flex items-center-safe gap-1.5 text-white text-csNormal px-5! py-2.5! rounded-small!">
+                <button onClick={handleCreateQuestion}
+                className="h-fit bg-mainLightBlue flex items-center-safe gap-1.5 text-white text-csNormal px-5! py-2.5! rounded-small!"
+                >
                     <i className="fas fa-plus text-white"></i>
 
                     Câu hỏi mới
