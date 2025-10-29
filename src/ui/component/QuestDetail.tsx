@@ -95,7 +95,7 @@ const QuestDetail: React.FC<QuestDetail_interface> = ({ toggleQuestDetail }) => 
         { user: "Nguyen Van D", date: "27/10/2025", role: "user", body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book." },
     ]
     // State
-    const [isCommentForm, setIsCommentForm] = useState<boolean>(false)
+    const [isCommentForm, setIsCommentForm] = useState<boolean>(true)
     const [isCloseQuestDetail, setIsCloseQuestDetail] = useState<boolean>(false)
     const [isAuth, setIsAuth] = useState<boolean>(true) // True => No login
 
