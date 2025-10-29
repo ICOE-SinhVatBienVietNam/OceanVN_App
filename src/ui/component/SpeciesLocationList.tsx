@@ -31,16 +31,16 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail }) => {
     return (
         <div
             onClick={speciesDeatail}
-            className="w-full flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-3 rounded-main"
+            className="w-full flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-0.5 rounded-main"
         >
-            <span className="mainShadow h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-full">
-                <img src={Logo} className="h-[60px]" />
+            <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center">
+                <img src={Logo} className="h-[40px]" />
             </span>
 
             <span className="flex-1">
-                <p className="">Tên sinh vật biển</p>
-                <p className="flex items-center text-csNormal text-gray">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4 fill-gray">
+                <p className="text-csNormal font-medium">Tên sinh vật biển</p>
+                <p className="flex items-center text-csSmall text-gray">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-3 fill-gray">
                         <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
                     </svg>
 
@@ -48,7 +48,7 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail }) => {
                 </p>
             </span>
 
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={randomColor} className="size-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={randomColor} className="size-3">
                 <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
             </svg>
 
@@ -73,8 +73,6 @@ const Card: React.FC<Card_interface> = ({ speciesDeatail }) => {
             <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-full">
                 <img src={Logo} />
             </span>
-
-            <p className="text-csNormal">Tên sinh vật</p>
         </div>
     )
 }
@@ -93,7 +91,7 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
     // State
     const [isCard, setIsCard] = useState<boolean>(false) // Change style list
     const [isList, setIsList] = useState<boolean>(true)
-    const animatedHeight = isList ? "75vh" : "0vh"
+    const animatedHeight = isList ? "65vh" : "0vh"
     const [isFunnel, setIsFunnel] = useState<boolean>(false)
 
     // Toggle
@@ -109,7 +107,7 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
     const closeSpeciesList = () => {
         if (!(location.pathname === routeConfig.main.map)) {
             router.push(routeConfig.main.map)
-        } else {closeSpeciesLocationList()}
+        } else { closeSpeciesLocationList() }
     }
 
     return (
@@ -151,26 +149,26 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
                 <div className="flex-1 w-full h-0 gap-2.5 flex flex-col px-mainTwoSidePadding">
                     <span className="h-fit w-full flex justify-between items-center">
                         <span className="">
-                            <h1 className="!leading-2.5">Vị trí phân bố</h1>
-                            <p className="text-gray text-csNormal">Loài: Tên sinh vật biển</p>
+                            <h2 className="!leading-2.5">Vị trí phân bố</h2>
+                            <p className="text-gray text-csSmall">Loài: Tên sinh vật biển</p>
                         </span>
 
                         <span className="flex gap-2.5">
-                            <button className="mainShadow !p-2.5 !rounded-small" onClick={() => { setIsCard(!isCard) }}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                            <button className="mainShadow !p-2 !rounded-small" onClick={() => { setIsCard(!isCard) }}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
                                 </svg>
                             </button>
 
-                            <button className="mainShadow !p-2.5 !rounded-small" onClick={toggleFunnel}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                            <button className="mainShadow !p-2 !rounded-small" onClick={toggleFunnel}>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
                                 </svg>
                             </button>
                         </span>
                     </span>
 
-                    <p className="text-mainRed text-csNormal">Số lượng: 10 vị trí</p>
+                    <p className="text-mainRed text-csSmall">Số lượng: 10 vị trí</p>
 
                     <span className="w-full flex-1 h-0 overflow-auto flex flex-wrap gap-2.5 py-2.5 px-0.5">
                         {isCard

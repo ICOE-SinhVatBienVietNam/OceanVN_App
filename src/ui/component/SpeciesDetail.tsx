@@ -62,15 +62,31 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                     </svg>
                 </button>
 
-                {!isShowLocation && (
-                    <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small" onClick={viewMorePosition}>
+                <span className="w-fit flex items-center gap-1.5">
+                    {!isShowLocation && (
+                        <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small" onClick={viewMorePosition}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                            </svg>
+
+                            Phân bố
+                        </button>
+                    )}
+
+                    <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159-1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+                        </svg>
+                    </button>
+
+                    <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
                         </svg>
 
-                        Vị trí phân bố
                     </button>
-                )}
+                </span>
             </span>
 
             <span className="flex-1 h-0 flex flex-col overflow-y-auto gap-2.5 pb-2.5 pt-0.5 px-mainTwoSidePadding">
@@ -96,20 +112,18 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                     </p>
                 </span>
 
-                <span className="w-full flex border-[0.5px] border-lightGray mt-5">
+                <span className="w-full flex border border-lighterGray mt-5">
                     {threatenedSpecies.map((level, index) => {
-                        if (index <= threatenedLevel) {
-                            return (
-                                <span key={index} className={`relative flex-1 h-3.5 ${level.color} `}>
-                                    {index === threatenedLevel && (
-                                        <>
-                                            <p className="absolute bottom-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[-20%] text-nowrap font-medium text-csNormal">{level.code}</p>
-                                            <p className="absolute top-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[20%] text-nowrap font-medium text-csNormal">{level.label}</p>
-                                        </>
-                                    )}
-                                </span>
-                            )
-                        }
+                        return (
+                            <span key={index} className={`relative flex-1 h-3 ${index <= threatenedLevel && level.color}`}>
+                                {index === threatenedLevel && (
+                                    <>
+                                        <p className="absolute bottom-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[-20%] text-nowrap font-medium text-csNormal">{level.code}</p>
+                                        <p className="absolute top-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[20%] text-nowrap font-medium text-csNormal">{level.label}</p>
+                                    </>
+                                )}
+                            </span>
+                        )
                     })}
                 </span>
 

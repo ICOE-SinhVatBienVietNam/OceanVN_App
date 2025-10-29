@@ -60,7 +60,7 @@ const ContributeCard: React.FC<{
     }
 
     return (
-        <span className="relative mainShadow flex-shrink-0 w-[48%] h-fit flex flex-col gap-2.5 rounded-main px-2.5 py-5" onClick={handleClick}>
+        <span className="relative mainShadow flex-shrink-0 flex-1/4 h-fit flex flex-col gap-2.5 rounded-main px-2.5 py-5" onClick={handleClick}>
             {isDeleting && (
                 <input
                     type="checkbox"
@@ -69,12 +69,12 @@ const ContributeCard: React.FC<{
                     className="absolute top-2 left-2 w-4 h-4 accent-mainBlue"
                 />
             )}
-            <span className="w-full h-[100px] flex justify-center-safe items-center-safe">
+            <span className="w-full flex-1 flex justify-center-safe items-center-safe">
                 <img src={Logo} className="!h-full" />
             </span>
 
             <span className="w-full flex flex-col items-center-safe gap-2.5">
-                <p className="text-csNormal text-center">Tiêu đề hình ảnh</p>
+                {/* <p className="text-csNormal text-center">Tiêu đề hình ảnh</p> */}
                 <p className="text-csSmall text-gray font-medium flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-3 fill-gray">
                         <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z" clipRule="evenodd" />
@@ -96,8 +96,8 @@ const Camera: React.FC = () => {
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [selectedItems, setSelectedItems] = useState<number[]>([])
 
-    const changeList = () => {
-        setIsSaved(!isSaved)
+    const changeList = (type: boolean) => {
+        setIsSaved(type)
     }
 
     const toggleForm = (toast?: ToastType) => {
@@ -139,14 +139,14 @@ const Camera: React.FC = () => {
             <span className="w-full px-mainTwoSidePadding">
                 <span className=" mainShadow p-[0.5px] w-full h-[40px] bg-lightGray flex rounded-main">
                     <button
-                        onClick={changeList}
+                        onClick={() => { changeList(true) }}
                         className={`text-csNormal font-medium h-full w-1/2 ${isSaved ? "bg-white" : "bg-transparent"} !rounded-main`}
                     >
                         Đã lưu
                     </button>
 
                     <button
-                        onClick={changeList}
+                        onClick={() => { changeList(false) }}
                         className={`text-csNormal font-medium h-full w-1/2 ${!isSaved ? "bg-white" : "bg-transparent"} !rounded-main`}
                     >
                         Đã đóng góp

@@ -9,10 +9,18 @@ const Funnel: React.FC<Funnel_interface> = ({ closeFunnel }) => {
     const [filters, setFilters] = useState<Array<{ id: string; label: string; checked: boolean }>>(
         Array(20).fill(0).map((_, i) => ({
             id: `filter-${i}`,
-            label: `Loài ${i + 1}`,
+            label: `Nhóm ${i + 1}`,
             checked: false,
         }))
     );
+
+    const [isCloseFunnel, setIsCloseFunnel] = useState<boolean>(false)
+    const toggleCloseFunnel = () => {
+        setIsCloseFunnel(true)
+        setTimeout(() => {
+            closeFunnel()
+        }, 200)
+    }
 
     const handleChange = (id: string) => {
         setFilters(prevFilters =>
@@ -39,18 +47,19 @@ const Funnel: React.FC<Funnel_interface> = ({ closeFunnel }) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: isCloseFunnel ? 0 : 1 }}
+            animate={{ opacity: isCloseFunnel ? 1 : 0 }}
             exit={{ opacity: 0 }}
+            transition={{ delay: 150 }}
             className="absolute top-0 left-0 z-20 h-full w-full bg-[rgba(0,0,0,0.5)] flex justify-end-safe">
             <motion.div
-                initial={{ x: "100%" }}
-                animate={{ x: 0 }}
+                initial={{ x: !isCloseFunnel ? "100%" : 0 }}
+                animate={{ x: !isCloseFunnel ? 0 : "100%" }}
                 exit={{ x: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 className="relative h-full w-3/4 bg-white flex flex-col py-2.5">
                 <button
-                    onClick={closeFunnel}
+                    onClick={toggleCloseFunnel}
                     className="absolute top-1/2 right-full translate-y-[-50%] h-[100px] text-white bg-mainRed flex justify-center-safe items-center-safe !px-2.5 !rounded-tl-full !rounded-bl-full"
                 >
                     x
@@ -58,7 +67,7 @@ const Funnel: React.FC<Funnel_interface> = ({ closeFunnel }) => {
 
                 <div className="px-mainTwoSidePadding mb-2.5">
                     <h2 className="">Bộ lọc</h2>
-                    <p className="text-csNormal text-mainRed font-medium">Số lượng: 10 loài</p>
+                    <p className="text-csNormal text-mainRed font-medium">Số lượng: 10 nhóm</p>
                 </div>
 
                 <div className="flex-1 h-0 flex flex-col gap-2.5 py-2.5 px-mainTwoSidePadding overflow-auto">

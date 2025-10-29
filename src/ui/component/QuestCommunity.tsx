@@ -14,14 +14,14 @@ const QuestionCard: React.FC<{
 
     return (
         <span className="relative mainShadow h-[120px] min-w-[30%] flex-1 flex gap-2.5 rounded-small px-2.5" onClick={openDetail}>
-            <span className="h-full w-[70px] shrink-0 flex justify-center-safe items-center-safe">
+            <span className="h-full w-[60px] shrink-0 flex justify-center-safe items-center-safe">
                 <img src={Logo} className="w-full" />
             </span>
 
             <span className="flex-1 h-full flex flex-col gap-1.5 py-3.5">
                 <span className="flex-1 min-w-0 flex flex-col justify-between">
-                    <h5 className="!leading-none my-0!">Tiêu đề câu hỏi</h5>
-                    <p className="!line-clamp-2 text-csNormal text-gray">
+                    <h6 className="!leading-none my-0!">Tiêu đề câu hỏi</h6>
+                    <p className="!line-clamp-2 text-csSmall text-gray">
                         Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v ...
                     </p>
                 </span>
@@ -66,7 +66,7 @@ const QuestCommunity: React.FC<QuestCommunity_interface> = ({ toggleQuestCommuni
             animate={{ x: !isCloseQuestCommunity ? 0 : "100%" }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-0 left-0 h-full w-full bg-white flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto pt-2.5"
+            className="fixed top-0 left-0 h-full w-full bg-white flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto pt-2.5"
         >
             <div className="w-full h-full flex flex-col">
                 <span className="sticky top-0 left-0 flex flex-col gap-2.5 bg-white pb-2.5">

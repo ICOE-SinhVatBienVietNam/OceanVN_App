@@ -34,7 +34,7 @@ const QuestionForm: React.FC<ContributionForm_interface> = ({ toggleForm }) => {
             animate={{ x: !isCloseForm ? 0 : "100%" }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="absolute top-0 left-0 h-full w-full bg-white flex flex-col gap-2.5 pt-2.5"
+            className="fixed top-0 left-0 h-full w-full bg-white flex flex-col gap-2.5 pt-2.5"
         >
             <span className="flex-1 h-0 px-mainTwoSidePadding overflow-auto">
                 <form>

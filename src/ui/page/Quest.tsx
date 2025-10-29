@@ -40,19 +40,19 @@ const QuestionCard: React.FC<{
                     className="absolute top-2 left-2 w-4 h-4 accent-mainBlue"
                 />
             )}
-            <span className="h-full w-[70px] shrink-0 flex justify-center-safe items-center-safe">
+            <span className="h-full w-[60px] shrink-0 flex justify-center-safe items-center-safe">
                 <img src={Logo} className="w-full" />
             </span>
 
             <span className="flex-1 h-full flex flex-col gap-1.5 py-3.5">
                 <span className="flex-1 min-w-0 flex flex-col justify-between">
-                    <h5 className="!leading-none my-0!">Tiêu đề câu hỏi</h5>
-                    <p className="!line-clamp-2 text-csNormal text-gray">
+                    <h6 className="!leading-none my-0!">Tiêu đề câu hỏi</h6>
+                    <p className="!line-clamp-2 text-csSmall text-gray">
                         Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v ...
                     </p>
                 </span>
 
-                <p className="h-fit flex-1 flex items-center-safe gap-1.5 text-csSmall">
+                <p className="h-fit flex-1 flex items-center-safe gap-1.5 text-csTiny">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-3">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
                     </svg>
@@ -122,7 +122,7 @@ const Quest: React.FC = () => {
     }
 
     return (
-        <div className="relative h-full w-full flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto">
+        <div className="relative h-full w-full flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto pt-2.5">
             <>
                 <div className="w-full flex-col">
                     <span className="flex items-center justify-between">
@@ -192,7 +192,7 @@ const Quest: React.FC = () => {
                     </span>
 
                     {!isDeleting && (
-                        <span className="absolute bottom-5 right-mainTwoSidePadding">
+                        <span className="fixed bottom-5 right-mainTwoSidePadding">
                             <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={toggleQuestionForm}>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 stroke-white fill-white">
                                     <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
