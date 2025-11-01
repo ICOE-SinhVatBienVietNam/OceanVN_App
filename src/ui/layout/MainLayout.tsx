@@ -1,13 +1,12 @@
 import { IonPage, IonRouterLink, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, useIonRouter } from "@ionic/react";
 import React, { lazy } from "react"
 import { Route } from "react-router";
-import { IonReactRouter } from "@ionic/react-router";
 
 // Config
 import { routeConfig } from "../../config/routeConfig";
 
 // Page
-const Map = lazy(() => import("../page/Map"))
+import Map from "../page/Map";
 import Discover from "../page/Discover";
 import Camera from "../page/Camera";
 import Quest from "../page/Quest";
@@ -25,7 +24,7 @@ const MainLayout: React.FC = () => {
     const router = useIonRouter();
 
     return (
-        <IonReactRouter>
+        <>
             <IonTabs>
                 <IonRouterOutlet className="z-0">
                     {/* Map */}
@@ -102,7 +101,7 @@ const MainLayout: React.FC = () => {
                     </IonTabButton>
                 </IonTabBar>
             </IonTabs>
-            
+
             <ToastContainer
                 position="top-right"
                 autoClose={3000}
@@ -117,7 +116,7 @@ const MainLayout: React.FC = () => {
                 theme="colored"
                 transition={Bounce}
             />
-        </IonReactRouter>
+        </>
     )
 }
 

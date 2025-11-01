@@ -14,6 +14,7 @@ import { toastConfig } from "../../config/toastConfig"
 import QuestCommunity from "../component/QuestCommunity"
 import QuestDetail from "../component/QuestDetail"
 import QuestionForm from "../component/QuestionForm"
+import { IonPage } from "@ionic/react"
 
 const QuestionCard: React.FC<{
     id: number,
@@ -122,111 +123,113 @@ const Quest: React.FC = () => {
     }
 
     return (
-        <div className="relative h-full w-full flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto pt-2.5">
-            <>
-                <div className="w-full flex-col">
-                    <span className="flex items-center justify-between">
-                        <h2 className="">Các kênh liên hệ khác</h2>
-                    </span>
+        <IonPage>
+            <div className="relative h-full w-full flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto pt-2.5">
+                <>
+                    <div className="w-full flex-col">
+                        <span className="flex items-center justify-between">
+                            <h2 className="">Các kênh liên hệ khác</h2>
+                        </span>
 
-                    <span className="w-full flex justify-start gap-5 overflow-x-auto p-0.5">
-                        {differentConnections.current.map((connection, index) => {
-                            return (
-                                <span key={index} className="h-fit w-[60px] flex flex-col items-center-safe gap-1.5">
-                                    <span className="mainShadow w-full aspect-square bg-white flex justify-center-safe items-center-safe p-3.5 rounded-full">
-                                        <img className="w-full" src={connection.thumbnail} />
+                        <span className="w-full flex justify-start gap-5 overflow-x-auto p-0.5">
+                            {differentConnections.current.map((connection, index) => {
+                                return (
+                                    <span key={index} className="h-fit w-[60px] flex flex-col items-center-safe gap-1.5">
+                                        <span className="mainShadow w-full aspect-square bg-white flex justify-center-safe items-center-safe p-3.5 rounded-full">
+                                            <img className="w-full" src={connection.thumbnail} />
+                                        </span>
+
+                                        <p className="text-csNormal text-nowrap font-medium">{connection.label}</p>
                                     </span>
+                                )
+                            })}
+                        </span>
+                    </div>
 
-                                    <p className="text-csNormal text-nowrap font-medium">{connection.label}</p>
+                    <div className="w-full h-full flex flex-col">
+                        <span className="sticky top-0 left-0 flex flex-col gap-2.5 bg-white pb-2.5">
+                            <span className="w-full flex justify-between items-center-safe">
+                                <span className="">
+                                    <h2 className="leading-none! mb-1.5">Câu hỏi của tôi</h2>
+                                    <p className="text-csNormal text-mainRed font-medium">Số lượng: 20 câu hỏi</p>
                                 </span>
-                            )
-                        })}
-                    </span>
-                </div>
 
-                <div className="w-full h-full flex flex-col">
-                    <span className="sticky top-0 left-0 flex flex-col gap-2.5 bg-white pb-2.5">
-                        <span className="w-full flex justify-between items-center-safe">
-                            <span className="">
-                                <h2 className="leading-none! mb-1.5">Câu hỏi của tôi</h2>
-                                <p className="text-csNormal text-mainRed font-medium">Số lượng: 20 câu hỏi</p>
+                                <span className="h-fit w-fit">
+                                    <button
+                                        onClick={toggleQuestCommunity}
+                                        className="bg-mainLightBlueRGB text-csNormal text-mainLightBlue font-medium px-2.5! py-2.5! rounded-small!"
+                                    >
+                                        Cộng đồng
+                                    </button>
+                                </span>
                             </span>
 
-                            <span className="h-fit w-fit">
-                                <button
-                                onClick={toggleQuestCommunity}
-                                    className="bg-mainLightBlueRGB text-csNormal text-mainLightBlue font-medium px-2.5! py-2.5! rounded-small!"
-                                >
-                                    Cộng đồng
-                                </button>
+                            <span className="w-full flex items-center-safe gap-2.5">
+                                <span className="mainShadow h-[40px] flex-1 flex items-center-safe gap-2.5 px-2.5 rounded-small">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                    </svg>
+
+                                    <input
+                                        className="!text-csNormal h-full w-full outline-none"
+                                        type="text"
+                                        placeholder="Tìm kiếm..."
+                                    />
+                                </span>
+
+                                {!isDeleting && (
+                                    <button className="mainShadow w-[40px] h-[40px] flex justify-center-safe items-center-safe rounded-small!" onClick={toggleIsDeleting}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.124-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.077-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                                        </svg>
+                                    </button>
+                                )}
                             </span>
                         </span>
 
-                        <span className="w-full flex items-center-safe gap-2.5">
-                            <span className="mainShadow h-[40px] flex-1 flex items-center-safe gap-2.5 px-2.5 rounded-small">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                                </svg>
+                        <span className="w-full flex-1 h-0 overflow-auto flex flex-col justify-between gap-2.5 px-0.5 py-2.5">
+                            {Array(20).fill(0).map((_, index) => {
+                                return <QuestionCard key={index} id={index} isDeleting={isDeleting} isSelected={selectedItems.includes(index)} onSelect={handleSelectItem} toggleQuestDetailForm={toggleQuestDetail} />
+                            })}
+                        </span>
 
-                                <input
-                                    className="!text-csNormal h-full w-full outline-none"
-                                    type="text"
-                                    placeholder="Tìm kiếm..."
-                                />
-                            </span>
-
-                            {!isDeleting && (
-                                <button className="mainShadow w-[40px] h-[40px] flex justify-center-safe items-center-safe rounded-small!" onClick={toggleIsDeleting}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.124-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.077-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                        {!isDeleting && (
+                            <span className="fixed bottom-5 right-mainTwoSidePadding">
+                                <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={toggleQuestionForm}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 stroke-white fill-white">
+                                        <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
                                     </svg>
                                 </button>
-                            )}
-                        </span>
-                    </span>
+                            </span>
+                        )}
 
-                    <span className="w-full flex-1 h-0 overflow-auto flex flex-col justify-between gap-2.5 px-0.5 py-2.5">
-                        {Array(20).fill(0).map((_, index) => {
-                            return <QuestionCard key={index} id={index} isDeleting={isDeleting} isSelected={selectedItems.includes(index)} onSelect={handleSelectItem} toggleQuestDetailForm={toggleQuestDetail} />
-                        })}
-                    </span>
-
-                    {!isDeleting && (
-                        <span className="fixed bottom-5 right-mainTwoSidePadding">
-                            <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={toggleQuestionForm}>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 stroke-white fill-white">
-                                    <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
-                                </svg>
-                            </button>
-                        </span>
-                    )}
-
-                    {isDeleting && (
-                        <div className="absolute left-0 bottom-0 w-full px-mainTwoSidePadding py-2.5 bg-white drop-shadow-[0_-2px_4px_rgba(0,0,0,0.05)]">
-                            <div className="w-full flex justify-center-safe items-center-safe gap-5">
-                                <button
-                                    onClick={toggleIsDeleting}
-                                    className="mainShadow w-full h-fit py-2.5! bg-lightGray rounded-main text-csNormal font-semibold"
-                                >
-                                    Hủy
-                                </button>
-                                <button
-                                    onClick={handleDelete}
-                                    disabled={selectedItems.length === 0}
-                                    className="mainShadow w-full h-fit py-2.5! bg-mainRed rounded-main text-csNormal font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {`Xóa(${selectedItems.length})`}
-                                </button>
+                        {isDeleting && (
+                            <div className="absolute left-0 bottom-0 w-full px-mainTwoSidePadding py-2.5 bg-white drop-shadow-[0_-2px_4px_rgba(0,0,0,0.05)]">
+                                <div className="w-full flex justify-center-safe items-center-safe gap-5">
+                                    <button
+                                        onClick={toggleIsDeleting}
+                                        className="mainShadow w-full h-fit py-2.5! bg-lightGray rounded-main text-csNormal font-semibold"
+                                    >
+                                        Hủy
+                                    </button>
+                                    <button
+                                        onClick={handleDelete}
+                                        disabled={selectedItems.length === 0}
+                                        className="mainShadow w-full h-fit py-2.5! bg-mainRed rounded-main text-csNormal font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {`Xóa(${selectedItems.length})`}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    )}
-                </div>
-            </>
+                        )}
+                    </div>
+                </>
 
-            {isCommunity && (<QuestCommunity toggleQuestCommunity={toggleQuestCommunity} openDetail={toggleQuestDetail} />)}
-            {isQuestDetail && (<QuestDetail toggleQuestDetail={toggleQuestDetail} createQuestion={toggleQuestionForm} />)}
-            {isQuestionForm && (<QuestionForm toggleForm={toggleQuestionForm} />)}
-        </div>
+                {isCommunity && (<QuestCommunity toggleQuestCommunity={toggleQuestCommunity} openDetail={toggleQuestDetail} />)}
+                {isQuestDetail && (<QuestDetail toggleQuestDetail={toggleQuestDetail} createQuestion={toggleQuestionForm} />)}
+                {isQuestionForm && (<QuestionForm toggleForm={toggleQuestionForm} />)}
+            </div>
+        </IonPage>
     )
 }
 

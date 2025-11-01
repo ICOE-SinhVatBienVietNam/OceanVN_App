@@ -3,6 +3,7 @@ import React from "react"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
+import { IonPage } from "@ionic/react"
 
 // Authorise
 const Authorise: React.FC = () => {
@@ -20,27 +21,29 @@ const Unauthorise: React.FC = () => {
 
 const MoreInfo: React.FC = () => {
     return (
-        <div className="relative h-full w-full flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto pt-2.5">
-            <div className="">
+        <IonPage>
+            <div className="relative h-full w-full flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto pt-2.5">
+                <div className="">
 
+                </div>
+
+                <div className="">
+
+                </div>
+
+                <div className="">
+
+                </div>
+
+                <div className="">
+
+                </div>
+
+                <div className="">
+
+                </div>
             </div>
-
-            <div className="">
-
-            </div>
-
-            <div className="">
-
-            </div>
-
-            <div className="">
-
-            </div>
-
-            <div className="">
-
-            </div>
-        </div>
+        </IonPage>
     )
 }
 

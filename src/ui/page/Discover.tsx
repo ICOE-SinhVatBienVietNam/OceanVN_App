@@ -8,6 +8,7 @@ import Logo from "../../assets/SinhVatBienVN.png"
 import Funnel from "../component/Funnel"
 import NewSpeciesList from "../component/NewSpeciesList"
 import SpeciesDetail from "../component/SpeciesDetail"
+import { IonPage } from "@ionic/react"
 
 // Card
 type sizesType = "x0.5" | "x0.75" | "x1"
@@ -54,24 +55,24 @@ export const Discover_Card: React.FC<Card_interface> = ({ speciesDeatail, size }
         switch (size) {
             case 'x0.5':
                 style = {
-                    style: "flex-1/5",
-                    info: true
+                    style: "basis-[calc(25%-8.5px)]", // 4 cards per row with gap-2.5 (10px) and px-0.5 (4px total)
+                    info: true // Hide text
                 }
                 setTextSize(style)
                 break;
 
             case 'x0.75':
                 style = {
-                    style: "flex-1/4",
-                    info: true
+                    style: "basis-[calc(33.333%-8px)]", // 3 cards per row with gap-2.5 (10px) and px-0.5 (4px total)
+                    info: true // Hide text
                 }
                 setTextSize(style)
                 break;
 
             case 'x1':
                 style = {
-                    style: "w-[48%]",
-                    info: false
+                    style: "basis-[calc(50%-7px)]", // 2 cards per row with gap-2.5 (10px) and px-0.5 (4px total)
+                    info: false // Show text
                 }
                 setTextSize(style)
                 break;
@@ -140,91 +141,93 @@ const Discover: React.FC = () => {
     }
 
     return (
-        <div className="h-full w-full px-mainTwoSidePadding overflow-auto">
-            <>
-                <div className="w-full flex-col">
-                    <span className="flex items-center justify-between">
-                        <h2 className="">Khám phá mới</h2>
-                        <button className="text-csSmall text-mainDarkBlue font-medium flex items-center underline" onClick={toggleNewSpeciesList}>
-                            Xem tất cả
+        <IonPage>
+            <div className="h-full w-full px-mainTwoSidePadding overflow-auto">
+                <>
+                    <div className="w-full flex-col">
+                        <span className="flex items-center justify-between">
+                            <h2 className="">Khám phá mới</h2>
+                            <button className="text-csSmall text-mainDarkBlue font-medium flex items-center underline" onClick={toggleNewSpeciesList}>
+                                Xem tất cả
 
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-3 stroke-mainDarkBlue">
-                                <path fillRule="evenodd" d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z" clipRule="evenodd" />
-                            </svg>
-                        </button>
-                    </span>
-
-                    <span className="w-full flex justify-evenly gap-2.5 overflow-auto p-0.5">
-                        {Array(10).fill(0).map((_, index) => {
-                            return <Discover_NewCard key={index} speciesDeatail={toggleSpeciesDetail} />
-                        })}
-                    </span>
-                </div>
-
-                <div className="w-full h-full flex flex-col">
-                    <span className="sticky top-0 left-0 flex flex-col bg-white pb-2.5">
-                        <span className="w-full">
-                            <h2 className="">Dữ liệu sinh vật biển</h2>
-                        </span>
-
-                        <span className="w-full flex items-center-safe gap-2.5">
-                            <span className="mainShadow h-[40px] flex-1 flex items-center-safe gap-2.5 px-2.5 rounded-small">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                                </svg>
-
-                                <input
-                                    className="!text-csNormal h-full w-full outline-none"
-                                    type="text"
-                                    placeholder="Tìm kiếm..."
-                                />
-                            </span>
-
-                            <button className="mainShadow !p-2.5 !rounded-small" onClick={toggleFunnel}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-3 stroke-mainDarkBlue">
+                                    <path fillRule="evenodd" d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z" clipRule="evenodd" />
                                 </svg>
                             </button>
+                        </span>
 
-                            <span className="relative h-fit w-fit">
-                                <button className="mainShadow !p-2.5 !rounded-small" onClick={() => { setIsSize(!isSize) }}>
+                        <span className="w-full flex justify-evenly gap-2.5 overflow-auto p-0.5">
+                            {Array(10).fill(0).map((_, index) => {
+                                return <Discover_NewCard key={index} speciesDeatail={toggleSpeciesDetail} />
+                            })}
+                        </span>
+                    </div>
+
+                    <div className="w-full h-full flex flex-col">
+                        <span className="sticky top-0 left-0 flex flex-col bg-white pb-2.5">
+                            <span className="w-full">
+                                <h2 className="">Dữ liệu sinh vật biển</h2>
+                            </span>
+
+                            <span className="w-full flex items-center-safe gap-2.5">
+                                <span className="mainShadow h-[40px] flex-1 flex items-center-safe gap-2.5 px-2.5 rounded-small">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                                    </svg>
+
+                                    <input
+                                        className="!text-csNormal h-full w-full outline-none"
+                                        type="text"
+                                        placeholder="Tìm kiếm..."
+                                    />
+                                </span>
+
+                                <button className="mainShadow !p-2.5 !rounded-small" onClick={toggleFunnel}>
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z" />
                                     </svg>
                                 </button>
 
-                                {isSize && (
-                                    <span className="mainShadow absolute top-full right-0 bg-white h-fit w-fit flex flex-col py-2.5 gap-2.5 rounded-small rounded-tr-none">
-                                        {sizes.current.map((sz, index) => {
-                                            return (
-                                                <span
-                                                    key={index}
-                                                    className={`flex items-center-safe gap-1.5 py-1.5 px-3.5 ${size === sz && "bg-mainLightBlueRGB"}`}
-                                                    onClick={() => { changeSize(sz) }}
-                                                >
-                                                    <p className="text-csNormal">{sz}</p>
-                                                </span>
-                                            )
-                                        })}
-                                    </span>
-                                )}
+                                <span className="relative h-fit w-fit">
+                                    <button className="mainShadow !p-2.5 !rounded-small" onClick={() => { setIsSize(!isSize) }}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+                                        </svg>
+                                    </button>
+
+                                    {isSize && (
+                                        <span className="mainShadow absolute top-full right-0 bg-white h-fit w-fit flex flex-col py-2.5 gap-2.5 rounded-small rounded-tr-none">
+                                            {sizes.current.map((sz, index) => {
+                                                return (
+                                                    <span
+                                                        key={index}
+                                                        className={`flex items-center-safe gap-1.5 py-1.5 px-3.5 ${size === sz && "bg-mainLightBlueRGB"}`}
+                                                        onClick={() => { changeSize(sz) }}
+                                                    >
+                                                        <p className="text-csNormal">{sz}</p>
+                                                    </span>
+                                                )
+                                            })}
+                                        </span>
+                                    )}
+                                </span>
                             </span>
                         </span>
-                    </span>
 
-                    <span className="w-full flex-1 overflow-auto flex flex-wrap justify-between gap-2.5 px-0.5 py-2.5">
-                        {Array(20).fill(0).map((_, index) => {
-                            return <Discover_Card key={index} speciesDeatail={toggleSpeciesDetail} size={size} />
-                        })}
-                    </span>
-                </div>
-            </>
+                        <span className="w-full flex-1 overflow-auto flex flex-wrap justify-start gap-2.5 px-0.5 py-2.5">
+                            {Array(20).fill(0).map((_, index) => {
+                                return <Discover_Card key={index} speciesDeatail={toggleSpeciesDetail} size={size} />
+                            })}
+                        </span>
+                    </div>
+                </>
 
-            {isNewSpeciesList && (<NewSpeciesList closeNewSpeciesList={toggleNewSpeciesList} />)}
+                {isNewSpeciesList && (<NewSpeciesList closeNewSpeciesList={toggleNewSpeciesList} />)}
 
-            {isFunnel && (<Funnel closeFunnel={toggleFunnel} />)}
-            {isSpeciesDetail && (<SpeciesDetail closeSpeciesDeatail={toggleSpeciesDetail} isShowLocation={false} />)}
-        </div>
+                {isFunnel && (<Funnel closeFunnel={toggleFunnel} />)}
+                {isSpeciesDetail && (<SpeciesDetail closeSpeciesDeatail={toggleSpeciesDetail} isShowLocation={false} />)}
+            </div>
+        </IonPage>
     )
 }
 
