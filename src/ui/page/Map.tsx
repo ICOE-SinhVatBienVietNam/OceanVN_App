@@ -11,6 +11,17 @@ import SpeciesLocationList from "../component/SpeciesLocationList"
 import { useParams } from "react-router"
 import { IonPage } from "@ionic/react"
 
+// Redux
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "../../redux/store"
+
+import { setSpecies } from "../../redux/state/speciesReducer"
+
+// Serices
+import { SpeciesService } from "../../services/speciesService"
+
+const speciesService = new SpeciesService()
+
 // 
 const ZoomButton: React.FC = () => {
     const map = useMap()
@@ -39,6 +50,18 @@ const MapResizeHandler: React.FC = () => {
 };
 
 const Map: React.FC = () => {
+    // Data
+    const speciesData = useSelector((state: RootState) => state.species)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        (async () => {
+            const getSpeciesData = await speciesService.getSpeciesShortDetail()
+            console.log(getSpeciesData)
+            dispatch(setSpecies(getSpeciesData))
+        })()
+    }, [])
+
     // Layer
     const [layer, setLayer] = useState<number>(0)
 
