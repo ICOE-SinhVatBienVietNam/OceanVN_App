@@ -11,7 +11,7 @@ export type Species_Type = {
     genus: string,
     species: string,
     name: string,
-    threatened_level?: string,
+    threatened_symbol?: string,
     impact?: string,
     description?: string,
     characteristic?: string,
@@ -19,14 +19,25 @@ export type Species_Type = {
     distribution?: string,
 }
 
-export class SpeciesService {
+interface SpeciesCoordinate {
+  latitude: string;
+  longitude: string;
+}
 
+export interface SpeciesShortDetail {
+  id: string;
+  name: string;
+  species_coordinates: SpeciesCoordinate[];
+  thumbnail: {thumbnail: string}[];
+}
+
+export class SpeciesService {
     // Get all species for rendering on the map
-    async getSpeciesShortDetail(): Promise<Species_Type[]> {
+    async getSpeciesShortDetail(): Promise<SpeciesShortDetail[]> {
         try {
-            const species: Species_Type[] = await api.get('/species/get-all-short')
-            console.log(species)
+            const species: SpeciesShortDetail[] = await api.get('/species/get-all-short')
             return species
+            // return []
         } catch (error) {
             console.error(error)
             return []
