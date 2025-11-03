@@ -15,5 +15,5 @@ export const threatenedSpecies:threatenedSpecies[] = [
     { level: "5", color: "bg-[#FC7F3F]", code: "EN", label: "Nguy cấp" },
     { level: "6", color: "bg-[#D81E05]", code: "CR", label: "Cực kỳ nguy cấp" },
     { level: "7", color: "bg-[#542344]", code: "EW", label: "Tuyệt chủng trong tự nhiên" },
-    { level: "8", color: "bg-[#000000]", code: "EX", label: "Tuyệt chủng" },
+    { level: "8", color: "bg-[#000000]", code: "EX", label: "Tuyệt chủng" }, 
 ]
