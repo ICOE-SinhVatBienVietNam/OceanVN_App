@@ -2,11 +2,11 @@ import { toast, Bounce, ToastPosition } from "react-toastify";
 import { ToastType } from "../ui/layout/MainLayout";
 
 export const toastConfig = (toastData: ToastType) => {
-  const { toastMessage, toastType } = toastData;
+  const { toastMessage, toastType, pending, autoclose } = toastData;
 
   const options = {
     position: "top-right" as ToastPosition,
-    autoClose: 3000,
+    autoClose: autoclose ? autoclose : 3000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,
@@ -15,6 +15,10 @@ export const toastConfig = (toastData: ToastType) => {
     theme: "light",
     transition: Bounce,
   };
+
+  if (pending) {
+    return toast.loading(toastMessage, options)
+  }
 
   switch (toastType) {
     case "success":

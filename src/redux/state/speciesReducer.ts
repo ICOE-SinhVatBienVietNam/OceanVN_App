@@ -2,26 +2,35 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 // Type
-import { Species_Type } from '../../services/speciesService'
+import { Species_Type, SpeciesShortDetail } from '../../services/speciesService'
 
 export interface SpeciesState {
-    speciesList: Species_Type[]
+    speciesList: SpeciesShortDetail[]
+    speciesListDiscovered: SpeciesShortDetail[]
 }
 
 const initialState: SpeciesState = {
     speciesList: [],
+    speciesListDiscovered: [],
 }
 
 export const speciesSlice = createSlice({
     name: 'species',
     initialState,
     reducers: {
-        setSpecies: (state, action: PayloadAction<Species_Type[]>) => {
+        setSpecies: (state, action: PayloadAction<SpeciesShortDetail[]>) => {
             state.speciesList = action.payload
+        },
+
+        setSpeciesDiscovered: (state, action: PayloadAction<SpeciesShortDetail[]>) => {
+            state.speciesListDiscovered = action.payload
         }
     },
 })
 
-export const { setSpecies } = speciesSlice.actions
+export const {
+    setSpecies,
+    setSpeciesDiscovered
+} = speciesSlice.actions
 
 export default speciesSlice.reducer

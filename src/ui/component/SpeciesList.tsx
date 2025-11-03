@@ -7,6 +7,8 @@ import Logo from "../../assets/SinhVatBienVN.png"
 
 // Component
 import Funnel from "./Funnel"
+import { useSelector } from "react-redux"
+import { RootState } from "../../redux/store"
 
 // Card
 type CardProp = {
@@ -23,7 +25,7 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail }) => {
     return (
         <div
             onClick={speciesDeatail}
-            className="w-full flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-0.5 rounded-main"
+            className="w-full h-fit flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-0.5 rounded-main"
         >
             <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center">
                 <img src={Logo} className="h-[40px]" />
@@ -51,7 +53,7 @@ const Card: React.FC<Card_interface> = ({ speciesDeatail }) => {
     return (
         <div
             onClick={speciesDeatail}
-            className="mainShadow min-w-[30%] flex-1 flex flex-col items-center p-2.5 rounded-main gap-2.5"
+            className="relative mainShadow flex-shrink-0 basis-[calc(33.333%-8px)] h-fit flex flex-col items-center-safe gap-2.5 rounded-main px-2.5 py-5"
         >
             <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-full">
                 <img src={Logo} />
@@ -71,10 +73,13 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
     closeSpeciesList, speciesDeatail
 }) => {
     // State
-    const [isCard, setIsCard] = useState<boolean>(false) // Change style list
+    const [isCard, setIsCard] = useState<boolean>(true)
     const [isList, setIsList] = useState<boolean>(true)
     const animatedHeight = isList ? "65vh" : "0vh"
     const [isFunnel, setIsFunnel] = useState<boolean>(false)
+
+    // Data
+    const speciesListDiscovered = useSelector((state: RootState) => state.species.speciesListDiscovered)
 
     // Toggle
     const toggleFunnel = () => {
@@ -128,14 +133,11 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
 
                     <p className="text-mainRed text-csSmall">Số lượng: 500 loài</p>
 
-                    <span className="w-full flex-1 h-0 overflow-auto flex flex-wrap gap-2.5 py-2.5 px-0.5">
+                    {/* <span className={"w-full flex-1 overflow-auto flex flex-wrap justify-start gap-2.5 px-0.5 py-2.5"}></span> */}
+                    <span className={"w-full flex-1 overflow-auto flex flex-wrap content-start gap-x-2.5 gap-y-2.5 justify-start px-0.5 py-2.5"}>
                         {isCard
-                            ? Array(20)
-                                .fill(0)
-                                .map((_, i) => <Card key={i} speciesDeatail={speciesDeatail} />)
-                            : Array(20)
-                                .fill(0)
-                                .map((_, i) => <Tag key={i} speciesDeatail={speciesDeatail} />)}
+                            ? speciesListDiscovered.length > 0 && speciesListDiscovered.map((_, i) => <Card key={i} speciesDeatail={speciesDeatail} />)
+                            : speciesListDiscovered.length > 0 && speciesListDiscovered.map((_, i) => <Tag key={i} speciesDeatail={speciesDeatail} />)}
                     </span>
                 </div>
             </motion.div>

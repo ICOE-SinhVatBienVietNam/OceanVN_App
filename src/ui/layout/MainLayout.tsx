@@ -16,7 +16,9 @@ import MoreInfo from "../page/MoreInfo";
 import { Bounce, ToastContainer } from "react-toastify";
 export type ToastType = {
     toastMessage: string,
-    toastType: "info" | "success" | "warn" | "error",
+    toastType?: "info" | "success" | "warn" | "error",
+    pending?: boolean,
+    autoclose?: number
 }
 
 const MainLayout: React.FC = () => {

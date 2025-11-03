@@ -1,8 +1,10 @@
 // Import librarise
 import React, { useEffect, useRef, useState } from "react"
+import uniqolor from "uniqolor"
 
 // Leaflet
-import { MapContainer, TileLayer, useMap } from "react-leaflet"
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet"
+import L from 'leaflet'
 
 // Component
 import SpeciesList from "../component/SpeciesList"
@@ -15,30 +17,75 @@ import { IonPage } from "@ionic/react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 
-import { setSpecies } from "../../redux/state/speciesReducer"
+import { setSpecies, setSpeciesDiscovered } from "../../redux/state/speciesReducer"
 
 // Serices
-import { SpeciesService } from "../../services/speciesService"
+import { SpeciesService, SpeciesShortDetail } from "../../services/speciesService"
+
+// Toast
+import { toastConfig } from "../../config/toastConfig"
+import { toast } from "react-toastify"
 
 const speciesService = new SpeciesService()
 
-// 
+// Zoom button
 const ZoomButton: React.FC = () => {
     const map = useMap()
+    const [zoomLevel, setZoomLevel] = useState<number>()
+
+    useEffect(() => {
+        setZoomLevel(map.getZoom())
+
+        const onZoom = () => {
+            setZoomLevel(map.getZoom())
+        };
+
+        map.on("zoomend", onZoom);
+        return () => {
+            map.off("zoomend", onZoom);
+        };
+    }, [map])
 
     return (
         <span className="flex flex-col gap-2.5">
-            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-3.5" onClick={() => { map.zoomIn() }}>
+            <button className="mainShadow h-fit aspect-square bg-white flex justify-center-safe items-center-safe !rounded-full !p-3.5" onClick={() => { map.zoomIn() }}>
                 <i className="fas fa-plus"></i>
             </button>
 
-            <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-3.5" onClick={() => { map.zoomOut() }}>
+            <div className="mainShadow h-fit aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe !rounded-full !p-3.5">
+                <p className="text-csNormal text-white font-medium">{zoomLevel}</p>
+            </div>
+
+            <button className="mainShadow h-fit aspect-square bg-white flex justify-center-safe items-center-safe !rounded-full !p-3.5" onClick={() => { map.zoomOut() }}>
                 <i className="fas fa-minus"></i>
             </button>
         </span>
     )
 }
 
+// Custom icon
+interface PinMarkerProps {
+    position: [number, number];
+    color: string;
+    size?: number;
+}
+const PinMarker: React.FC<PinMarkerProps> = ({ position, color, size = 32 }) => {
+    const icon = L.divIcon({
+        className: "custom-pin-marker",
+        html: `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="${size}" height="${size}">
+        <path fill-rule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
+      </svg>
+    `,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size],
+    });
+
+    return <Marker position={position} icon={icon} />;
+};
+
+
+// Map resize
 const MapResizeHandler: React.FC = () => {
     const map = useMap();
     useEffect(() => {
@@ -49,15 +96,18 @@ const MapResizeHandler: React.FC = () => {
     return null;
 };
 
+// Map
 const Map: React.FC = () => {
+    // Map
+    const mapRef = useRef<L.Map>(null)
+
     // Data
-    const speciesData = useSelector((state: RootState) => state.species)
+    const speciesData = useSelector((state: RootState) => state.species.speciesList)
     const dispatch = useDispatch()
 
     useEffect(() => {
         (async () => {
             const getSpeciesData = await speciesService.getSpeciesShortDetail()
-            console.log(getSpeciesData)
             dispatch(setSpecies(getSpeciesData))
         })()
     }, [])
@@ -108,6 +158,54 @@ const Map: React.FC = () => {
         setIsDiscover(!isDiscover)
     }
 
+    const handleDiscover = () => {
+
+
+        if (speciesData.length <= 0) {
+            toastConfig({
+                toastMessage: "Không tìm thấy dữ liệu sinh vật",
+                toastType: "info"
+            })
+        } else {
+            const pendingToast = toastConfig({
+                toastMessage: "Đang khám phá",
+                pending: true
+            })
+
+            const mapView = mapRef.current?.getBounds()
+            if (!mapView) {
+                toastConfig({
+                    toastMessage: "Bản đồ chưa được tải",
+                    toastType: 'error'
+                })
+            } else {
+                const speciesListDiscovered: SpeciesShortDetail[] = []
+                speciesData.forEach((species) => {
+                    if (species.species_coordinates.length > 0) {
+                        species.species_coordinates.forEach((position) => {
+                            if (mapView.contains([parseFloat(position.latitude), parseFloat(position.longitude)]) && !speciesListDiscovered.includes(species)) {
+                                speciesListDiscovered.push(species)
+                            }
+                        })
+                    }
+                    mapView.contains
+                })
+                
+                toast.dismiss(pendingToast)
+
+                if (speciesListDiscovered.length > 0) {
+                    toggleDiscover() 
+                    dispatch(setSpeciesDiscovered(speciesListDiscovered))
+                } else {
+                    toastConfig({
+                        toastMessage: 'Không tìm thấy sinh vật trong vùng bản đồ hiện tại',
+                        toastType: 'error'
+                    })
+                }
+            }
+        }
+    }
+
     // Get slug
     const { id } = useParams<{ id: string }>()
 
@@ -123,10 +221,10 @@ const Map: React.FC = () => {
             <div className="relative !z-0 h-full w-full">
                 <MapContainer
                     center={[10.8231, 106.6297]}
-                    zoom={12}
+                    zoom={5}
                     style={{ height: "100%", width: "100%", position: "relative" }}
                     className="z-0"
-                    // ref={mapRef}
+                    ref={mapRef}
                     zoomControl={false}
                 >
                     <MapResizeHandler />
@@ -134,6 +232,13 @@ const Map: React.FC = () => {
                         url={mapLayers.current[layer].layer}
                         attribution={mapLayers.current[layer].attribution}
                     />
+                    a
+
+                    {speciesData.length > 0 && speciesData.map((species) => (
+                        species.species_coordinates && species.species_coordinates.length > 0 && species.species_coordinates.map((data, index) => {
+                            return <PinMarker key={species.id + index.toString()} color={uniqolor(species.id).color} position={[parseFloat(data.latitude), parseFloat(data.longitude)]} />
+                        })
+                    ))}
 
                     {/* Option */}
                     <span className="absolute z-[1000] bottom-10 right-2.5 flex flex-col gap-7.5">
@@ -161,7 +266,7 @@ const Map: React.FC = () => {
                     {!isDiscover && !isSpeciesLocation && (
 
                         <button
-                            onClick={toggleDiscover}
+                            onClick={handleDiscover}
                             className="bottom-10 text-csNormal text-white flex items-center-safe gap-2.5 bg-mainLightBlue !py-2.5 !px-2.5 !rounded-small"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 stroke-white">
