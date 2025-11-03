@@ -36,8 +36,8 @@ export class SpeciesService {
     async getSpeciesShortDetail(): Promise<SpeciesShortDetail[]> {
         try {
             const species: SpeciesShortDetail[] = await api.get('/species/get-all-short')
-            return species
-            // return []
+            // return species
+            return []
         } catch (error) {
             console.error(error)
             return []
