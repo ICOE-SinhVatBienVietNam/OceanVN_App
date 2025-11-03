@@ -10,53 +10,48 @@ import Funnel from "./Funnel"
 import { useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 
+// Config
+import { cloudinaryRoot } from "../../config/gateway"
+
+// Type
+import { SpeciesShortDetail } from "../../services/speciesService"
+
 // Card
-type CardProp = {
-    name: string,
-    location: string,
-    thumbnail: string | string[]
-}
-
 interface Card_interface {
-    speciesDeatail: () => void
+    speciesDeatail: () => void,
+    species: SpeciesShortDetail
 }
 
-const Tag: React.FC<Card_interface> = ({ speciesDeatail }) => {
+const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
+    const mainThumbnail = species.thumbnails.find(t => t.is_main)?.thumbnail;
+
     return (
         <div
             onClick={speciesDeatail}
-            className="w-full h-fit flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-0.5 rounded-main"
+            className="w-full h-fit flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-1.5 rounded-main"
         >
             <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center">
-                <img src={Logo} className="h-[40px]" />
+                <img src={cloudinaryRoot + mainThumbnail} className="h-full w-full object-cover object-center" loading="lazy" />
             </span>
 
             <span className="flex-1">
-                <p className="text-csNormal font-medium">Tên sinh vật biển</p>
-                <p className="flex items-center text-csSmall text-gray">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-3 fill-gray">
-                        <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
-                    </svg>
-
-                    Vũng tàu, TP.HCM
-                </p>
+                <p className="text-csNormal font-medium">{species.species}</p>
+                <p className="flex items-center text-csSmall text-gray">{species.group}</p>
             </span>
-
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-3 stroke-mainDarkBlue">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
-            </svg>
         </div>
     )
 }
 
-const Card: React.FC<Card_interface> = ({ speciesDeatail }) => {
+const Card: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
+    const mainThumbnail = species.thumbnails.find(t => t.is_main)?.thumbnail;
+
     return (
         <div
             onClick={speciesDeatail}
-            className="relative mainShadow flex-shrink-0 basis-[calc(33.333%-8px)] h-fit flex flex-col items-center-safe gap-2.5 rounded-main px-2.5 py-5"
+            className="relative mainShadow flex-shrink-0 overflow-hidden basis-[calc(33.333%-8px)] h-fit flex flex-col items-center-safe gap-2.5 rounded-main p-2.5"
         >
-            <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-full">
-                <img src={Logo} />
+            <span className="w-full h-full aspect-square overflow-hidden flex justify-center items-center">
+                <img src={cloudinaryRoot + mainThumbnail} loading="lazy" className="w-full h-full object-cover object-center" />
             </span>
         </div>
     )
@@ -131,13 +126,12 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
                         </span>
                     </span>
 
-                    <p className="text-mainRed text-csSmall">Số lượng: 500 loài</p>
+                    <p className="text-mainRed text-csSmall">Số lượng: {speciesListDiscovered.length} loài</p>
 
-                    {/* <span className={"w-full flex-1 overflow-auto flex flex-wrap justify-start gap-2.5 px-0.5 py-2.5"}></span> */}
                     <span className={"w-full flex-1 overflow-auto flex flex-wrap content-start gap-x-2.5 gap-y-2.5 justify-start px-0.5 py-2.5"}>
                         {isCard
-                            ? speciesListDiscovered.length > 0 && speciesListDiscovered.map((_, i) => <Card key={i} speciesDeatail={speciesDeatail} />)
-                            : speciesListDiscovered.length > 0 && speciesListDiscovered.map((_, i) => <Tag key={i} speciesDeatail={speciesDeatail} />)}
+                            ? speciesListDiscovered.length > 0 && speciesListDiscovered.map((species, i) => <Card key={i} speciesDeatail={speciesDeatail} species={species} />)
+                            : speciesListDiscovered.length > 0 && speciesListDiscovered.map((species, i) => <Tag key={i} speciesDeatail={speciesDeatail} species={species} />)}
                     </span>
                 </div>
             </motion.div>
