@@ -1,6 +1,6 @@
 // Libraries
-import React, { useEffect, useState } from "react"
-import { motion } from "framer-motion"
+import React, { useEffect, useState, useRef } from "react"
+import { motion, useMotionValue, PanInfo } from "framer-motion"
 
 // Config
 import { routeConfig } from "../../config/routeConfig"
@@ -62,7 +62,7 @@ const Card: React.FC<Card_interface> = ({ speciesDeatail }) => {
     return (
         <div
             onClick={speciesDeatail}
-            className="mainShadow relative min-w-[30%] flex-1 flex flex-col items-center p-2.5 rounded-main gap-2.5"
+            className="relative mainShadow flex-shrink-0 overflow-hidden basis-[calc(25%-8px)] h-fit flex flex-col items-center-safe gap-2.5 rounded-main p-2.5"
         >
             <span className="absolute top-0 left-0">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={randomColor} className="size-6">
@@ -91,12 +91,33 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
     // State
     const [isCard, setIsCard] = useState<boolean>(false) // Change style list
     const [isList, setIsList] = useState<boolean>(true)
-    const animatedHeight = isList ? "65vh" : "0vh"
     const [isFunnel, setIsFunnel] = useState<boolean>(false)
+
+    const height = useMotionValue(isList ? window.innerHeight * 0.65 : 0);
+    const lastHeight = useRef(window.innerHeight * 0.65);
+    const minHeight = window.innerHeight * 0.2;
+    const maxHeight = window.innerHeight * 0.9;
+
+    const handleDrag = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        const newHeight = height.get() - info.delta.y;
+        if (newHeight > minHeight && newHeight < maxHeight) {
+            height.set(newHeight);
+            lastHeight.current = newHeight;
+        }
+    };
 
     // Toggle
     const toggleFunnel = () => {
         setIsFunnel(!isFunnel)
+    }
+
+    const toggleList = () => {
+        if (isList) {
+            height.set(0);
+        } else {
+            height.set(lastHeight.current);
+        }
+        setIsList(!isList);
     }
 
     // Get slug
@@ -114,13 +135,25 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
         <>
             <motion.div
                 initial={{ y: "100%" }}
-                animate={{ y: 0, height: animatedHeight }}
+                animate={{ y: 0 }}
+                style={{ height }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="mainShadow absolute z-10 bottom-0 left-0  flex w-full bg-white flex-col gap-2.5 pt-2.5"
+                className="mainShadow absolute z-10 bottom-0 left-0  flex w-full bg-white flex-col gap-2.5 pt-6"
             >
+                <motion.div
+                    onDrag={handleDrag}
+                    drag="y"
+                    dragConstraints={{ top: 0, bottom: 0 }}
+                    dragElastic={0}
+                    dragMomentum={false}
+                    className="absolute top-0 left-0 w-full h-10 cursor-row-resize flex justify-center items-center"
+                >
+                    <div className="w-28 h-1.5 bg-gray-300 rounded-full" /> 
+                </motion.div>
+
                 <button
-                    onClick={() => { setIsList(!isList) }}
+                    onClick={toggleList}
                     className={`absolute top-0 left-1/2 translate-y-[-120%] translate-x-[-50%] mainShadow ${isList ? "bg-white" : "bg-mainRed"} !px-2.5 !py-2.5 !rounded-small`}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-4 ${!isList && "stroke-white"}`}>
@@ -170,7 +203,7 @@ const SpeciesLocationList: React.FC<SpeciesLocationList_interface> = ({
 
                     <p className="text-mainRed text-csSmall">Số lượng: 10 vị trí</p>
 
-                    <span className="w-full flex-1 h-0 overflow-auto flex flex-wrap gap-2.5 py-2.5 px-0.5">
+                    <span className="w-full flex-1 overflow-auto flex flex-wrap content-start gap-x-2.5 gap-y-2.5 justify-start px-0.5 py-2.5">
                         {isCard
                             ? Array(20)
                                 .fill(0)

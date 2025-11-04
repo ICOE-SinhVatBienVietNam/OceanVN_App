@@ -1,13 +1,13 @@
 // Libraries
-import React, { useState } from "react"
-import { motion } from "framer-motion"
+import React, { useState, useRef } from "react"
+import { motion, useMotionValue, PanInfo } from "framer-motion"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
 
 // Component
 import Funnel from "./Funnel"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 
 // Config
@@ -15,6 +15,9 @@ import { cloudinaryRoot } from "../../config/gateway"
 
 // Type
 import { SpeciesShortDetail } from "../../services/speciesService"
+
+// Redux
+import { setSpeciesDetailID } from "../../redux/state/speciesReducer"
 
 // Card
 interface Card_interface {
@@ -24,10 +27,16 @@ interface Card_interface {
 
 const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
     const mainThumbnail = species.thumbnails.find(t => t.is_main)?.thumbnail;
+    const dispatch = useDispatch()
+
+    const chooseSpecies = () => {
+        dispatch(setSpeciesDetailID(species.id))
+        speciesDeatail()
+    }
 
     return (
         <div
-            onClick={speciesDeatail}
+            onClick={chooseSpecies}
             className="w-full h-fit flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-1.5 rounded-main"
         >
             <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center">
@@ -44,11 +53,17 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
 
 const Card: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
     const mainThumbnail = species.thumbnails.find(t => t.is_main)?.thumbnail;
+    const dispatch = useDispatch()
+
+    const chooseSpecies = () => {
+        dispatch(setSpeciesDetailID(species.id))
+        speciesDeatail()
+    }
 
     return (
         <div
-            onClick={speciesDeatail}
-            className="relative mainShadow flex-shrink-0 overflow-hidden basis-[calc(33.333%-8px)] h-fit flex flex-col items-center-safe gap-2.5 rounded-main p-2.5"
+            onClick={chooseSpecies}
+            className="relative mainShadow flex-shrink-0 overflow-hidden basis-[calc(25%-8px)] h-fit flex flex-col items-center-safe gap-2.5 rounded-main p-2.5"
         >
             <span className="w-full h-full aspect-square overflow-hidden flex justify-center items-center">
                 <img src={cloudinaryRoot + mainThumbnail} loading="lazy" className="w-full h-full object-cover object-center" />
@@ -70,8 +85,20 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
     // State
     const [isCard, setIsCard] = useState<boolean>(true)
     const [isList, setIsList] = useState<boolean>(true)
-    const animatedHeight = isList ? "65vh" : "0vh"
     const [isFunnel, setIsFunnel] = useState<boolean>(false)
+
+    const height = useMotionValue(isList ? window.innerHeight * 0.5 : 0);
+    const lastHeight = useRef(window.innerHeight * 0.65);
+    const minHeight = window.innerHeight * 0.2;
+    const maxHeight = window.innerHeight * 0.9;
+
+    const handleDrag = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+        const newHeight = height.get() - info.delta.y;
+        if (newHeight > minHeight && newHeight < maxHeight) {
+            height.set(newHeight);
+            lastHeight.current = newHeight;
+        }
+    };
 
     // Data
     const speciesListDiscovered = useSelector((state: RootState) => state.species.speciesListDiscovered)
@@ -81,17 +108,38 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
         setIsFunnel(!isFunnel)
     }
 
+    const toggleList = () => {
+        if (isList) {
+            height.set(0);
+        } else {
+            height.set(lastHeight.current);
+        }
+        setIsList(!isList);
+    }
+
     return (
         <>
             <motion.div
                 initial={{ y: "100%" }}
-                animate={{ y: 0, height: animatedHeight }}
+                animate={{ y: 0 }}
+                style={{ height }}
                 exit={{ y: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="mainShadow absolute z-10 bottom-0 left-0 flex w-full bg-white flex-col gap-2.5 pt-2.5"
+                className="mainShadow absolute z-10 bottom-0 left-0 flex w-full bg-white flex-col gap-2.5 pt-6"
             >
+                <motion.div
+                    onDrag={handleDrag}
+                    drag="y"
+                    dragConstraints={{ top: 0, bottom: 0 }}
+                    dragElastic={0}
+                    dragMomentum={false}
+                    className="absolute top-0 left-0 w-full h-6 cursor-row-resize flex justify-center items-center"
+                >
+                    <div className="w-28 h-1.5 bg-gray-300 rounded-full" />
+                </motion.div>
+
                 <button
-                    onClick={() => { setIsList(!isList) }}
+                    onClick={toggleList}
                     className={`absolute top-0 left-1/2 translate-y-[-120%] translate-x-[-50%] mainShadow ${isList ? "bg-white" : "bg-mainRed"} !px-2.5 !py-2.5 !rounded-small`}
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-4 ${!isList && "stroke-white"}`}>

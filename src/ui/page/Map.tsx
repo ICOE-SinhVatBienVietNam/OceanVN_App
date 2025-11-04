@@ -159,8 +159,6 @@ const Map: React.FC = () => {
     }
 
     const handleDiscover = () => {
-
-
         if (speciesData.length <= 0) {
             toastConfig({
                 toastMessage: "Không tìm thấy dữ liệu sinh vật",
@@ -232,7 +230,6 @@ const Map: React.FC = () => {
                         url={mapLayers.current[layer].layer}
                         attribution={mapLayers.current[layer].attribution}
                     />
-                    a
 
                     {speciesData.length > 0 && speciesData.map((species) => (
                         species.species_coordinates && species.species_coordinates.length > 0 && species.species_coordinates.map((data, index) => {

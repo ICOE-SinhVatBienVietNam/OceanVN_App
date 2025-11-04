@@ -7,11 +7,16 @@ import { Species_Type, SpeciesShortDetail } from '../../services/speciesService'
 export interface SpeciesState {
     speciesList: SpeciesShortDetail[]
     speciesListDiscovered: SpeciesShortDetail[]
+    speciesDetailID: string
+    speciesDetail: Species_Type
 }
 
 const initialState: SpeciesState = {
-    speciesList: [],
-    speciesListDiscovered: [],
+    speciesList: [] as SpeciesShortDetail[],
+    speciesListDiscovered: [] as SpeciesShortDetail[],
+    speciesDetailID: "",
+    speciesDetail: {} as Species_Type
+
 }
 
 export const speciesSlice = createSlice({
@@ -24,13 +29,23 @@ export const speciesSlice = createSlice({
 
         setSpeciesDiscovered: (state, action: PayloadAction<SpeciesShortDetail[]>) => {
             state.speciesListDiscovered = action.payload
+        },
+
+        setSpeciesDetailID: (state, action: PayloadAction<string>) => {
+            state.speciesDetailID = action.payload
+        },
+
+        setSpeciesDetail: (state, action: PayloadAction<Species_Type>) => {
+            state.speciesDetail = action.payload
         }
     },
 })
 
 export const {
     setSpecies,
-    setSpeciesDiscovered
+    setSpeciesDiscovered,
+    setSpeciesDetailID,
+    setSpeciesDetail
 } = speciesSlice.actions
 
 export default speciesSlice.reducer
