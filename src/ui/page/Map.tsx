@@ -139,7 +139,6 @@ const Map: React.FC = () => {
         if (id) {
             setIsSpeciesLocation(true)
         }
-        // window.location.pathname = "/main/map"
     }, [])
 
     // SpeciesLocation
@@ -303,7 +302,7 @@ const Map: React.FC = () => {
                                     <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z" clipRule="evenodd" />
                                 </svg>
 
-                                Danh sách sinh vật
+                                Danh sách khám phá
                             </button>
 
                             <button
@@ -319,7 +318,7 @@ const Map: React.FC = () => {
 
                 {/* Popup */}
                 {isDiscover && (<SpeciesList closeSpeciesList={toggleDiscover} speciesDeatail={toggleSpeciesDetail} />)}
-                {isSpeciesDetail && (<SpeciesDetail isShowLocation={isSpeciesLocation} closeSpeciesDeatail={toggleSpeciesDetail} speciesLocation={toggleSpeciesLocation} />)}
+                {isSpeciesDetail && (<SpeciesDetail closeSpeciesDeatail={toggleSpeciesDetail} speciesLocation={toggleSpeciesLocation} />)}
             </div>
         </IonPage>
     )
