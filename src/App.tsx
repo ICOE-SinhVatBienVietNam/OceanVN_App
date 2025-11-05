@@ -29,14 +29,18 @@ import '@ionic/react/css/display.css';
 /* import '@ionic/react/css/palettes/dark.class.css'; */
 import '@ionic/react/css/palettes/dark.system.css';
 import { lazy, Suspense } from 'react';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Components
 import { ScreenSizeWarningPopup } from './hooks/DeviceCheck';
 const Introduction = lazy(() => import("./ui/page/Introduction"))
 const Login = lazy(() => import("./ui/page/Login"))
 const Register = lazy(() => import("./ui/page/Register"))
-import 'react-toastify/dist/ReactToastify.css';
+import SpeciesShare from './ui/page/SpeciesShare';
+// Layout
 import MainLayout from './ui/layout/MainLayout';
+
+// Hooks
 import { ConfirmProvider } from './hooks/ConfirmForm';
 import { AuthCheckPopupProvider } from './hooks/AuthCheck';
 
@@ -64,6 +68,9 @@ const App: React.FC = () => (
               {/* Main */}
               <Route path="/main/*" children={<MainLayout />}></Route>
               <Redirect exact path='/main' to={routeConfig.main.map} />
+
+              {/* Share */}
+              <Route path={routeConfig.share.species} children={<SpeciesShare />}></Route>
             </IonRouterOutlet>
           </Suspense>
         </AuthCheckPopupProvider>

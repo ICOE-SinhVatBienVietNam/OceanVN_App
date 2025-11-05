@@ -29,5 +29,8 @@ export const routeConfig = {
     },
     register: {
         root: "/register"
+    },
+    share: {
+        species: "/public-shared/:id"
     }
 }

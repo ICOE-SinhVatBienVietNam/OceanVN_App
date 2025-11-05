@@ -11,7 +11,6 @@ const speciesService = new SpeciesService()
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
-import { useIonRouter } from "@ionic/react"
 
 // Type
 import { Species_Type } from "../../services/speciesService"
@@ -19,6 +18,7 @@ import { Species_Type } from "../../services/speciesService"
 // Config
 import { toastConfig } from "../../config/toastConfig"
 import { cloudinaryRoot } from "../../config/gateway"
+import { useIonRouter } from "@ionic/react"
 
 // Component
 import Error404 from "./Error404"
@@ -70,8 +70,50 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                     dispatch(setSpeciesDetail(speciesData))
                 }
             })()
+        } else {
+            if (!speciesDetailDataCache.species) return
+            const getThreatenedLevel = threatenedSpecies.find(lv => lv.code === speciesDetailDataCache.threatened_symbol)?.level
+            if (getThreatenedLevel) setThreatenedLevel(parseInt(getThreatenedLevel))
+            const splitSpeciesName: [string, string] = [speciesDetailDataCache.species.split(" ").slice(0, 2).join(" "), speciesDetailDataCache.species.split(" ").slice(2).join(" ")];
+            setSpeciesName(splitSpeciesName)
+            dispatch(setSpeciesDetailID(speciesDetailDataCache.id))
+            dispatch(setSpeciesDetail(speciesDetailDataCache))
         }
 
+    }, [speciesDetailID])
+
+    // Share link
+    const [readyCloseShareLink, setReadyCloseShareLink] = useState<boolean>(false)
+    const [isShareLink, setIsShareLink] = useState<boolean>(false)
+    const [shareLink, setShareLink] = useState<string>()
+    const copyLink = async () => {
+        if (shareLink) {
+            await navigator.clipboard.writeText(shareLink)
+                .then(() => {
+                    toastConfig({
+                        toastType: 'success',
+                        toastMessage: 'Đã copy'
+                    })
+                })
+                .catch(() => {
+                    toastConfig({
+                        toastType: 'error',
+                        toastMessage: 'URL không khả dụng'
+                    })
+                })
+        }
+    }
+
+    const toggleShareLink = () => {
+        setReadyCloseShareLink(!readyCloseShareLink)
+        setTimeout(() => {
+            setIsShareLink(!isShareLink)
+        }, 200)
+    }
+
+    useEffect(() => {
+        const linkForShare = window.location.origin + "/public-shared/" + speciesDetailID
+        setShareLink(linkForShare)
     }, [speciesDetailID])
 
     // Location path
@@ -79,11 +121,6 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
     const router = useIonRouter()
 
     const viewMorePosition = () => {
-        toastConfig({
-            toastMessage: "Chưa có chức năng",
-            toastType: "info"
-        })
-
         // Reset state
         dispatch(setSpeciesDetailID(""))
         dispatch(setSpeciesDetail({} as Species_Type))
@@ -138,7 +175,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                         </button>
                     )}
 
-                    <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small">
+                    <button className="mainShadow flex items-center text-csNormal gap-1 !p-2.5 !rounded-small" onClick={toggleShareLink}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
                         </svg>
@@ -154,7 +191,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
             </span>
 
             <span className="relative flex-1 h-0 flex flex-col overflow-y-auto gap-2.5 pb-2.5 pt-0.5 px-mainTwoSidePadding">
-                {!speciesDetailDataCache.id ? (
+                {!speciesDetailDataCache || !speciesDetailDataCache.id ? (
                     <Error404 />
                 ) : (
                     <>
@@ -341,6 +378,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                 )}
             </span>
 
+            {/* light Box */}
             {
                 isLightboxOpen &&
                 <motion.div
@@ -369,6 +407,52 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
                     </button>
                 </motion.div>
             }
+
+            {/* Share popup */}
+            {isShareLink && (
+                <motion.div
+                    initial={{ opacity: readyCloseShareLink ? 0 : 1 }}
+                    animate={{ opacity: readyCloseShareLink ? 1 : 0 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed top-0 left-0 h-full w-full bg-[rgba(0,0,0,0.75)] flex justify-center-safe items-center-safe"
+                >
+
+                    <motion.div
+                        initial={{ scale: 0.9, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.9, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeOut' }}
+                        className="h-fit w-[90%] bg-white flex flex-col gap-2.5 px-5 pt-2.5 pb-5 rounded-main"
+                    >
+                        <div className="h-fit w-full flex items-center-safe justify-between">
+                            <h5 className="flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-6 stroke-mainRed">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+                                </svg>
+
+                                Chia sẻ liên kết
+                            </h5>
+
+                            <button onClick={toggleShareLink} className="px-2.5! py-1!">x</button>
+                        </div>
+
+                        <div className="h-fit w-full">
+                            <div className="h-[35px] w-full flex items-center-safe gap-1.5">
+                                <span className="h-full flex-1 w-0 bg-lighterGray flex items-center-safe px-2.5 py-2.5 rounded-small" onClick={copyLink}>
+                                    <p className="text-nowrap truncate text-csNormal">{shareLink}</p>
+                                </span>
+
+                                <button className=" mainShadow bg-white h-full aspect-square flex justify-center-safe items-center-safe rounded-small!" onClick={copyLink}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                </motion.div>
+            )}
         </motion.div >
     )
 }
