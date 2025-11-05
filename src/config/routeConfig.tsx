@@ -12,7 +12,7 @@ export const routeConfig = {
     },
     mainSlug: {
         map: {
-            getPosition: "/main/map/:id"
+
         },
         discover: {
 
