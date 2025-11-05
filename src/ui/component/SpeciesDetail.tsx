@@ -121,13 +121,9 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
     const router = useIonRouter()
 
     const viewMorePosition = () => {
-        // Reset state
-        dispatch(setSpeciesDetailID(""))
-        dispatch(setSpeciesDetail({} as Species_Type))
-
         switch (location.pathname) {
             case routeConfig.main.discover:
-                router.push(routeConfig.main.map + "/123")
+                router.push(routeConfig.main.map)
                 break;
 
             default:
@@ -144,7 +140,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
 
         setTimeout(() => {
             closeSpeciesDeatail()
-        }, 200)
+        }, 100)
     }
 
     return (
@@ -152,7 +148,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ isShowLocation, clos
             initial={{ x: !isCloseSpeciesDeatail ? "100%" : 0 }}
             animate={{ x: !isCloseSpeciesDeatail ? 0 : "100%" }}
             exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30, duration:100 }}
             className="mainShadow absolute z-10 bottom-0 left-0 h-full w-full bg-white flex flex-col gap-5 pt-2.5"
         >
 
