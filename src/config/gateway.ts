@@ -88,3 +88,5 @@ api.interceptors.response.use(
 );
 
 export default api;
+
+export const cloudinaryRoot = import.meta.env.VITE_PATH_CLOUDINARY

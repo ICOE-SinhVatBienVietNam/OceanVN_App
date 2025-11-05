@@ -27,6 +27,10 @@
         background-color: white !important;
     }
 
+    li {
+        line-height: 1.8 !important;
+    }
+
     /* Toast */
     .Toastify__toast-container {
         z-index: 999999 !important;

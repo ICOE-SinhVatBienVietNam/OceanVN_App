@@ -128,7 +128,7 @@ const Discover: React.FC = () => {
 
     // Card UI: Control size's card
     const [isSize, setIsSize] = useState<boolean>()
-    const [size, setSize] = useState<sizesType>("x1")
+    const [size, setSize] = useState<sizesType>("x0.5")
     const sizes = useRef<sizesType[]>([
         "x0.5",
         "x0.75",
