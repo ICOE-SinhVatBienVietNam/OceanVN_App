@@ -9,15 +9,16 @@ import L from 'leaflet'
 // Component
 import SpeciesList from "../component/SpeciesList"
 import SpeciesDetail from "../component/SpeciesDetail"
-import SpeciesLocationList from "../component/SpeciesLocationList"
 import { useParams } from "react-router"
 import { IonPage } from "@ionic/react"
 
 // Redux
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
+import { setSpeciesDiscovered } from "../../redux/state/speciesReducer"
 
-import { setSpecies, setSpeciesDiscovered } from "../../redux/state/speciesReducer"
+// Config
+import { cloudinaryRoot } from "../../config/gateway"
 
 // Serices
 import { SpeciesService, SpeciesShortDetail } from "../../services/speciesService"
@@ -25,8 +26,6 @@ import { SpeciesService, SpeciesShortDetail } from "../../services/speciesServic
 // Toast
 import { toastConfig } from "../../config/toastConfig"
 import { toast } from "react-toastify"
-
-const speciesService = new SpeciesService()
 
 // Zoom button
 const ZoomButton: React.FC = () => {
@@ -103,14 +102,8 @@ const Map: React.FC = () => {
 
     // Data
     const speciesData = useSelector((state: RootState) => state.species.speciesList)
+    const speciesDetail = useSelector((state: RootState) => state.species.speciesDetail)
     const dispatch = useDispatch()
-
-    useEffect(() => {
-        (async () => {
-            const getSpeciesData = await speciesService.getSpeciesShortDetail()
-            dispatch(setSpecies(getSpeciesData))
-        })()
-    }, [])
 
     // Layer
     const [layer, setLayer] = useState<number>(0)
@@ -133,7 +126,21 @@ const Map: React.FC = () => {
 
     const toggleSpeciesDetail = () => {
         setIsSpeciesDeatail(!isSpeciesDetail)
+
+        if (isSpeciesDetail && isSpeciesLocation) {
+            setIsSpeciesLocation(false)
+        }
     }
+
+    // Get slug
+    const { id } = useParams<{ id: string }>()
+
+    useEffect(() => {
+        if (id) {
+            setIsSpeciesLocation(true)
+        }
+        // window.location.pathname = "/main/map"
+    }, [])
 
     // SpeciesLocation
     const [isSpeciesLocation, setIsSpeciesLocation] = useState<boolean>(false)
@@ -188,11 +195,11 @@ const Map: React.FC = () => {
                     }
                     mapView.contains
                 })
-                
+
                 toast.dismiss(pendingToast)
 
                 if (speciesListDiscovered.length > 0) {
-                    toggleDiscover() 
+                    toggleDiscover()
                     dispatch(setSpeciesDiscovered(speciesListDiscovered))
                 } else {
                     toastConfig({
@@ -203,16 +210,6 @@ const Map: React.FC = () => {
             }
         }
     }
-
-    // Get slug
-    const { id } = useParams<{ id: string }>()
-
-    useEffect(() => {
-        if (id) {
-            setIsSpeciesLocation(true)
-        }
-        // window.location.pathname = "/main/map"
-    }, [])
 
     return (
         <IonPage>
@@ -231,11 +228,18 @@ const Map: React.FC = () => {
                         attribution={mapLayers.current[layer].attribution}
                     />
 
-                    {speciesData.length > 0 && speciesData.map((species) => (
-                        species.species_coordinates && species.species_coordinates.length > 0 && species.species_coordinates.map((data, index) => {
-                            return <PinMarker key={species.id + index.toString()} color={uniqolor(species.id).color} position={[parseFloat(data.latitude), parseFloat(data.longitude)]} />
+                    {isSpeciesLocation ? (
+                        speciesDetail.species_coordinates && speciesDetail.species_coordinates.length > 0 && speciesDetail.species_coordinates.map((coordinate, index) => {
+                            console.log("vi tri")
+                            return <PinMarker key={speciesDetail.id + index.toString()} color={uniqolor(speciesDetail.id + index).color} position={[parseFloat(coordinate.latitude), parseFloat(coordinate.longitude)]} />
                         })
-                    ))}
+                    ) : (
+                        speciesData.length > 0 && speciesData.map((species) => (
+                            species.species_coordinates && species.species_coordinates.length > 0 && species.species_coordinates.map((data, index) => {
+                                return <PinMarker key={species.id + index.toString()} color={uniqolor(species.id).color} position={[parseFloat(data.latitude), parseFloat(data.longitude)]} />
+                            })
+                        ))
+                    )}
 
                     {/* Option */}
                     <span className="absolute z-[1000] bottom-10 right-2.5 flex flex-col gap-7.5">
@@ -275,9 +279,46 @@ const Map: React.FC = () => {
                     )}
                 </span>
 
+                {isSpeciesLocation && (
+                    <div className="absolute top-0 left-0 h-fit w-full bg-white flex flex-col gap-2.5 py-2.5 px-2.5">
+                        <span className="flex items-center gap-2.5">
+                            <span className="mainShadow h-[80px] aspect-square overflow-hidden flex justify-center items-center rounded-main!">
+                                <img src={cloudinaryRoot + speciesDetail.thumbnails.find(t => t.is_main)?.thumbnail} className="object-cover object-center" />
+                            </span>
+
+                            <span className="flex-1 w-0">
+                                <h6 className="truncate! text-csNormal !font-medium text-wrap text-left"><i>{speciesDetail.species.split(" ").slice(0, 2).join(" ")}</i> {speciesDetail.species.split(" ").slice(2).join(" ")}</h6>
+                                <p className="text-csNormal !font-medium text-wrap text-left text-gray"><b className="text-gray">Nhóm: </b>{speciesDetail.group}</p>
+                            </span>
+                        </span>
+
+                        <span className="h-[30px] w-full bg-transparent flex justify-center-safe gap-2.5">
+                            <button className="w-1/5 bg-mainRed text-white text-csNormal !py-2.5 !rounded-small" onClick={toggleSpeciesLocation}>X</button>
+                            
+                            <button
+                                onClick={backToSpeciesList}
+                                className="mainShadow w-1/2 text-csNormal bg-white flex items-center-safe justify-center-safe gap-1.5 !px-2.5 !rounded-small"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4">
+                                    <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z" clipRule="evenodd" />
+                                </svg>
+
+                                Danh sách sinh vật
+                            </button>
+
+                            <button
+                                onClick={toggleSpeciesDetail}
+                                className="mainShadow w-1/3 text-csNormal bg-white flex items-center-safe justify-center-safe gap-1.5 !px-2.5 !rounded-small"
+                            >
+
+                                Thông tin
+                            </button>
+                        </span>
+                    </div>
+                )}
+
                 {/* Popup */}
                 {isDiscover && (<SpeciesList closeSpeciesList={toggleDiscover} speciesDeatail={toggleSpeciesDetail} />)}
-                {isSpeciesLocation && (<SpeciesLocationList speciesDeatail={toggleSpeciesDetail} closeSpeciesLocationList={toggleSpeciesLocation} backToSpeciesList={backToSpeciesList} />)}
                 {isSpeciesDetail && (<SpeciesDetail isShowLocation={isSpeciesLocation} closeSpeciesDeatail={toggleSpeciesDetail} speciesLocation={toggleSpeciesLocation} />)}
             </div>
         </IonPage>

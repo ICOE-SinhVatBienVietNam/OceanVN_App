@@ -1,9 +1,7 @@
 // Libraries
 import React, { useState, useRef } from "react"
 import { motion, useMotionValue, PanInfo } from "framer-motion"
-
-// Images
-import Logo from "../../assets/SinhVatBienVN.png"
+import uniqolor from "uniqolor"
 
 // Component
 import Funnel from "./Funnel"
@@ -26,6 +24,7 @@ interface Card_interface {
 }
 
 const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
+    const randomColor = uniqolor(species.id).color
     const mainThumbnail = species.thumbnails.find(t => t.is_main)?.thumbnail;
     const dispatch = useDispatch()
 
@@ -37,8 +36,14 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
     return (
         <div
             onClick={chooseSpecies}
-            className="w-full h-fit flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-1.5 rounded-main"
+            className="relative w-full h-fit flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-1.5 rounded-main"
         >
+            <span className="absolute top-0 left-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={randomColor} className="size-6">
+                    <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
+                </svg>
+            </span>
+
             <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center">
                 <img src={cloudinaryRoot + mainThumbnail} className="h-full w-full object-cover object-center" loading="lazy" />
             </span>
@@ -52,6 +57,7 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
 }
 
 const Card: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
+    const randomColor = uniqolor(species.id).color
     const mainThumbnail = species.thumbnails.find(t => t.is_main)?.thumbnail;
     const dispatch = useDispatch()
 
@@ -65,6 +71,12 @@ const Card: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
             onClick={chooseSpecies}
             className="relative mainShadow flex-shrink-0 overflow-hidden basis-[calc(25%-8px)] h-fit flex flex-col items-center-safe gap-2.5 rounded-main p-2.5"
         >
+            <span className="absolute top-0 left-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={randomColor} className="size-6">
+                    <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
+                </svg>
+            </span>
+
             <span className="w-full h-full aspect-square overflow-hidden flex justify-center items-center">
                 <img src={cloudinaryRoot + mainThumbnail} loading="lazy" className="w-full h-full object-cover object-center" />
             </span>
