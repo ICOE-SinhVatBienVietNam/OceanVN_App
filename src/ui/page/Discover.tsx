@@ -225,7 +225,7 @@ const Discover: React.FC = () => {
                 {isNewSpeciesList && (<NewSpeciesList closeNewSpeciesList={toggleNewSpeciesList} />)}
 
                 {isFunnel && (<Funnel closeFunnel={toggleFunnel} />)}
-                {isSpeciesDetail && (<SpeciesDetail closeSpeciesDeatail={toggleSpeciesDetail} isShowLocation={false} />)}
+                {isSpeciesDetail && (<SpeciesDetail closeSpeciesDeatail={toggleSpeciesDetail} />)}
             </div>
         </IonPage>
     )

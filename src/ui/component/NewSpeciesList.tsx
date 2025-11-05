@@ -76,7 +76,7 @@ const NewSpeciesList: React.FC<NewSpeciesList_interface> = ({ closeNewSpeciesLis
             </span>
 
             {isFunnel && (<Funnel closeFunnel={toggleFunnel} />)}
-            {isSpeciesDetail && (<SpeciesDetail isShowLocation={false} closeSpeciesDeatail={toggleSpeciesDetail} />)}
+            {isSpeciesDetail && (<SpeciesDetail closeSpeciesDeatail={toggleSpeciesDetail} />)}
         </motion.div>
     )
 }
