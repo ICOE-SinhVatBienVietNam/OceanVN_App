@@ -27,6 +27,11 @@ import { SpeciesService, SpeciesShortDetail } from "../../services/speciesServic
 import { toastConfig } from "../../config/toastConfig"
 import { toast } from "react-toastify"
 
+// Cluster
+import MarkerClusterGroup from "react-leaflet-markercluster"
+import "leaflet.markercluster/dist/MarkerCluster.css"
+import "leaflet.markercluster/dist/MarkerCluster.Default.css"
+
 // Zoom button
 const ZoomButton: React.FC = () => {
     const map = useMap()
@@ -227,18 +232,19 @@ const Map: React.FC = () => {
                         attribution={mapLayers.current[layer].attribution}
                     />
 
-                    {isSpeciesLocation ? (
-                        speciesDetail.species_coordinates && speciesDetail.species_coordinates.length > 0 && speciesDetail.species_coordinates.map((coordinate, index) => {
-                            console.log("vi tri")
-                            return <PinMarker key={speciesDetail.id + index.toString()} color={uniqolor(speciesDetail.id + index).color} position={[parseFloat(coordinate.latitude), parseFloat(coordinate.longitude)]} />
-                        })
-                    ) : (
-                        speciesData.length > 0 && speciesData.map((species) => (
-                            species.species_coordinates && species.species_coordinates.length > 0 && species.species_coordinates.map((data, index) => {
-                                return <PinMarker key={species.id + index.toString()} color={uniqolor(species.id).color} position={[parseFloat(data.latitude), parseFloat(data.longitude)]} />
+                    <MarkerClusterGroup>
+                        {isSpeciesLocation ? (
+                            speciesDetail.species_coordinates && speciesDetail.species_coordinates.length > 0 && speciesDetail.species_coordinates.map((coordinate, index) => {
+                                return <PinMarker key={speciesDetail.id + index.toString()} color={uniqolor(speciesDetail.id + index).color} position={[parseFloat(coordinate.latitude), parseFloat(coordinate.longitude)]} />
                             })
-                        ))
-                    )}
+                        ) : (
+                            speciesData.length > 0 && speciesData.map((species) => (
+                                species.species_coordinates && species.species_coordinates.length > 0 && species.species_coordinates.map((data, index) => {
+                                    return <PinMarker key={species.id + index.toString()} color={uniqolor(species.id).color} position={[parseFloat(data.latitude), parseFloat(data.longitude)]} />
+                                })
+                            ))
+                        )}
+                    </MarkerClusterGroup>
 
                     {/* Option */}
                     <span className="absolute z-[1000] bottom-10 right-2.5 flex flex-col gap-7.5">
@@ -281,7 +287,7 @@ const Map: React.FC = () => {
                 {isSpeciesLocation && (
                     <div className="absolute top-0 left-0 h-fit w-full bg-white flex flex-col gap-2.5 py-2.5 px-2.5">
                         <span className="flex items-center gap-2.5">
-                            <span className="mainShadow h-[80px] aspect-square overflow-hidden flex justify-center items-center rounded-main!">
+                            <span className="h-[80px] aspect-square overflow-hidden flex justify-center items-center rounded-main!">
                                 <img src={cloudinaryRoot + speciesDetail.thumbnails.find(t => t.is_main)?.thumbnail} className="object-cover object-center" />
                             </span>
 
@@ -293,7 +299,7 @@ const Map: React.FC = () => {
 
                         <span className="h-[30px] w-full bg-transparent flex justify-center-safe gap-2.5">
                             <button className="w-1/5 bg-mainRed text-white text-csNormal !py-2.5 !rounded-small" onClick={toggleSpeciesLocation}>X</button>
-                            
+
                             <button
                                 onClick={backToSpeciesList}
                                 className="mainShadow w-1/2 text-csNormal bg-white flex items-center-safe justify-center-safe gap-1.5 !px-2.5 !rounded-small"
@@ -302,7 +308,7 @@ const Map: React.FC = () => {
                                     <path fillRule="evenodd" d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z" clipRule="evenodd" />
                                 </svg>
 
-                                Danh sách khám phá
+                                D.sách khám phá
                             </button>
 
                             <button
