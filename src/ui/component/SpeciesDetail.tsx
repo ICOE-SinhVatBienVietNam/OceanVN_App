@@ -62,7 +62,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                 const speciesData = await speciesService.getSpeciesID(speciesDetailID)
                 if (speciesData) {
                     const getThreatenedLevel = threatenedSpecies.find(lv => lv.code === speciesData.threatened_symbol)?.level
-                    if (getThreatenedLevel) setThreatenedLevel(parseInt(getThreatenedLevel))
+                    if (getThreatenedLevel != null) setThreatenedLevel(parseInt(getThreatenedLevel))
                     const splitSpeciesName: [string, string] = [speciesData.species.split(" ").slice(0, 2).join(" "), speciesData.species.split(" ").slice(2).join(" ")];
                     setSpeciesName(splitSpeciesName)
                     dispatch(setSpeciesDetailID(speciesData.id))
@@ -72,7 +72,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
         } else {
             if (!speciesDetailDataCache.species) return
             const getThreatenedLevel = threatenedSpecies.find(lv => lv.code === speciesDetailDataCache.threatened_symbol)?.level
-            if (getThreatenedLevel) setThreatenedLevel(parseInt(getThreatenedLevel))
+            if (getThreatenedLevel != null) setThreatenedLevel(parseInt(getThreatenedLevel))
             const splitSpeciesName: [string, string] = [speciesDetailDataCache.species.split(" ").slice(0, 2).join(" "), speciesDetailDataCache.species.split(" ").slice(2).join(" ")];
             setSpeciesName(splitSpeciesName)
             dispatch(setSpeciesDetailID(speciesDetailDataCache.id))
@@ -191,7 +191,6 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                         <div className="flex flex-wrap gap-2.5 mb-2.5">
                             <button className="mainShadow text-csNormal !py-1 !px-2.5 !rounded-small">Tên bộ (30)</button>
                             <button className="mainShadow text-csNormal !py-1 !px-2.5 !rounded-small">Tên họ (15)</button>
-                            <button className="mainShadow text-csNormal !py-1 !px-2.5 !rounded-small">Tên loài (1)</button>
                         </div>
 
                         <div className="relative mainShadow !h-[200px] flex-shrink-0 rounded-main overflow-hidden">
@@ -233,15 +232,15 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                             <p className="text-csBig text-gray"><b className="text-gray">Nhóm: </b>{speciesDetailDataCache.group}</p>
                         </span>
 
-                        <span className={`w-full flex ${threatenedLevel && "border border-lighterGray mt-2.5 mb-2.5"}`}>
-                            {speciesDetailDataCache.threatened_symbol && threatenedLevel ? (
-                                speciesDetailDataCache.threatened_symbol && threatenedSpecies.map((level, index) => {
+                        <span className={`w-full flex ${threatenedLevel != null && "border border-lighterGray mt-2.5 mb-2.5"}`}>
+                            {speciesDetailDataCache.threatened_symbol && threatenedLevel != null ? (
+                                threatenedSpecies.map((level, index) => {
                                     return (
                                         <span key={index} className={`relative flex-1 h-3 ${(index <= threatenedLevel) && level.color}`}>
                                             {index === threatenedLevel && (
                                                 <>
                                                     <p className="absolute bottom-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[-20%] text-nowrap font-medium text-csNormal">{level.code}</p>
-                                                    <p className="absolute top-full left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[20%] text-nowrap font-medium text-csNormal">{level.label}</p>
+                                                    <p className={`absolute top-full ${threatenedLevel == 0 && "left-0! translate-x-0!"} ${threatenedLevel == 8 && "right-0! translate-x-0!"} left-1/2 h-fit w-fit translate-x-[-50%] translate-y-[20%] text-nowrap font-medium text-csNormal`}>{level.label}</p>
                                                 </>
                                             )}
                                         </span>
