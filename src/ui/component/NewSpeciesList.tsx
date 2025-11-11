@@ -70,12 +70,12 @@ const NewSpeciesList: React.FC<NewSpeciesList_interface> = ({ closeNewSpeciesLis
             </span>
 
             <span className="w-full flex-1 overflow-auto flex flex-wrap justify-between gap-2.5 px-0.5 py-2.5">
-                {Array(20).fill(0).map((_, index) => {
+                {/* {Array(20).fill(0).map((_, index) => {
                     return <Discover_Card key={index} speciesDeatail={toggleSpeciesDetail} size="x1" />
-                })}
+                })} */}
             </span>
 
-            {isFunnel && (<Funnel closeFunnel={toggleFunnel} />)}
+            {/* {isFunnel && (<Funnel closeFunnel={toggleFunnel} />)} */}
             {isSpeciesDetail && (<SpeciesDetail closeSpeciesDeatail={toggleSpeciesDetail} />)}
         </motion.div>
     )
