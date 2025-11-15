@@ -1,4 +1,4 @@
-// Import libraries
+import { CameraSource } from "@capacitor/camera";
 import React, { lazy, useState } from "react"
 
 // Images
@@ -63,9 +63,11 @@ const ConfirmForm: React.FC<ConfirmForm_interface> = ({ confirm }) => {
 type typePosition_type = "" | "myLocation" | "map"
 interface ContributionForm_interface {
     toggleForm: (toast?: ToastType) => void
+    image: string | null;
+    onRetake: (source: CameraSource) => void;
 }
 
-const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm }) => {
+const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm, image, onRetake }) => {
     // Contribute
     const [isContribute, setIsContribute] = useState<boolean>(false)
     const [isSnapMap, setIsSnapMap] = useState<boolean>(false)
@@ -114,17 +116,21 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm }) 
             </span>
 
             <span className="flex-1 h-0 px-mainTwoSidePadding overflow-auto">
-                <form>
+                <form onSubmit={(e) => e.preventDefault()}>
                     <span className="">
                         <h2 className="!leading-0 py-2.5">Thông tin bức ảnh</h2>
                     </span>
 
                     <span className="w-full flex flex-col gap-5">
                         <span className="w-full flex flex-col gap-2.5">
-                            <span className="h-[200px] bg-lightGray rounded-small"></span>
+                            {image ? (
+                                <img src={image} alt="Selected" className="h-[200px] w-full object-cover bg-lightGray rounded-small" />
+                            ) : (
+                                <span className="h-[200px] bg-lightGray rounded-small"></span>
+                            )}
 
                             <span className="w-full flex items-center-safe gap-2.5">
-                                <button className="mainShadow w-2/5 h-[40px] bg-white text-csNormal font-medium flex items-center-safe justify-center-safe gap-2.5 !border-[0.5px] !border-lightGray !rounded-small">
+                                <button type="button" onClick={() => onRetake(CameraSource.Camera)} className="mainShadow w-2/5 h-[40px] bg-white text-csNormal font-medium flex items-center-safe justify-center-safe gap-2.5 !border-[0.5px] !border-lightGray !rounded-small">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
@@ -133,7 +139,7 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm }) 
                                     Chụp lại
                                 </button>
 
-                                <button className="flex-1 h-[40px] text-white bg-mainDark text-csNormal flex items-center-safe justify-center-safe gap-2.5 !rounded-small">
+                                <button type="button" onClick={() => onRetake(CameraSource.Photos)} className="flex-1 h-[40px] text-white bg-mainDark text-csNormal flex items-center-safe justify-center-safe gap-2.5 !rounded-small">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 stroke-white">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
                                     </svg>
