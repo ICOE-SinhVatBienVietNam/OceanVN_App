@@ -50,6 +50,7 @@ const MainLayout: React.FC = () => {
                 <IonRouterOutlet className="z-0">
                     {/* Map */}
                     <Route path={routeConfig.main.map} children={<Map />} exact />
+                    <Route path={routeConfig.mainSlug.map.speciesLocation} children={<Map />} exact />
 
                     {/* Discover */}
                     <Route path={routeConfig.main.discover} children={<Discover />} exact />
