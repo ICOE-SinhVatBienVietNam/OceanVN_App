@@ -1,17 +1,19 @@
 // Import libraries
 import React, { lazy, useState } from "react"
+import { Camera as CapacitorCamera, CameraResultType, CameraSource, CameraDirection } from '@capacitor/camera';
+import { IonPage } from "@ionic/react"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
 
 // Components
 import ContributionForm from "../component/ContributionForm"
+import PhotoActionModal from "../component/PhotoActionModal";
 const CameraStorageDetail = lazy(() => import('../component/CameraStorageDetail'))
 
 // Toast interface
 import { ToastType } from "../layout/MainLayout"
 import { toastConfig } from "../../config/toastConfig"
-import { IonPage } from "@ionic/react"
 
 const StorageCard: React.FC<{
     id: number,
@@ -96,6 +98,8 @@ const Camera: React.FC = () => {
     const [isCameraStorageDetail, setIsCameraStorageDetail] = useState<boolean>(false)
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [selectedItems, setSelectedItems] = useState<number[]>([])
+    const [photo, setPhoto] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const changeList = (type: boolean) => {
         setIsSaved(type)
@@ -104,10 +108,46 @@ const Camera: React.FC = () => {
     const toggleForm = (toast?: ToastType) => {
         setIsNew(!isNew)
 
+        if (!isNew) {
+            setPhoto(null);
+        }
+
         if (toast) {
             toastConfig(toast)
         }
     }
+
+    const handleSelectPhotoSource = (source: CameraSource) => {
+        setIsModalOpen(false);
+        takePicture(source);
+    };
+
+    const takePicture = async (source: CameraSource) => {
+        try {
+            const image = await CapacitorCamera.getPhoto({
+                quality: 90,
+                allowEditing: false,
+                resultType: CameraResultType.Uri,
+                source: source,
+                direction: source === CameraSource.Camera ? CameraDirection.Front : undefined
+            });
+
+            if (image.webPath) {
+                setPhoto(image.webPath);
+                setIsNew(true);
+            }
+        } catch (error: any) { // Explicitly type error as 'any' for message property
+            if (error.message === "User cancelled photos app" || error.message === "No image selected") {
+                console.log("User cancelled photo selection.");
+            } else {
+                console.error("Error taking picture: ", error);
+                toastConfig({
+                    toastType: "error",
+                    toastMessage: "Không thể mở camera hoặc thư viện"
+                })
+            }
+        }
+    };
 
     const toggleCameraStorageDetail = () => {
         setIsCameraStorageDetail(!isCameraStorageDetail)
@@ -173,7 +213,7 @@ const Camera: React.FC = () => {
                                     className="!text-csNormal h-full w-full outline-none"
                                     type="text"
                                     placeholder="Tìm kiếm..."
-                                />
+                                 />
                             </span>
 
                             {!isDeleting && (
@@ -200,7 +240,7 @@ const Camera: React.FC = () => {
 
                 {!isDeleting && (
                     <span className="absolute bottom-5 right-mainTwoSidePadding">
-                        <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={() => { toggleForm() }}>
+                        <button className="mainShadow h-[50px] aspect-square bg-mainLightBlue flex justify-center-safe items-center-safe rounded-full" onClick={() => setIsModalOpen(true)}>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 stroke-white fill-white">
                                 <path fillRule="evenodd" d="M12 3.75a.75.75 0 0 1 .75.75v6.75h6.75a.75.75 0 0 1 0 1.5h-6.75v6.75a.75.75 0 0 1-1.5 0v-6.75H4.5a.75.75 0 0 1 0-1.5h6.75V4.5a.75.75 0 0 1 .75-.75Z" clipRule="evenodd" />
                             </svg>
@@ -228,8 +268,9 @@ const Camera: React.FC = () => {
                     </div>
                 )}
 
-                {isNew && (<ContributionForm toggleForm={toggleForm} />)}
+                {isNew && (<ContributionForm toggleForm={toggleForm} image={photo} onRetake={takePicture} />)}
                 {isCameraStorageDetail && (<CameraStorageDetail toggleCameraStorageDetail={toggleCameraStorageDetail} />)}
+                {isModalOpen && <PhotoActionModal onClose={() => setIsModalOpen(false)} onSelect={handleSelectPhotoSource} />}
             </div>
         </IonPage>
     )

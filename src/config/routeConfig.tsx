@@ -12,7 +12,7 @@ export const routeConfig = {
     },
     mainSlug: {
         map: {
-            getPosition: "/main/map/:id"
+            speciesLocation: "/main/map/:id"   
         },
         discover: {
 

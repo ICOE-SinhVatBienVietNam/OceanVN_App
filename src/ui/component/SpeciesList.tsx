@@ -1,12 +1,10 @@
 // Libraries
-import React, { useState, useRef } from "react"
+import React, { useState, useRef, useMemo } from "react"
 import { motion, useMotionValue, PanInfo } from "framer-motion"
-
-// Images
-import Logo from "../../assets/SinhVatBienVN.png"
+import uniqolor from "uniqolor"
 
 // Component
-import Funnel from "./Funnel"
+import Funnel, { FilterSection } from "./Funnel"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 
@@ -19,6 +17,8 @@ import { SpeciesShortDetail } from "../../services/speciesService"
 // Redux
 import { setSpeciesDetailID } from "../../redux/state/speciesReducer"
 
+type Selections = Record<string, string[]>;
+
 // Card
 interface Card_interface {
     speciesDeatail: () => void,
@@ -26,6 +26,7 @@ interface Card_interface {
 }
 
 const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
+    const randomColor = uniqolor(species.id).color
     const mainThumbnail = species.thumbnails.find(t => t.is_main)?.thumbnail;
     const dispatch = useDispatch()
 
@@ -37,9 +38,15 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
     return (
         <div
             onClick={chooseSpecies}
-            className="w-full h-fit flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-1.5 rounded-main"
+            className="relative w-full h-fit flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-1.5 rounded-main"
         >
-            <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center">
+            <span className="absolute top-0 left-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={randomColor} className="size-6">
+                    <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
+                </svg>
+            </span>
+
+            <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-small">
                 <img src={cloudinaryRoot + mainThumbnail} className="h-full w-full object-cover object-center" loading="lazy" />
             </span>
 
@@ -52,6 +59,7 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
 }
 
 const Card: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
+    const randomColor = uniqolor(species.id).color
     const mainThumbnail = species.thumbnails.find(t => t.is_main)?.thumbnail;
     const dispatch = useDispatch()
 
@@ -65,7 +73,13 @@ const Card: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
             onClick={chooseSpecies}
             className="relative mainShadow flex-shrink-0 overflow-hidden basis-[calc(25%-8px)] h-fit flex flex-col items-center-safe gap-2.5 rounded-main p-2.5"
         >
-            <span className="w-full h-full aspect-square overflow-hidden flex justify-center items-center">
+            <span className="absolute top-0 left-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={randomColor} className="size-6">
+                    <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
+                </svg>
+            </span>
+
+            <span className="w-full h-full aspect-square overflow-hidden flex justify-center items-center rounded-small">
                 <img src={cloudinaryRoot + mainThumbnail} loading="lazy" className="w-full h-full object-cover object-center" />
             </span>
         </div>
@@ -86,6 +100,8 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
     const [isCard, setIsCard] = useState<boolean>(true)
     const [isList, setIsList] = useState<boolean>(true)
     const [isFunnel, setIsFunnel] = useState<boolean>(false)
+    const [selections, setSelections] = useState<Selections>({});
+
 
     const height = useMotionValue(isList ? window.innerHeight * 0.5 : 0);
     const lastHeight = useRef(window.innerHeight * 0.65);
@@ -102,6 +118,41 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
 
     // Data
     const speciesListDiscovered = useSelector((state: RootState) => state.species.speciesListDiscovered)
+
+    const filterSections = useMemo<FilterSection[]>(() => {
+        const filterKeys: (keyof Pick<SpeciesShortDetail, 'group'>)[] = ['group'];
+
+        return filterKeys.reduce((acc, key) => {
+            const uniqueValues = Array.from(new Set(speciesListDiscovered.map(s => s[key]).filter((v): v is string => !!v)));
+            
+            if (uniqueValues.length > 1) {
+                acc.push({
+                    key: key,
+                    title: `Lọc theo ${key.charAt(0).toUpperCase() + key.slice(1)}`,
+                    options: uniqueValues.map(value => ({ id: value, label: value }))
+                });
+            }
+            
+            return acc;
+        }, [] as FilterSection[]);
+    }, [speciesListDiscovered]);
+
+    const filteredSpecies = useMemo(() => {
+        const activeFilterKeys = Object.keys(selections).filter(key => selections[key]?.length > 0);
+
+        if (activeFilterKeys.length === 0) {
+            return speciesListDiscovered;
+        }
+
+        return speciesListDiscovered.filter(species => {
+            return activeFilterKeys.every(key => {
+                const speciesPropertyKey = key as keyof SpeciesShortDetail;
+                const speciesValue = species[speciesPropertyKey];
+                return typeof speciesValue === 'string' && selections[key].includes(speciesValue);
+            });
+        });
+    }, [speciesListDiscovered, selections]);
+
 
     // Toggle
     const toggleFunnel = () => {
@@ -174,17 +225,17 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
                         </span>
                     </span>
 
-                    <p className="text-mainRed text-csSmall">Số lượng: {speciesListDiscovered.length} loài</p>
+                    <p className="text-mainRed text-csSmall">Số lượng: {filteredSpecies.length} loài</p>
 
                     <span className={"w-full flex-1 overflow-auto flex flex-wrap content-start gap-x-2.5 gap-y-2.5 justify-start px-0.5 py-2.5"}>
                         {isCard
-                            ? speciesListDiscovered.length > 0 && speciesListDiscovered.map((species, i) => <Card key={i} speciesDeatail={speciesDeatail} species={species} />)
-                            : speciesListDiscovered.length > 0 && speciesListDiscovered.map((species, i) => <Tag key={i} speciesDeatail={speciesDeatail} species={species} />)}
+                            ? filteredSpecies.length > 0 && filteredSpecies.map((species) => <Card key={species.id} speciesDeatail={speciesDeatail} species={species} />)
+                            : filteredSpecies.length > 0 && filteredSpecies.map((species) => <Tag key={species.id} speciesDeatail={speciesDeatail} species={species} />)}
                     </span>
                 </div>
             </motion.div>
 
-            {isFunnel && (<Funnel closeFunnel={toggleFunnel} />)}
+            {isFunnel && (<Funnel closeFunnel={toggleFunnel} sections={filterSections} initialSelections={selections} onApply={setSelections} />)}
         </>
     )
 }

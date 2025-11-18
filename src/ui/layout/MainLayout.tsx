@@ -1,5 +1,5 @@
 import { IonPage, IonRouterLink, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, useIonRouter } from "@ionic/react";
-import React, { lazy } from "react"
+import React, { lazy, useEffect } from "react"
 import { Route } from "react-router";
 
 // Config
@@ -14,6 +14,15 @@ import MoreInfo from "../page/MoreInfo";
 
 // Toast
 import { Bounce, ToastContainer } from "react-toastify";
+
+// Redux
+import { useDispatch } from "react-redux";
+import { setSpecies } from "../../redux/state/speciesReducer";
+
+// Service
+import { SpeciesService } from "../../services/speciesService";
+const speciesService = new SpeciesService()
+
 export type ToastType = {
     toastMessage: string,
     toastType?: "info" | "success" | "warn" | "error",
@@ -25,13 +34,23 @@ const MainLayout: React.FC = () => {
     // Map root
     const router = useIonRouter();
 
+    const dispatch = useDispatch()
+
+    // Get species data 
+    useEffect(() => {
+        (async () => {
+            const getSpeciesData = await speciesService.getSpeciesShortDetail()
+            dispatch(setSpecies(getSpeciesData))
+        })()
+    }, [])
+
     return (
         <>
             <IonTabs>
                 <IonRouterOutlet className="z-0">
                     {/* Map */}
                     <Route path={routeConfig.main.map} children={<Map />} exact />
-                    <Route path={routeConfig.mainSlug.map.getPosition} children={<Map />} exact />
+                    <Route path={routeConfig.mainSlug.map.speciesLocation} children={<Map />} exact />
 
                     {/* Discover */}
                     <Route path={routeConfig.main.discover} children={<Discover />} exact />

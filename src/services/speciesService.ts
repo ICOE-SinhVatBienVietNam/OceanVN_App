@@ -50,8 +50,12 @@ interface SpeciesThumbnail {
 
 export interface SpeciesShortDetail {
     id: string;
+    group: string | null;
+    phylum: string | null;
+    class: string | null;
+    order: string | null;
+    genus: string;
     species: string;
-    group: string;
     species_coordinates: SpeciesCoordinate[] | [];
     thumbnails: SpeciesThumbnail[] | [];
 }
