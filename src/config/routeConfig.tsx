@@ -12,7 +12,7 @@ export const routeConfig = {
     },
     mainSlug: {
         map: {
-            getPosition: "/main/map/:id"
+            speciesLocation: "/main/map/:id"   
         },
         discover: {
 
@@ -29,5 +29,8 @@ export const routeConfig = {
     },
     register: {
         root: "/register"
+    },
+    share: {
+        species: "/public-shared/:id"
     }
 }

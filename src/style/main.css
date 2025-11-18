@@ -27,9 +27,14 @@
         background-color: white !important;
     }
 
+    li {
+        line-height: 1.8 !important;
+    }
+
     /* Toast */
     .Toastify__toast-container {
         z-index: 999999 !important;
+        gap: 5px;
     }
     
     /* ====== Toast Box ====== */
@@ -71,6 +76,12 @@
     /* Leaflet */
     .leaflet-control-attribution {
         font-size: 8px;
+    }
+
+    /* Custom Pin Marker */
+    .custom-pin-marker.leaflet-marker-icon {
+        background: none;
+        border: none;
     }
 }
 
