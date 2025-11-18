@@ -122,7 +122,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
     const viewMorePosition = () => {
         switch (location.pathname) {
             case routeConfig.main.discover:
-                router.push(routeConfig.main.map)
+                router.push(`${routeConfig.main.map}/${speciesDetailID}`, "forward")
                 break;
 
             default:
@@ -254,7 +254,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
 
                         <span className="flex flex-col gap-2.5 text-csNormal">
                             <span className="flex flex-col">
-                                <h5 className="font-semibold text-lg">Tên gọi khác</h5>
+                                <h5 className="font-semibold text-lg">Tên tiếng Việt</h5>
                                 <ul className="list-none text-gray pl-2.5">
                                     {speciesDetailDataCache.common_names && speciesDetailDataCache.common_names.length > 0 ? (
                                         speciesDetailDataCache.common_names.map((name, i) => {
