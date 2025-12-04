@@ -13,7 +13,7 @@ import Quest from "../page/Quest";
 import MoreInfo from "../page/MoreInfo";
 
 // Toast
-import { Bounce, ToastContainer } from "react-toastify";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 // Redux
 import { useDispatch } from "react-redux";
@@ -21,6 +21,7 @@ import { setSpecies } from "../../redux/state/speciesReducer";
 
 // Service
 import { SpeciesService } from "../../services/speciesService";
+import { toastConfig } from "../../config/toastConfig";
 const speciesService = new SpeciesService()
 
 export type ToastType = {
@@ -39,7 +40,12 @@ const MainLayout: React.FC = () => {
     // Get species data 
     useEffect(() => {
         (async () => {
+            const pending = toastConfig({
+                toastMessage: 'Đang tải dữ liệu',
+                pending: true
+            })
             const getSpeciesData = await speciesService.getSpeciesShortDetail()
+            toast.dismiss(pending)
             dispatch(setSpecies(getSpeciesData))
         })()
     }, [])
