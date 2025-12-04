@@ -117,7 +117,7 @@ const MyPositionMarker: React.FC<{ position: [number, number] }> = ({
     <i class="fas fa-map-marker text-2xl text-mainRed"></i>
     `,
     iconSize: [24, 24],
-    iconAnchor: [24/2, 24]
+    iconAnchor: [24 / 2, 24]
   });
 
   return <Marker position={position} icon={icon} />;
@@ -224,7 +224,7 @@ const Map: React.FC = () => {
 
   const toggleSpeciesDetail = () => {
     if (slugId && speciesDetail.id) {
-      router.push(routeConfig.main.discover, "forward");
+      router.back();
       setIsSpeciesLocation(false);
       return;
     }
@@ -394,37 +394,37 @@ const Map: React.FC = () => {
           <MarkerClusterGroup>
             {isSpeciesLocation
               ? speciesDetail.species_coordinates &&
-                speciesDetail.species_coordinates.length > 0 &&
-                speciesDetail.species_coordinates.map((coordinate, index) => {
-                  return (
-                    <PinMarker
-                      key={speciesDetail.id + index.toString()}
-                      color={uniqolor(speciesDetail.id + index).color}
-                      position={[
-                        parseFloat(coordinate.latitude),
-                        parseFloat(coordinate.longitude),
-                      ]}
-                    />
-                  );
-                })
+              speciesDetail.species_coordinates.length > 0 &&
+              speciesDetail.species_coordinates.map((coordinate, index) => {
+                return (
+                  <PinMarker
+                    key={speciesDetail.id + index.toString()}
+                    color={uniqolor(speciesDetail.id + index).color}
+                    position={[
+                      parseFloat(coordinate.latitude),
+                      parseFloat(coordinate.longitude),
+                    ]}
+                  />
+                );
+              })
               : speciesData.length > 0 &&
-                speciesData.map(
-                  (species) =>
-                    species.species_coordinates &&
-                    species.species_coordinates.length > 0 &&
-                    species.species_coordinates.map((data, index) => {
-                      return (
-                        <PinMarker
-                          key={species.id + index.toString()}
-                          color={uniqolor(species.id).color}
-                          position={[
-                            parseFloat(data.latitude),
-                            parseFloat(data.longitude),
-                          ]}
-                        />
-                      );
-                    })
-                )}
+              speciesData.map(
+                (species) =>
+                  species.species_coordinates &&
+                  species.species_coordinates.length > 0 &&
+                  species.species_coordinates.map((data, index) => {
+                    return (
+                      <PinMarker
+                        key={species.id + index.toString()}
+                        color={uniqolor(species.id).color}
+                        position={[
+                          parseFloat(data.latitude),
+                          parseFloat(data.longitude),
+                        ]}
+                      />
+                    );
+                  })
+              )}
           </MarkerClusterGroup>
 
           {/* Option */}
@@ -449,9 +449,8 @@ const Map: React.FC = () => {
                 onClick={toggleTracking}
               >
                 <i
-                  className={`fas fa-crosshairs ${
-                    isTracking ? "text-mainLightBlue" : ""
-                  }`}
+                  className={`fas fa-crosshairs ${isTracking ? "text-mainLightBlue" : ""
+                    }`}
                 ></i>
               </button>
             </span>
@@ -532,7 +531,7 @@ const Map: React.FC = () => {
                     <path
                       fillRule="evenodd"
                       d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
-      clipRule="evenodd"
+                      clipRule="evenodd"
                     />
                   </svg>
                   D.sách khám phá
@@ -541,9 +540,8 @@ const Map: React.FC = () => {
 
               <button
                 onClick={toggleSpeciesDetail}
-                className={`mainShadow ${
-                  slugId && "flex-1!"
-                } w-1/3 text-csNormal bg-white flex items-center-safe justify-center-safe gap-1.5 !px-2.5 !rounded-small`}
+                className={`mainShadow ${slugId && "flex-1!"
+                  } w-1/3 text-csNormal bg-white flex items-center-safe justify-center-safe gap-1.5 !px-2.5 !rounded-small`}
               >
                 Thông tin
               </button>
