@@ -184,9 +184,13 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
             </span>
 
             <span className="relative flex-1 h-0 flex flex-col overflow-y-auto gap-2.5 pb-2.5 pt-0.5 px-mainTwoSidePadding">
-                {!speciesDetailDataCache || !speciesDetailDataCache.id ? (
+                {(!speciesDetailDataCache || !speciesDetailDataCache.id) && !speciesDetailID ? (
                     <Error404 />
                 ) : (
+                    speciesDetailID !== speciesDetailDataCache.id ? (
+                        <Error404 />
+                    ) : (
+
                     <>
                         <div className="flex flex-wrap gap-2.5 mb-2.5">
                             <button className="mainShadow text-csNormal !py-1 !px-2.5 !rounded-small">Tên bộ (30)</button>
@@ -260,7 +264,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                                         speciesDetailDataCache.common_names.map((name, i) => {
                                             return <li key={i} className="text-gray font-medium">{name.name}</li>
                                         })
-                                    ) : noDataMessage.current}
+                                    ) : "Chưa có"}
                                 </ul>
                             </span>
 
@@ -341,7 +345,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                                     <li className="text-gray"><span className="font-bold text-gray">Lớp: </span>{speciesDetailDataCache.class ? speciesDetailDataCache.class : noDataMessage.current}</li>
                                     <li className="text-gray"><span className="font-bold text-gray">Bộ: </span>{speciesDetailDataCache.order ? speciesDetailDataCache.order : noDataMessage.current}</li>
                                     <li className="text-gray"><span className="font-bold text-gray">Họ: </span>{speciesDetailDataCache.family ? speciesDetailDataCache.family : noDataMessage.current}</li>
-                                    <li className="text-gray"><span className="font-bold text-gray">Giống: </span>{speciesDetailDataCache.genus ? speciesDetailDataCache.phylum : noDataMessage.current}</li>
+                                    <li className="text-gray"><span className="font-bold text-gray">Giống: </span>{speciesDetailDataCache.genus ? speciesDetailDataCache.genus : noDataMessage.current}</li>
                                 </ul>
                             </span>
 
@@ -367,84 +371,87 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                             </span>
                         </span>
                     </>
+                    )
                 )}
-            </span>
+            </span >
 
-            {/* light Box */}
-            {
-                isLightboxOpen &&
-                <motion.div
-                    className="absolute top-0 left-0 z-20 w-full h-full bg-black/75 flex items-center justify-center"
-                    onClick={() => setIsLightboxOpen(false)}
+    {/* light Box */ }
+{
+    isLightboxOpen &&
+        <motion.div
+            className="absolute top-0 left-0 z-20 w-full h-full bg-black/75 flex items-center justify-center"
+            onClick={() => setIsLightboxOpen(false)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+        >
+            <motion.div
+                className="relative w-full h-full"
+                onClick={e => e.stopPropagation()}
+            >
+                <motion.img
+                    src={cloudinaryRoot + selectedImageUrl}
+                    className="w-full h-full object-contain"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                >
-                    <motion.div
-                        className="relative w-full h-full"
-                        onClick={e => e.stopPropagation()}
-                    >
-                        <motion.img
-                            src={cloudinaryRoot + selectedImageUrl}
-                            className="w-full h-full object-contain"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.3, type: 'spring' }}
-                        />
-                    </motion.div>
-                    <button onClick={() => setIsLightboxOpen(false)} className='absolute top-5 right-5 p-2 bg-black/50 rounded-full z-30'>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    transition={{ duration: 0.3, type: 'spring' }}
+                />
+            </motion.div>
+            <button onClick={() => setIsLightboxOpen(false)} className='absolute top-5 right-5 p-2 bg-black/50 rounded-full z-30'>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </motion.div>
+}
+
+{/* Share popup */ }
+{
+    isShareLink && (
+        <motion.div
+            initial={{ opacity: readyCloseShareLink ? 0 : 1 }}
+            animate={{ opacity: readyCloseShareLink ? 1 : 0 }}
+            exit={{ opacity: 0 }}
+            className="fixed top-0 left-0 h-full w-full bg-[rgba(0,0,0,0.75)] flex justify-center-safe items-center-safe"
+        >
+
+            <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+                className="h-fit w-[90%] bg-white flex flex-col gap-2.5 px-5 pt-2.5 pb-5 rounded-main"
+            >
+                <div className="h-fit w-full flex items-center-safe justify-between">
+                    <h5 className="flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-6 stroke-mainRed">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
                         </svg>
-                    </button>
-                </motion.div>
-            }
 
-            {/* Share popup */}
-            {isShareLink && (
-                <motion.div
-                    initial={{ opacity: readyCloseShareLink ? 0 : 1 }}
-                    animate={{ opacity: readyCloseShareLink ? 1 : 0 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed top-0 left-0 h-full w-full bg-[rgba(0,0,0,0.75)] flex justify-center-safe items-center-safe"
-                >
+                        Chia sẻ liên kết
+                    </h5>
 
-                    <motion.div
-                        initial={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0.9, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: 'easeOut' }}
-                        className="h-fit w-[90%] bg-white flex flex-col gap-2.5 px-5 pt-2.5 pb-5 rounded-main"
-                    >
-                        <div className="h-fit w-full flex items-center-safe justify-between">
-                            <h5 className="flex items-center gap-1.5">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-6 stroke-mainRed">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
-                                </svg>
+                    <button onClick={toggleShareLink} className="px-2.5! py-1!">x</button>
+                </div>
 
-                                Chia sẻ liên kết
-                            </h5>
+                <div className="h-fit w-full">
+                    <div className="h-[35px] w-full flex items-center-safe gap-1.5">
+                        <span className="h-full flex-1 w-0 bg-lighterGray flex items-center-safe px-2.5 py-2.5 rounded-small" onClick={copyLink}>
+                            <p className="text-nowrap truncate text-csNormal">{shareLink}</p>
+                        </span>
 
-                            <button onClick={toggleShareLink} className="px-2.5! py-1!">x</button>
-                        </div>
+                        <button className=" mainShadow bg-white h-full aspect-square flex justify-center-safe items-center-safe rounded-small!" onClick={copyLink}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
 
-                        <div className="h-fit w-full">
-                            <div className="h-[35px] w-full flex items-center-safe gap-1.5">
-                                <span className="h-full flex-1 w-0 bg-lighterGray flex items-center-safe px-2.5 py-2.5 rounded-small" onClick={copyLink}>
-                                    <p className="text-nowrap truncate text-csNormal">{shareLink}</p>
-                                </span>
-
-                                <button className=" mainShadow bg-white h-full aspect-square flex justify-center-safe items-center-safe rounded-small!" onClick={copyLink}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 8.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v8.25A2.25 2.25 0 0 0 6 16.5h2.25m8.25-8.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-7.5A2.25 2.25 0 0 1 8.25 18v-1.5m8.25-8.25h-6a2.25 2.25 0 0 0-2.25 2.25v6" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                </motion.div>
-            )}
+        </motion.div>
+    )
+}
         </motion.div >
     )
 }
