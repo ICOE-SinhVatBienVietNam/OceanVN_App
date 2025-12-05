@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 
 // Config
-import { cloudinaryRoot, cloudinaryThumbnail } from "../../config/gateway"
+import { cloudinaryThumbnail, noImageURL } from "../../config/gateway"
 
 // Type
 import { SpeciesShortDetail } from "../../services/speciesService"
@@ -45,7 +45,7 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
             className="relative w-full h-[70px] flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-1.5 rounded-main"
         >
             <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-small">
-                <img src={cloudinaryThumbnail + mainThumbnail} className="h-full w-full object-cover object-center" loading="lazy" />
+                <img src={cloudinaryThumbnail + mainThumbnail} className="h-full w-full object-cover object-center" loading="lazy" onError={(e) => { e.currentTarget.src = noImageURL }} />
             </span>
 
             <span className="w-full flex-1 flex flex-col">
@@ -98,7 +98,7 @@ const Card: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
             </span>
 
             <span className="w-full h-full aspect-square overflow-hidden flex justify-center items-center rounded-small">
-                <img src={cloudinaryThumbnail + mainThumbnail} loading="lazy" className="w-full h-full object-cover object-center" />
+                <img src={cloudinaryThumbnail + mainThumbnail} loading="lazy" className="w-full h-full object-cover object-center" onError={(e) => { e.currentTarget.src = noImageURL }} />
             </span>
         </div>
     )
@@ -144,6 +144,11 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
 
     // Data
     const speciesListDiscovered = useSelector((state: RootState) => state.species.speciesListDiscovered)
+    const filterTitle = useRef<Partial<Record<keyof SpeciesShortDetail, string>>>({
+        genus: "Giống",
+        threatened_symbol: "Mức độ bảo tồn"
+    });
+
 
     const filterSections = useMemo<FilterSection[]>(() => {
         const filterKeys: (keyof Pick<SpeciesShortDetail, 'genus'>)[] = ['genus'];
@@ -154,7 +159,7 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
             if (uniqueValues.length > 1) {
                 acc.push({
                     key: key,
-                    title: `Lọc theo ${key.charAt(0).toUpperCase() + key.slice(1)}`,
+                    title: `Lọc theo ${filterTitle.current[key]}`,
                     options: uniqueValues.map(value => ({ id: value, label: value }))
                 });
             }

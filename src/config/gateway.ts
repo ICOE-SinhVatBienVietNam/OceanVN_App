@@ -91,6 +91,7 @@ export default api;
 
 export const cloudinaryRoot = import.meta.env.VITE_PATH_CLOUDINARY
 export const cloudinaryThumbnail = "https://res.cloudinary.com/dz1o0fpi6/image/upload/w_200,h_200,c_fill,g_auto,f_auto,q_auto:eco,fl_strip_profile/v1762183131/"
+export const noImageURL = "https://res.cloudinary.com/dz1o0fpi6/image/upload/w_200,h_200,c_fill,g_auto,f_auto,q_auto:eco,fl_strip_profile/v1762183131/noImage_eakrcb"
 
 // w_200,h_200 → resize xuống 200x200px
 // c_fill → crop đầy đủ, giữ center
