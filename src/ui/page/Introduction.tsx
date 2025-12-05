@@ -26,7 +26,7 @@ const Introduction: React.FC = () => {
 
                     <span className="w-full flex flex-col items-center-safe gap-2.5">
                         <button
-                            onClick={() => { router.push(routeConfig.main.map, "root") }}
+                            onClick={() => { router.push(routeConfig.main.map, "forward") }}
                             className="flex w-[80%] text-csMedium !text-white !bg-mainLightBlue justify-center-safe items-center-safe rounded-main! py-3.5!"
                         >
                             Bắt đầu hành trình khám phá

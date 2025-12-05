@@ -120,7 +120,7 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
     const speciesListDiscovered = useSelector((state: RootState) => state.species.speciesListDiscovered)
 
     const filterSections = useMemo<FilterSection[]>(() => {
-        const filterKeys: (keyof Pick<SpeciesShortDetail, 'group'>)[] = ['group'];
+        const filterKeys: (keyof Pick<SpeciesShortDetail, 'genus'>)[] = ['genus'];
 
         return filterKeys.reduce((acc, key) => {
             const uniqueValues = Array.from(new Set(speciesListDiscovered.map(s => s[key]).filter((v): v is string => !!v)));
