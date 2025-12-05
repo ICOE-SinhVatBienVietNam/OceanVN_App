@@ -10,10 +10,19 @@ const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt }) => {
   const [scale, setScale] = useState(1);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
+  const scaleRef = useRef(1);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
+  // Reset position when scale is 1
+  useEffect(() => {
+    if (scale === 1) {
+      x.set(0);
+      y.set(0);
+    }
+  }, [scale, x, y]);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -27,12 +36,8 @@ const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt }) => {
   const handleWheel = (event: React.WheelEvent) => {
     const delta = -event.deltaY / 500;
     let newScale = scale + delta;
-    if (newScale < 1) {
-      newScale = 1;
-      x.set(0);
-      y.set(0);
-    }
-    newScale = Math.min(newScale, 4);
+    if (newScale < 1) newScale = 1;
+    newScale = Math.min(newScale, 4); // Max zoom 4x
     setScale(newScale);
   };
 
@@ -62,9 +67,7 @@ const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt }) => {
   };
 
   const handleDoubleClick = () => {
-    setScale(1);
-    x.set(0);
-    y.set(0);
+    setScale(prevScale => prevScale > 1 ? 1 : 2);
   };
 
   return (
@@ -90,6 +93,15 @@ const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt }) => {
         dragConstraints={scale > 1 ? dragConstraints : false}
         dragElastic={0.1}
         whileDrag={{ cursor: "grabbing" }}
+        onPinchStart={() => {
+          scaleRef.current = scale;
+        }}
+        onPinch={(event, info) => {
+          let newScale = scaleRef.current * info.offset.x;
+          if (newScale < 1) newScale = 1;
+          newScale = Math.min(newScale, 4);
+          setScale(newScale);
+        }}
       />
     </motion.div>
   );

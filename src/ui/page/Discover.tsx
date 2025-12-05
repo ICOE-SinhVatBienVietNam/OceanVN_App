@@ -2,18 +2,14 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { VirtuosoGrid, VirtuosoGridHandle } from "react-virtuoso"
 
-// Images
-import Logo from "../../assets/SinhVatBienVN.png"
-
 // Component
 import Funnel, { FilterSection } from "../component/Funnel"
-import NewSpeciesList from "../component/NewSpeciesList"
 import SpeciesDetail from "../component/SpeciesDetail"
 import { IonPage } from "@ionic/react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 import { SpeciesShortDetail } from "../../services/speciesService"
-import { cloudinaryRoot, cloudinaryThumbnail } from "../../config/gateway"
+import { cloudinaryRoot, cloudinaryThumbnail, noImageURL } from "../../config/gateway"
 import { setSpeciesDetailID } from "../../redux/state/speciesReducer"
 import { threatenedSpecies } from "../../config/threatenedSpecies"
 
@@ -40,8 +36,8 @@ export const Discover_Card: React.FC<Card_interface> = React.memo(({ speciesDeat
 
     return (
         <span className={`mainShadow flex-shrink-0 w-full flex flex-col gap-2.5 rounded-main px-2.5 py-2.5`} onClick={chooseSpecies}>
-            <span className={`w-full h-[50px] ${size == "x1" && "h-[100px]"} ${size == "x0.75" && "h-[80px]"} aspect-square overflow-hidden flex justify-center items-center rounded-main`}>
-                <img src={cloudinaryThumbnail + thumbnail} className="w-full h-full object-cover object-center" loading="lazy" />
+            <span className={`w-full h-[50px] ${size == "x1" && "h-[100px]"} ${size == "x0.75" && "h-[100px]"} aspect-square overflow-hidden flex justify-center items-center rounded-main`}>
+                <img src={cloudinaryThumbnail + thumbnail} className="w-full h-full object-cover object-center" loading="lazy" onError={(e) => { e.currentTarget.src = noImageURL}} />
             </span>
 
             {size === 'x1' && (
@@ -50,17 +46,22 @@ export const Discover_Card: React.FC<Card_interface> = React.memo(({ speciesDeat
                         <p className="text-csNormal font-medium text-center line-clamp-2">{speciesData.species}</p>
                     </span>
 
-                    <span className={`w-full flex ${"border border-lightGray mt-2.5"}`}>
-                        {speciesData.threatened_symbol && threatenedLevel != null ? (
-                            threatenedSpecies.map((level, index) => {
-                                return (
-                                    <span key={index} className={`relative flex-1 h-2 ${(index <= parseInt(threatenedLevel)) && level.color}`}>
+                    <span className="flex items-center-safe gap-1.5">
+                        <p className="h-fit flex items-center text-csSmall font-bold text-gray">{speciesData.threatened_symbol}</p>
 
-                                    </span>
-                                )
-                            })
 
-                        ) : null}
+                        <span className={`w-full flex ${"border border-lightGray"}`}>
+                            {speciesData.threatened_symbol && threatenedLevel != null ? (
+                                threatenedSpecies.map((level, index) => {
+                                    return (
+                                        <span key={index} className={`relative flex-1 h-2.5 ${(index <= parseInt(threatenedLevel)) && level.color}`}>
+
+                                        </span>
+                                    )
+                                })
+
+                            ) : null}
+                        </span>
                     </span>
                 </>
             )}
