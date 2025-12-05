@@ -56,6 +56,7 @@ export interface SpeciesShortDetail {
     order: string | null;
     genus: string;
     species: string;
+    threatened_symbol: string | null,
     species_coordinates: SpeciesCoordinate[] | [];
     thumbnails: SpeciesThumbnail[] | [];
 }
@@ -66,7 +67,6 @@ export class SpeciesService {
         try {
             const species: SpeciesShortDetail[] = await api.get('/species/get-all-short')
             return species
-            return []
         } catch (error) {
             console.error(error)
             return []
