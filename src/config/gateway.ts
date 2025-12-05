@@ -90,3 +90,11 @@ api.interceptors.response.use(
 export default api;
 
 export const cloudinaryRoot = import.meta.env.VITE_PATH_CLOUDINARY
+export const cloudinaryThumbnail = "https://res.cloudinary.com/dz1o0fpi6/image/upload/w_200,h_200,c_fill,g_auto,f_auto,q_auto:eco,fl_strip_profile/v1762183131/"
+
+// w_200,h_200 → resize xuống 200x200px
+// c_fill → crop đầy đủ, giữ center
+// g_auto → crop focus thông minh, nếu là người/subject thì lấy trọng tâm
+// f_auto → Cloudinary tự chuyển định dạng (WebP/AVIF) → nhẹ hơn JPEG/PNG
+// q_auto:eco → nén cực mạnh, giảm dung lượng
+// fl_strip_profile → loại bỏ metadata thừa (EXIF…)

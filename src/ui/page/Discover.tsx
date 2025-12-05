@@ -13,7 +13,7 @@ import { IonPage } from "@ionic/react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 import { SpeciesShortDetail } from "../../services/speciesService"
-import { cloudinaryRoot } from "../../config/gateway"
+import { cloudinaryRoot, cloudinaryThumbnail } from "../../config/gateway"
 import { setSpeciesDetailID } from "../../redux/state/speciesReducer"
 import { threatenedSpecies } from "../../config/threatenedSpecies"
 
@@ -41,7 +41,7 @@ export const Discover_Card: React.FC<Card_interface> = React.memo(({ speciesDeat
     return (
         <span className={`mainShadow flex-shrink-0 w-full flex flex-col gap-2.5 rounded-main px-2.5 py-2.5`} onClick={chooseSpecies}>
             <span className={`w-full h-[50px] ${size == "x1" && "h-[100px]"} ${size == "x0.75" && "h-[80px]"} aspect-square overflow-hidden flex justify-center items-center rounded-main`}>
-                <img src={cloudinaryRoot + thumbnail} className="w-full h-full object-cover object-center" loading="lazy" />
+                <img src={cloudinaryThumbnail + thumbnail} className="w-full h-full object-cover object-center" loading="lazy" />
             </span>
 
             {size === 'x1' && (
