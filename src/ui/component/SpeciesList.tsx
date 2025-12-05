@@ -1,7 +1,8 @@
 // Libraries
-import React, { useState, useRef, useMemo } from "react"
+import React, { useState, useRef, useMemo, useEffect } from "react"
 import { motion, useMotionValue, PanInfo } from "framer-motion"
 import uniqolor from "uniqolor"
+import { VirtuosoGrid } from "react-virtuoso"
 
 // Component
 import Funnel, { FilterSection } from "./Funnel"
@@ -9,13 +10,14 @@ import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 
 // Config
-import { cloudinaryRoot } from "../../config/gateway"
+import { cloudinaryRoot, cloudinaryThumbnail } from "../../config/gateway"
 
 // Type
 import { SpeciesShortDetail } from "../../services/speciesService"
 
 // Redux
 import { setSpeciesDetailID } from "../../redux/state/speciesReducer"
+import { threatenedSpecies } from "../../config/threatenedSpecies"
 
 type Selections = Record<string, string[]>;
 
@@ -28,6 +30,8 @@ interface Card_interface {
 const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
     const randomColor = uniqolor(species.id).color
     const mainThumbnail = species.thumbnails.find(t => t.is_main)?.thumbnail;
+    const threatenedLevel = threatenedSpecies.find(lv => lv.code === species.threatened_symbol)?.level
+
     const dispatch = useDispatch()
 
     const chooseSpecies = () => {
@@ -38,21 +42,35 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
     return (
         <div
             onClick={chooseSpecies}
-            className="relative w-full h-fit flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-1.5 rounded-main"
+            className="relative w-full h-[70px] flex gap-2.5 items-center px-5 !border-[0.5px] border-lightGray py-1.5 rounded-main"
         >
-            <span className="absolute top-0 left-0">
+            <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-small">
+                <img src={cloudinaryThumbnail + mainThumbnail} className="h-full w-full object-cover object-center" loading="lazy" />
+            </span>
+
+            <span className="w-full flex-1 flex flex-col">
+                <p className="w-full text-csNormal font-semibold line-clamp-1">{species.species}</p>
+                <p className="flex items-center text-csSmall font-bold text-gray">Nhóm {species.group}</p>
+                <span className="flex items-center-safe gap-1.5">
+                    <p className="flex items-center text-csSmall font-bold text-gray">{species.threatened_symbol}</p>
+
+                    <span className={`w-full flex ${"border border-lightGray"}`}>
+                        {species.threatened_symbol && threatenedLevel != null ? (
+                            threatenedSpecies.map((level, index) => {
+                                return (
+                                    <span key={index} className={`relative flex-1 h-1.5 ${(index <= parseInt(threatenedLevel)) && level.color}`}></span>
+                                )
+                            })
+
+                        ) : null}
+                    </span>
+                </span>
+            </span>
+
+            <span className="w-fit">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={randomColor} className="size-6">
                     <path fillRule="evenodd" d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
                 </svg>
-            </span>
-
-            <span className="h-[50px] aspect-square overflow-hidden flex justify-center items-center rounded-small">
-                <img src={cloudinaryRoot + mainThumbnail} className="h-full w-full object-cover object-center" loading="lazy" />
-            </span>
-
-            <span className="flex-1">
-                <p className="text-csNormal font-medium">{species.species}</p>
-                <p className="flex items-center text-csSmall text-gray">{species.group}</p>
             </span>
         </div>
     )
@@ -71,7 +89,7 @@ const Card: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
     return (
         <div
             onClick={chooseSpecies}
-            className="relative mainShadow flex-shrink-0 overflow-hidden basis-[calc(25%-8px)] h-fit flex flex-col items-center-safe gap-2.5 rounded-main p-2.5"
+            className="relative mainShadow flex-shrink-0 overflow-hidden w-full h-fit flex flex-col items-center-safe gap-2.5 rounded-main p-2.5"
         >
             <span className="absolute top-0 left-0">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={randomColor} className="size-6">
@@ -80,7 +98,7 @@ const Card: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
             </span>
 
             <span className="w-full h-full aspect-square overflow-hidden flex justify-center items-center rounded-small">
-                <img src={cloudinaryRoot + mainThumbnail} loading="lazy" className="w-full h-full object-cover object-center" />
+                <img src={cloudinaryThumbnail + mainThumbnail} loading="lazy" className="w-full h-full object-cover object-center" />
             </span>
         </div>
     )
@@ -101,6 +119,7 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
     const [isList, setIsList] = useState<boolean>(true)
     const [isFunnel, setIsFunnel] = useState<boolean>(false)
     const [selections, setSelections] = useState<Selections>({});
+    const [isDragging, setIsDragging] = useState<boolean>(false);
 
 
     const height = useMotionValue(isList ? window.innerHeight * 0.5 : 0);
@@ -116,6 +135,13 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
         }
     };
 
+    const [ready, setReady] = useState(false);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => setReady(true), 50); // chờ motion div mount xong
+        return () => clearTimeout(timeout);
+    }, []);
+
     // Data
     const speciesListDiscovered = useSelector((state: RootState) => state.species.speciesListDiscovered)
 
@@ -124,7 +150,7 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
 
         return filterKeys.reduce((acc, key) => {
             const uniqueValues = Array.from(new Set(speciesListDiscovered.map(s => s[key]).filter((v): v is string => !!v)));
-            
+
             if (uniqueValues.length > 1) {
                 acc.push({
                     key: key,
@@ -132,7 +158,7 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
                     options: uniqueValues.map(value => ({ id: value, label: value }))
                 });
             }
-            
+
             return acc;
         }, [] as FilterSection[]);
     }, [speciesListDiscovered]);
@@ -180,6 +206,8 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
             >
                 <motion.div
                     onDrag={handleDrag}
+                    onDragStart={() => setIsDragging(true)}
+                    onDragEnd={() => setIsDragging(false)}
                     drag="y"
                     dragConstraints={{ top: 0, bottom: 0 }}
                     dragElastic={0}
@@ -227,11 +255,48 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
 
                     <p className="text-mainRed text-csSmall">Số lượng: {filteredSpecies.length} loài</p>
 
-                    <span className={"w-full flex-1 overflow-auto flex flex-wrap content-start gap-x-2.5 gap-y-2.5 justify-start px-0.5 py-2.5"}>
-                        {isCard
-                            ? filteredSpecies.length > 0 && filteredSpecies.map((species) => <Card key={species.id} speciesDeatail={speciesDeatail} species={species} />)
-                            : filteredSpecies.length > 0 && filteredSpecies.map((species) => <Tag key={species.id} speciesDeatail={speciesDeatail} species={species} />)}
-                    </span>
+                    <div className="flex-1 h-0">
+                        {isDragging ? (
+                            <div className="w-full h-full flex justify-center items-center">
+                                <p className="text-gray">Đang điều chỉnh...</p>
+                            </div>
+                        ) : (
+                            <VirtuosoGrid
+                                style={{ height: '100%', width: '100%' }}
+                                totalCount={filteredSpecies.length}
+                                components={{
+                                    Item: ({ children, ...props }) => (
+                                        <div
+                                            {...props}
+                                            style={{
+                                                width: isCard ? 'calc(25% - 8px)' : 'calc(100% - 8px)',
+                                                margin: '4px',
+                                                boxSizing: 'border-box',
+                                            }}
+                                        >
+                                            {children}
+                                        </div>
+                                    ),
+                                    List: React.forwardRef(({ style, children, ...props }, ref) => (
+                                        <div ref={ref} {...props} style={{ ...style, display: 'flex', flexWrap: 'wrap' }}>{children}</div>
+                                    )),
+                                }}
+                                itemContent={(index) => (
+                                    isCard ? (
+                                        <Card
+                                            species={filteredSpecies[index]}
+                                            speciesDeatail={speciesDeatail}
+                                        />
+                                    ) : (
+                                        <Tag
+                                            species={filteredSpecies[index]}
+                                            speciesDeatail={speciesDeatail}
+                                        />
+                                    )
+                                )}
+                            />
+                        )}
+                    </div>
                 </div>
             </motion.div>
 

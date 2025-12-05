@@ -1,6 +1,6 @@
 // Import libraries
 import React, { useEffect, useRef, useState } from "react"
-import { motion, useMotionValue, animate } from "framer-motion"
+import { motion, useMotionValue, animate, AnimatePresence } from "framer-motion"
 import { useLocation } from "react-router"
 
 // Config
@@ -22,6 +22,7 @@ import { useIonRouter } from "@ionic/react"
 
 // Component
 import Error404 from "./Error404"
+import ZoomableImage from "./ZoomableImage";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux"
@@ -45,11 +46,12 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
     const [speciesName, setSpeciesName] = useState<[string, string]>()
 
     const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
-    const [selectedImageUrl, setSelectedImageUrl] = useState<string>('');
+    const [lightboxImages, setLightboxImages] = useState<string[]>([]);
+    const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
 
-    const openLightbox = (url: string) => {
-        // if (url === Logo) return
-        setSelectedImageUrl(url);
+    const openLightbox = (images: string[], index: number) => {
+        setLightboxImages(images);
+        setCurrentImageIndex(index);
         setIsLightboxOpen(true);
     };
 
@@ -192,10 +194,10 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                     ) : (
 
                     <>
-                        <div className="flex flex-wrap gap-2.5 mb-2.5">
+                        {/* <div className="flex flex-wrap gap-2.5 mb-2.5">
                             <button className="mainShadow text-csNormal !py-1 !px-2.5 !rounded-small">Tên bộ (30)</button>
                             <button className="mainShadow text-csNormal !py-1 !px-2.5 !rounded-small">Tên họ (15)</button>
-                        </div>
+                        </div> */}
 
                         <div className="relative mainShadow !h-[200px] flex-shrink-0 rounded-main overflow-hidden">
                             <span className="absolute top-0 left-0 bg-[rgba(0,0,0,0.75)] px-2.5 py-1.5">
@@ -205,10 +207,11 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                             </span>
                             {(() => {
                                 if (speciesDetailDataCache.thumbnails && speciesDetailDataCache.thumbnails.length > 1) {
+                                    const images = speciesDetailDataCache.thumbnails.map(t => t.thumbnail);
                                     return (
                                         <div className="flex w-full h-full overflow-x-auto snap-x snap-mandatory">
                                             {speciesDetailDataCache.thumbnails.map((thumbnail, index) => (
-                                                <div key={index} className="w-full h-full flex-shrink-0 snap-center flex justify-center items-center p-2.5 cursor-pointer" onClick={() => openLightbox(thumbnail.thumbnail)}>
+                                                <div key={index} className="w-full h-full flex-shrink-0 snap-center flex justify-center items-center p-2.5 cursor-pointer" onClick={() => openLightbox(images, index)}>
                                                     <img src={cloudinaryRoot + thumbnail.thumbnail} className="h-full object-cover object-center" loading="lazy" />
                                                 </div>
                                             ))}
@@ -221,7 +224,7 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                                     : Logo;
 
                                 return (
-                                    <div className="w-full h-full flex justify-center items-center p-2.5 cursor-pointer" onClick={() => openLightbox(imageUrl)}>
+                                    <div className="w-full h-full flex justify-center items-center p-2.5 cursor-pointer" onClick={() => openLightbox([imageUrl], 0)}>
                                         <img src={cloudinaryRoot + imageUrl} className="h-full object-cover object-center" />
                                     </div>
                                 );
@@ -375,35 +378,80 @@ const SpeciesDetail: React.FC<SpeciesDetail_interface> = ({ closeSpeciesDeatail,
                 )}
             </span >
 
-    {/* light Box */ }
-{
-    isLightboxOpen &&
-        <motion.div
-            className="absolute top-0 left-0 z-20 w-full h-full bg-black/75 flex items-center justify-center"
-            onClick={() => setIsLightboxOpen(false)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-        >
-            <motion.div
-                className="relative w-full h-full"
-                onClick={e => e.stopPropagation()}
-            >
-                <motion.img
-                    src={cloudinaryRoot + selectedImageUrl}
-                    className="w-full h-full object-contain"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3, type: 'spring' }}
-                />
-            </motion.div>
-            <button onClick={() => setIsLightboxOpen(false)} className='absolute top-5 right-5 p-2 bg-black/50 rounded-full z-30'>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </motion.div>
-}
+        {/* light Box */}
+    {isLightboxOpen && (
+      <motion.div
+        className="absolute top-0 left-0 z-20 w-full h-full bg-black/75 flex items-center justify-center"
+        onClick={() => setIsLightboxOpen(false)}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={currentImageIndex}
+            className="relative w-full h-full"
+            onClick={(e) => e.stopPropagation()}
+            initial={{ x: 300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -300, opacity: 0 }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            onDragEnd={(e, { offset, velocity }) => {
+              const swipe = Math.abs(offset.x);
+              if (swipe > 50) {
+                if (offset.x > 0) {
+                  setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : lightboxImages.length - 1));
+                } else {
+                  setCurrentImageIndex((prev) => (prev < lightboxImages.length - 1 ? prev + 1 : 0));
+                }
+              }
+            }}
+          >
+            <ZoomableImage
+              src={cloudinaryRoot + lightboxImages[currentImageIndex]}
+              alt="Enlarged species image"
+            />
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-3 z-30">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : lightboxImages.length - 1));
+            }}
+            className="p-2 bg-black/50 rounded-full"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="size-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
+          <div className="bg-black/50 text-white px-3 py-1 rounded-full text-sm">
+            {currentImageIndex + 1} / {lightboxImages.length}
+          </div>
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrentImageIndex((prev) => (prev < lightboxImages.length - 1 ? prev + 1 : 0));
+            }}
+            className="p-2 bg-black/50 rounded-full"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="size-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+
+        <button onClick={() => setIsLightboxOpen(false)} className='absolute top-5 right-5 p-2 bg-black/50 rounded-full z-30'>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="white" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </motion.div>
+    )}
 
 {/* Share popup */ }
 {
