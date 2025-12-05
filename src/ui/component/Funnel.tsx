@@ -100,15 +100,15 @@ const Funnel: React.FC<FunnelProps> = ({ closeFunnel, sections, initialSelection
                         const isCollapsed = collapsedSections[section.key];
                         return (
                             <div key={section.key} className="flex flex-col gap-2.5">
-                                <span className="sticky top-0 left-0 bg-white flex items-center justify-between px-mainTwoSidePadding py-2.5">
-                                    <h5 className="text-csNormal flex items-center gap-1.5">
+                                <span className="sticky top-0 left-0 bg-white flex items-center justify-between px-mainTwoSidePadding py-1.5">
+                                    <h6 className="text-csNormal flex items-center gap-1.5">
                                         {currentSelections[section.key]?.length > 0 && (
                                             <span className="size-2 bg-mainRed rounded-full"></span>
                                         )}
                                         {section.title}
-                                    </h5>
+                                    </h6>
 
-                                    <button className="mainShadow !p-2 !rounded-small" onClick={() => toggleSection(section.key)}>
+                                    <button className="mainShadow !p-2 rounded-full!" onClick={() => toggleSection(section.key)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-4 transition-transform duration-200 ${isCollapsed ? "rotate-180" : ""}`}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                                         </svg>
