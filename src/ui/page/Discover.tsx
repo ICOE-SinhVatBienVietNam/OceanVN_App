@@ -37,7 +37,7 @@ export const Discover_Card: React.FC<Card_interface> = React.memo(({ speciesDeat
     return (
         <span className={`mainShadow flex-shrink-0 w-full flex flex-col gap-2.5 rounded-main px-2.5 py-2.5`} onClick={chooseSpecies}>
             <span className={`w-full h-[50px] ${size == "x1" && "h-[100px]"} ${size == "x0.75" && "h-[100px]"} aspect-square overflow-hidden flex justify-center items-center rounded-main`}>
-                <img src={cloudinaryThumbnail + thumbnail} className="w-full h-full object-cover object-center" loading="lazy" onError={(e) => { e.currentTarget.src = noImageURL}} />
+                <img src={cloudinaryThumbnail + thumbnail} className="w-full h-full object-cover object-center" loading="lazy" onError={(e) => { e.currentTarget.src = noImageURL }} />
             </span>
 
             {size === 'x1' && (
@@ -76,8 +76,13 @@ const Discover: React.FC = () => {
     const [selections, setSelections] = useState<Selections>({});
     const [searchTerm, setSearchTerm] = useState<string>("");
 
+    const filterTitle = useRef<Partial<Record<keyof SpeciesShortDetail, string>>>({
+        genus: "Giống",
+        threatened_symbol: "Mức độ bảo tồn"
+    });
+
     const filterSections = useMemo<FilterSection[]>(() => {
-        const filterKeys: (keyof Pick<SpeciesShortDetail, 'group' | 'phylum' | 'genus' | 'threatened_symbol'>)[] = ['group', 'phylum', 'genus', 'threatened_symbol'];
+        const filterKeys: (keyof Pick<SpeciesShortDetail, 'group' | 'phylum' | 'genus' | 'threatened_symbol'>)[] = ['threatened_symbol', 'group', 'phylum', 'genus'];
 
         return filterKeys.reduce((acc, key) => {
             const uniqueValues = Array.from(new Set(speciesData.map(s => s[key]).filter((v): v is string => !!v)));
@@ -85,7 +90,7 @@ const Discover: React.FC = () => {
             if (uniqueValues.length > 1) {
                 acc.push({
                     key: key,
-                    title: `Lọc theo ${key.charAt(0).toUpperCase() + key.slice(1)}`,
+                    title: `Lọc theo ${filterTitle.current[key]}`,
                     options: uniqueValues.map(value => ({ id: value, label: value }))
                 });
             }
