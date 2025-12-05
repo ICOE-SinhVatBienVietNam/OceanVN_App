@@ -70,13 +70,26 @@ const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt }) => {
     setScale(prevScale => prevScale > 1 ? 1 : 2);
   };
 
+  const pinchHandlers = {
+    onPinchStart: (event: any, info: any) => {
+      scaleRef.current = scale;
+    },
+    onPinch: (event: any, info: any) => {
+      let newScale = scaleRef.current * info.offset.x;
+      if (newScale < 1) newScale = 1;
+      newScale = Math.min(newScale, 4);
+      setScale(newScale);
+    },
+  };
+
   return (
     <motion.div
       ref={containerRef}
       className="w-full h-full flex items-center justify-center overflow-hidden"
+      style={{ touchAction: "none" }}
       onWheel={handleWheel}
       onDoubleClick={handleDoubleClick}
-      style={{ touchAction: "none" }}
+      {...pinchHandlers}
     >
       <motion.img
         src={src}
@@ -93,15 +106,6 @@ const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt }) => {
         dragConstraints={scale > 1 ? dragConstraints : false}
         dragElastic={0.1}
         whileDrag={{ cursor: "grabbing" }}
-        onPinchStart={() => {
-          scaleRef.current = scale;
-        }}
-        onPinch={(event, info) => {
-          let newScale = scaleRef.current * info.offset.x;
-          if (newScale < 1) newScale = 1;
-          newScale = Math.min(newScale, 4);
-          setScale(newScale);
-        }}
       />
     </motion.div>
   );
