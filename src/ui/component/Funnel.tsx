@@ -24,6 +24,7 @@ interface FunnelProps {
 const Funnel: React.FC<FunnelProps> = ({ closeFunnel, sections, initialSelections, onApply }) => {
     const [currentSelections, setCurrentSelections] = useState<Selections>(initialSelections);
     const [isCloseFunnel, setIsCloseFunnel] = useState<boolean>(false);
+    const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
 
     const toggleCloseFunnel = () => {
         setIsCloseFunnel(true);
@@ -44,6 +45,13 @@ const Funnel: React.FC<FunnelProps> = ({ closeFunnel, sections, initialSelection
                 [sectionKey]: newSectionSelections,
             };
         });
+    };
+
+    const toggleSection = (sectionKey: string) => {
+        setCollapsedSections(prev => ({
+            ...prev,
+            [sectionKey]: !prev[sectionKey],
+        }));
     };
 
     const handleReset = () => {
@@ -71,7 +79,7 @@ const Funnel: React.FC<FunnelProps> = ({ closeFunnel, sections, initialSelection
                 animate={{ x: 0 }}
                 exit={{ x: "100%" }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="relative h-full w-3/4 bg-white flex flex-col gap-2.5 py-2.5">
+                className="relative h-full w-3/4 bg-white flex flex-col py-2.5">
                 <button
                     onClick={toggleCloseFunnel}
                     className="absolute top-1/2 right-full translate-y-[-50%] h-[100px] text-white bg-mainRed flex justify-center-safe items-center-safe !px-2.5 !rounded-tl-full !rounded-bl-full"
@@ -87,26 +95,45 @@ const Funnel: React.FC<FunnelProps> = ({ closeFunnel, sections, initialSelection
                     <h3 className="">Bộ lọc ({sections.length})</h3>
                 </div>
 
-                <div className="flex-1 h-0 flex flex-col gap-2 overflow-auto">
-                    {sections.map(section => (
-                        <div key={section.key} className="flex flex-col gap-2.5">
-                            <h5 className="px-mainTwoSidePadding text-csNormal">{section.title}</h5>
-                            <div className="flex flex-col gap-2.5 px-mainTwoSidePadding">
-                                {section.options.map(option => {
-                                    const isSelected = currentSelections[section.key]?.includes(option.id);
-                                    return (
-                                        <span
-                                            key={option.id}
-                                            onClick={() => handleChange(section.key, option.id)}
-                                            className={`flex w-full !border-[0.5px] border-lightGray ${isSelected && "bg-mainLightBlue"} rounded-small px-2.5 py-2 cursor-pointer`}
-                                        >
-                                            <p className={`text-csNormal font-medium ${isSelected && "text-white"}`}>{option.label}</p>
-                                        </span>
-                                    );
-                                })}
+                <div className="relative flex-1 h-0 flex flex-col overflow-auto">
+                    {sections.map(section => {
+                        const isCollapsed = collapsedSections[section.key];
+                        return (
+                            <div key={section.key} className="flex flex-col gap-2.5">
+                                <span className="sticky top-0 left-0 bg-white flex items-center justify-between px-mainTwoSidePadding py-2.5">
+                                    <h5 className="text-csNormal flex items-center gap-1.5">
+                                        {currentSelections[section.key]?.length > 0 && (
+                                            <span className="size-2 bg-mainRed rounded-full"></span>
+                                        )}
+                                        {section.title}
+                                    </h5>
+
+                                    <button className="mainShadow !p-2 !rounded-small" onClick={() => toggleSection(section.key)}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`size-4 transition-transform duration-200 ${isCollapsed ? "rotate-180" : ""}`}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                        </svg>
+                                    </button>
+                                </span>
+
+                                {!isCollapsed && (
+                                    <div className="flex flex-col gap-2.5 px-mainTwoSidePadding">
+                                        {section.options.map(option => {
+                                            const isSelected = currentSelections[section.key]?.includes(option.id);
+                                            return (
+                                                <span
+                                                    key={option.id}
+                                                    onClick={() => handleChange(section.key, option.id)}
+                                                    className={`flex w-full !border-[0.5px] border-lightGray ${isSelected && "bg-mainLightBlue"} rounded-small px-2.5 py-2 cursor-pointer`}
+                                                >
+                                                    <p className={`text-csNormal font-medium ${isSelected && "text-white"}`}>{option.label}</p>
+                                                </span>
+                                            );
+                                        })}
+                                    </div>
+                                )}
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
 
                 <div className="px-mainTwoSidePadding flex items-center-safe gap-2.5">
