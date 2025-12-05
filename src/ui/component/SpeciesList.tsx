@@ -151,7 +151,7 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
 
 
     const filterSections = useMemo<FilterSection[]>(() => {
-        const filterKeys: (keyof Pick<SpeciesShortDetail, 'genus'>)[] = ['genus'];
+        const filterKeys: (keyof Pick<SpeciesShortDetail, 'genus' | 'threatened_symbol'>)[] = ["threatened_symbol", 'genus'];
 
         return filterKeys.reduce((acc, key) => {
             const uniqueValues = Array.from(new Set(speciesListDiscovered.map(s => s[key]).filter((v): v is string => !!v)));
