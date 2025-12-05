@@ -119,6 +119,7 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
     const [isList, setIsList] = useState<boolean>(true)
     const [isFunnel, setIsFunnel] = useState<boolean>(false)
     const [selections, setSelections] = useState<Selections>({});
+    const [isDragging, setIsDragging] = useState<boolean>(false);
 
 
     const height = useMotionValue(isList ? window.innerHeight * 0.5 : 0);
@@ -205,6 +206,8 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
             >
                 <motion.div
                     onDrag={handleDrag}
+                    onDragStart={() => setIsDragging(true)}
+                    onDragEnd={() => setIsDragging(false)}
                     drag="y"
                     dragConstraints={{ top: 0, bottom: 0 }}
                     dragElastic={0}
@@ -253,40 +256,46 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
                     <p className="text-mainRed text-csSmall">Số lượng: {filteredSpecies.length} loài</p>
 
                     <div className="flex-1 h-0">
-                        <VirtuosoGrid
-                            style={{ height: '100%', width: '100%' }}
-                            totalCount={filteredSpecies.length}
-                            components={{
-                                Item: ({ children, ...props }) => (
-                                    <div
-                                        {...props}
-                                        style={{
-                                            width: isCard ? 'calc(25% - 8px)' : 'calc(100% - 8px)',
-                                            margin: '4px',
-                                            boxSizing: 'border-box',
-                                        }}
-                                    >
-                                        {children}
-                                    </div>
-                                ),
-                                List: React.forwardRef(({ style, children, ...props }, ref) => (
-                                    <div ref={ref} {...props} style={{ ...style, display: 'flex', flexWrap: 'wrap' }}>{children}</div>
-                                )),
-                            }}
-                            itemContent={(index) => (
-                                isCard ? (
-                                    <Card
-                                        species={filteredSpecies[index]}
-                                        speciesDeatail={speciesDeatail}
-                                    />
-                                ) : (
-                                    <Tag
-                                        species={filteredSpecies[index]}
-                                        speciesDeatail={speciesDeatail}
-                                    />
-                                )
-                            )}
-                        />
+                        {isDragging ? (
+                            <div className="w-full h-full flex justify-center items-center">
+                                <p className="text-gray">Đang điều chỉnh...</p>
+                            </div>
+                        ) : (
+                            <VirtuosoGrid
+                                style={{ height: '100%', width: '100%' }}
+                                totalCount={filteredSpecies.length}
+                                components={{
+                                    Item: ({ children, ...props }) => (
+                                        <div
+                                            {...props}
+                                            style={{
+                                                width: isCard ? 'calc(25% - 8px)' : 'calc(100% - 8px)',
+                                                margin: '4px',
+                                                boxSizing: 'border-box',
+                                            }}
+                                        >
+                                            {children}
+                                        </div>
+                                    ),
+                                    List: React.forwardRef(({ style, children, ...props }, ref) => (
+                                        <div ref={ref} {...props} style={{ ...style, display: 'flex', flexWrap: 'wrap' }}>{children}</div>
+                                    )),
+                                }}
+                                itemContent={(index) => (
+                                    isCard ? (
+                                        <Card
+                                            species={filteredSpecies[index]}
+                                            speciesDeatail={speciesDeatail}
+                                        />
+                                    ) : (
+                                        <Tag
+                                            species={filteredSpecies[index]}
+                                            speciesDeatail={speciesDeatail}
+                                        />
+                                    )
+                                )}
+                            />
+                        )}
                     </div>
                 </div>
             </motion.div>

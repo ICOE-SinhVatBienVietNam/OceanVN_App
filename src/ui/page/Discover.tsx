@@ -28,7 +28,7 @@ interface Card_interface {
     speciesData: SpeciesShortDetail
 }
 
-export const Discover_Card: React.FC<Card_interface> = ({ speciesDeatail, size, speciesData }) => {
+export const Discover_Card: React.FC<Card_interface> = React.memo(({ speciesDeatail, size, speciesData }) => {
     const dispatch = useDispatch()
     const thumbnail = speciesData.thumbnails.find(th => th.is_main === true)?.thumbnail
     const threatenedLevel = threatenedSpecies.find(lv => lv.code === speciesData.threatened_symbol)?.level
@@ -41,7 +41,7 @@ export const Discover_Card: React.FC<Card_interface> = ({ speciesDeatail, size, 
     return (
         <span className={`mainShadow flex-shrink-0 w-full flex flex-col gap-2.5 rounded-main px-2.5 py-2.5`} onClick={chooseSpecies}>
             <span className={`w-full h-[50px] ${size == "x1" && "h-[100px]"} ${size == "x0.75" && "h-[80px]"} aspect-square overflow-hidden flex justify-center items-center rounded-main`}>
-                <img src={cloudinaryRoot + thumbnail} className="w-full h-full object-cover object-center" />
+                <img src={cloudinaryRoot + thumbnail} className="w-full h-full object-cover object-center" loading="lazy" />
             </span>
 
             {size === 'x1' && (
@@ -66,7 +66,7 @@ export const Discover_Card: React.FC<Card_interface> = ({ speciesDeatail, size, 
             )}
         </span>
     )
-}
+});
 
 // Main component
 const Discover: React.FC = () => {
