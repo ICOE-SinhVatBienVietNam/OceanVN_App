@@ -35,15 +35,18 @@ export const Discover_Card: React.FC<Card_interface> = React.memo(({ speciesDeat
     }
 
     return (
-        <span className={`mainShadow flex-shrink-0 w-full flex flex-col gap-2.5 rounded-main px-2.5 py-2.5`} onClick={chooseSpecies}>
+        <span className={`mainShadow flex-shrink-0 h-full w-full  flex flex-col gap-2.5 rounded-main px-2.5 py-2.5`} onClick={chooseSpecies}>
             <span className={`w-full h-[50px] ${size == "x1" && "h-[100px]"} ${size == "x0.75" && "h-[100px]"} aspect-square overflow-hidden flex justify-center items-center rounded-main`}>
                 <img src={cloudinaryThumbnail + thumbnail} className="w-full h-full object-cover object-center" loading="lazy" onError={(e) => { e.currentTarget.src = noImageURL }} />
             </span>
 
             {size === 'x1' && (
                 <>
-                    <span className="w-full flex flex-col items-center-safe gap-2.5">
-                        <p className="text-csNormal font-medium text-center line-clamp-2">{speciesData.species}</p>
+                    <span className="w-full flex-1 flex flex-col items-center-safe gap-2.5">
+                        <p className="text-csNormal font-medium text-center line-clamp-2">
+                            <i>{speciesData.species.split(" ").slice(0, 2).join(" ")} </i>
+                            {speciesData.species.split(" ").slice(2).join(" ")}
+                        </p>
                     </span>
 
                     <span className="flex items-center-safe gap-1.5">
@@ -54,7 +57,7 @@ export const Discover_Card: React.FC<Card_interface> = React.memo(({ speciesDeat
                             {speciesData.threatened_symbol && threatenedLevel != null ? (
                                 threatenedSpecies.map((level, index) => {
                                     return (
-                                        <span key={index} className={`relative flex-1 h-2.5 ${(index <= parseInt(threatenedLevel)) && level.color}`}>
+                                        <span key={index} className={`relative flex-1 h-2 ${(index <= parseInt(threatenedLevel)) && level.color}`}>
 
                                         </span>
                                     )

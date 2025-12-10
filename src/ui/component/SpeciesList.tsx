@@ -49,7 +49,10 @@ const Tag: React.FC<Card_interface> = ({ speciesDeatail, species }) => {
             </span>
 
             <span className="w-full flex-1 flex flex-col">
-                <p className="w-full text-csNormal font-semibold line-clamp-1">{species.species}</p>
+                <p className="w-full text-csNormal font-semibold line-clamp-1">
+                    <i>{species.species.split(" ").slice(0, 2).join(" ")} </i>
+                    {species.species.split(" ").slice(2).join(" ")}
+                </p>
                 <p className="flex items-center text-csSmall font-bold text-gray">Nhóm {species.group}</p>
                 <span className="flex items-center-safe gap-1.5">
                     <p className="flex items-center text-csSmall font-bold text-gray">{species.threatened_symbol}</p>
