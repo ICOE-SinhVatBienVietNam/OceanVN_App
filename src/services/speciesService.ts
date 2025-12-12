@@ -78,7 +78,6 @@ export class SpeciesService {
         try {
             const speciesDetail: Species_Type = await api.get('/species/' + id)
             return speciesDetail
-            return undefined
         } catch (error) {
             console.error(error)
             return undefined

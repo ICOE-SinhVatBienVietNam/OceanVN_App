@@ -30,6 +30,15 @@ export const routeConfig = {
     register: {
         root: "/register"
     },
+
+    requireResetPassword: {
+        root: "/password/require-reset"
+    },
+
+    forgotPassword: {
+        root: "/password/forgot"
+    },
+
     share: {
         species: "/public-shared/:id"
     }
