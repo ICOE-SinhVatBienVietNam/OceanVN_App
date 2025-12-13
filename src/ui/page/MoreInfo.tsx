@@ -3,8 +3,9 @@ import React from "react"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
-import { IonPage, IonRouterLink } from "@ionic/react"
+import { IonPage, IonRouterLink, useIonRouter } from "@ionic/react"
 import defaultAvatar from "../../assets/userDefault.avif"
+import { routeConfig } from "../../config/routeConfig"
 
 // Authorise
 const Authorise: React.FC = () => {
@@ -15,6 +16,8 @@ const Authorise: React.FC = () => {
 
 // Unauthorise
 const Unauthorise: React.FC = () => {
+    const router = useIonRouter()
+
     return (
         <div className="h-fit w-full flex items-center-safe gap-3.5">
             <span className="h-[80px] aspect-square overflow-hidden rounded-full border-2 border-mainLightBlue">
@@ -22,7 +25,10 @@ const Unauthorise: React.FC = () => {
             </span>
 
             <span className="flex-1 h-full flex items-center-safe">
-                <button className="w-full bg-mainLightBlue text-csMedium font-medium text-white py-5! rounded-main! transition-all hover:bg-mainDarkBlue">
+                <button 
+                className="w-full bg-mainLightBlue text-csMedium font-medium text-white py-5! rounded-main! transition-all hover:bg-mainDarkBlue"
+                onClick={() => { router.push(routeConfig.login.root) }}
+                >
                     Tham gia cộng đồng
                 </button>
             </span>

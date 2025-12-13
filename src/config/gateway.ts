@@ -55,7 +55,7 @@ api.interceptors.request.use(
 // Response Interceptor
 // =============================
 api.interceptors.response.use(
-    (response: AxiosResponse) => response.data,
+    (response: AxiosResponse) => response,
 
     async (error: AxiosError): Promise<any> => {
         const originalRequest = error.config as AxiosRequestConfigWithRetry;
