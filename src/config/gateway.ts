@@ -6,153 +6,203 @@ interface AxiosRequestConfigWithRetry extends AxiosRequestConfig {
     _retry?: boolean;
 }
 
-// =============================
-// axios instance chính
-// =============================
+/* =============================
+   Config
+============================= */
+
+const BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL_LOCAL;
+
+const PUBLIC_ENDPOINTS = [
+    "/auth/login",
+    "/auth/register",
+    "/auth/forgot-password",
+    "/auth/require-reset",
+];
+
+/* =============================
+   Axios instances
+============================= */
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL_LOCAL,
+    baseURL: BASE_URL,
     timeout: 60000,
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
 });
 
-// =============================
-// axios instance riêng cho refresh
-// KHÔNG có interceptor → tránh loop
-// =============================
 const refreshClient = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL_LOCAL,
+    baseURL: BASE_URL,
     timeout: 60000,
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
 });
+
+/* =============================
+   Refresh state
+============================= */
 
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
-function onTokenRefreshed(newToken: string) {
-    refreshSubscribers.forEach(cb => cb(newToken));
+function onTokenRefreshed(token: string) {
+    refreshSubscribers.forEach((cb) => cb(token));
     refreshSubscribers = [];
 }
 
-function addRefreshSubscriber(callback: (token: string) => void) {
-    refreshSubscribers.push(callback);
+function addRefreshSubscriber(cb: (token: string) => void) {
+    refreshSubscribers.push(cb);
 }
 
-// =============================
-// Request Interceptor
-// =============================
+/* =============================
+   Request interceptor
+============================= */
+
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem("accessToken");
+
         if (token) {
             config.headers?.set("Authorization", `Bearer ${token}`);
         }
+
         return config;
     },
     (error) => Promise.reject(error)
 );
 
-// =============================
-// Response Interceptor
-// =============================
+/* =============================
+   Response interceptor
+============================= */
+
 api.interceptors.response.use(
     (response: AxiosResponse) => response,
 
-    async (error: AxiosError): Promise<any> => {
+    async (error: AxiosError) => {
         const originalRequest = error.config as AxiosRequestConfigWithRetry;
 
-        // ================
-        // Nếu API refresh Token lỗi → redirect luôn
-        // ================
-        if (originalRequest?.url?.includes("/auth/refresh")) {
-
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
-
-            toastConfig({
-                toastType: "error",
-                toastMessage: "Phiên đăng nhập đã hết hạn"
-            });
-
-            window.location.replace(routeConfig.login.root);
+        if (!originalRequest || !originalRequest.url) {
             return Promise.reject(error);
         }
 
-        // ================
-        // Token hết hạn → refresh
-        // ================
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        /* =============================
+           1. Bỏ qua PUBLIC endpoints
+        ============================= */
 
-            originalRequest._retry = true;
+        const isPublicEndpoint = PUBLIC_ENDPOINTS.some((endpoint) =>
+            originalRequest.url!.includes(endpoint)
+        );
 
-            // Đang refresh → queue request lại
-            if (isRefreshing) {
-                return new Promise((resolve) => {
-                    addRefreshSubscriber((newToken) => {
-                        originalRequest.headers = {
-                            ...originalRequest.headers,
-                            Authorization: `Bearer ${newToken}`
-                        };
-                        resolve(api(originalRequest));
-                    });
-                });
-            }
-
-            // Bắt đầu refresh
-            isRefreshing = true;
-
-            try {
-                const refreshToken = localStorage.getItem("refreshToken");
-                if (!refreshToken) throw new Error("Missing refresh token");
-
-                const res = await refreshClient.post("/auth/refresh", {
-                    refresh_token: refreshToken
-                });
-
-                const newAccessToken = res.data.accessToken;
-                const newRefreshToken = res.data.refresh_token;
-
-                // Lưu token mới
-                localStorage.setItem("accessToken", newAccessToken);
-                localStorage.setItem("refreshToken", newRefreshToken);
-
-                // Gọi lại các request bị queue
-                onTokenRefreshed(newAccessToken);
-
-                // Gán lại token vào request ban đầu
-                originalRequest.headers = {
-                    ...originalRequest.headers,
-                    Authorization: `Bearer ${newAccessToken}`
-                };
-
-                return api(originalRequest);
-
-            } catch (refreshError) {
-                console.error("Refresh token failed:", refreshError);
-
-                // Xóa token
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-
-                toastConfig({
-                    toastType: "error",
-                    toastMessage: "Phiên đăng nhập đã hết hạn"
-                });
-
-                // Redirect chắc chắn chạy
-                setTimeout(() => {
-                    window.location.replace(routeConfig.login.root);
-                }, 0);
-
-                return Promise.reject(refreshError);
-
-            } finally {
-                isRefreshing = false;
-            }
+        if (isPublicEndpoint) {
+            return Promise.reject(error);
         }
 
-        return Promise.reject(error);
+        /* =============================
+           2. Không refresh nếu chưa login
+        ============================= */
+
+        const accessToken = localStorage.getItem("accessToken");
+        if (!accessToken) {
+            return Promise.reject(error);
+        }
+
+        /* =============================
+           3. Refresh token failed → logout
+        ============================= */
+
+        if (originalRequest.url.includes("/auth/refresh")) {
+            cleanupAndRedirect();
+            return Promise.reject(error);
+        }
+
+        /* =============================
+           4. Chỉ refresh khi token hết hạn
+        ============================= */
+
+        const isTokenExpired =
+            error.response?.status === 401 &&
+            // ⬇️ Nếu backend có code riêng thì check thêm
+            (error.response.data as any)?.code === "TOKEN_EXPIRED";
+
+        if (!isTokenExpired || originalRequest._retry) {
+            return Promise.reject(error);
+        }
+
+        originalRequest._retry = true;
+
+        /* =============================
+           5. Đang refresh → queue request
+        ============================= */
+
+        if (isRefreshing) {
+            return new Promise((resolve) => {
+                addRefreshSubscriber((newToken) => {
+                    originalRequest.headers = {
+                        ...originalRequest.headers,
+                        Authorization: `Bearer ${newToken}`,
+                    };
+                    resolve(api(originalRequest));
+                });
+            });
+        }
+
+        /* =============================
+           6. Thực hiện refresh
+        ============================= */
+
+        isRefreshing = true;
+
+        try {
+            const refreshToken = localStorage.getItem("refreshToken");
+            if (!refreshToken) {
+                throw new Error("Missing refresh token");
+            }
+
+            const res = await refreshClient.post("/auth/refresh", {
+                refresh_token: refreshToken,
+            });
+
+            const newAccessToken = res.data.accessToken;
+            const newRefreshToken = res.data.refresh_token;
+
+            localStorage.setItem("accessToken", newAccessToken);
+            localStorage.setItem("refreshToken", newRefreshToken);
+
+            onTokenRefreshed(newAccessToken);
+
+            originalRequest.headers = {
+                ...originalRequest.headers,
+                Authorization: `Bearer ${newAccessToken}`,
+            };
+
+            return api(originalRequest);
+        } catch (refreshError) {
+            cleanupAndRedirect();
+            return Promise.reject(refreshError);
+        } finally {
+            isRefreshing = false;
+        }
     }
 );
+
+/* =============================
+   Helpers
+============================= */
+
+function cleanupAndRedirect() {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+
+    toastConfig({
+        toastType: "error",
+        toastMessage: "Phiên đăng nhập đã hết hạn",
+    });
+
+    setTimeout(() => {
+        window.location.replace(routeConfig.login.root);
+    }, 0);
+}
+
+/* =============================
+   Exports
+============================= */
 
 export default api;
 

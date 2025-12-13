@@ -1,10 +1,12 @@
 import { toast } from "react-toastify";
 import api from "../config/gateway";
 import { toastConfig } from "../config/toastConfig";
+import { setAuth, setUserData, userData } from "../redux/state/authReducer";
+import { store } from "../redux/store";
 
 export class AuthService {
     // Sign in
-    async signin(email: string, password: string) {
+    static async signin(email: string, password: string) {
         if (!email || !password) {
             toastConfig({
                 toastType: 'error',
@@ -23,15 +25,46 @@ export class AuthService {
             return false
         }
 
+        let pending
+
         try {
-            const { status } = await api.post("/auth/sign-in", { email, password })
+            pending = toastConfig({
+                pending: true,
+                toastMessage: "Đang đăng nhập"
+            })
+            const { data, status } = await api.post("/auth/sign-in", { email, password })
+            toast.dismiss(pending)
 
             if (status === 201) {
-                toastConfig({
-                    toastType: 'success',
-                    toastMessage: 'Đăng nhập thành công'
-                })
-                return true
+                const userData = data as userData
+
+                if (userData.user.banned) {
+                    toastConfig({
+                        toastType: 'error',
+                        toastMessage: 'Tài khoản đã bị khóa'
+                    })
+
+                    setTimeout(() => {
+                        toastConfig({
+                            toastType: 'info',
+                            toastMessage: 'Vui lòng liên hệ quản trị viên'
+                        })
+                    }, 1000)
+
+                    return false
+                } else {
+                    toastConfig({
+                        toastType: 'success',
+                        toastMessage: 'Đăng nhập thành công'
+                    })
+
+                    localStorage.setItem("accessToken", userData.accessToken)
+                    localStorage.setItem("refreshToken", userData.refreshToken)
+
+                    store.dispatch(setUserData({ userData: userData.user }))
+                    store.dispatch(setAuth({ auth: true }))
+                    return true
+                }
             }
 
             toastConfig({
@@ -113,7 +146,7 @@ export class AuthService {
                 toastType: 'error',
                 toastMessage: 'Tài khoản không hợp lệ'
             })
-            
+
             return false
         }
     }

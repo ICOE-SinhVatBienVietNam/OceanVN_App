@@ -3,7 +3,7 @@ import React from "react"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
-import { IonPage, IonRouterLink, useIonRouter } from "@ionic/react"
+import { IonPage, useIonRouter } from "@ionic/react"
 import defaultAvatar from "../../assets/userDefault.avif"
 import { routeConfig } from "../../config/routeConfig"
 
@@ -27,7 +27,7 @@ const Unauthorise: React.FC = () => {
             <span className="flex-1 h-full flex items-center-safe">
                 <button 
                 className="w-full bg-mainLightBlue text-csMedium font-medium text-white py-5! rounded-main! transition-all hover:bg-mainDarkBlue"
-                onClick={() => { router.push(routeConfig.login.root) }}
+                onClick={() => { router.push(routeConfig.login.root, "root") }}
                 >
                     Tham gia cộng đồng
                 </button>
