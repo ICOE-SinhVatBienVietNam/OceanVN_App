@@ -64,7 +64,7 @@ const LoginForm: React.FC = () => {
             </span>
 
             <span className="w-full flex justify-end-safe">
-                <Link to="" className="!text-csNormal !text-mainLightBlue italic underline">Quên mật khẩu</Link>
+                <IonRouterLink href={routeConfig.requireResetPassword.root} className="!text-csNormal !text-mainLightBlue italic underline">Quên mật khẩu</IonRouterLink>
             </span>
 
             <span className="flex flex-col items-center-safe gap-3">

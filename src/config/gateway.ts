@@ -10,7 +10,8 @@ interface AxiosRequestConfigWithRetry extends AxiosRequestConfig {
    Config
 ============================= */
 
-const BASE_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL_LOCAL;
+const BASE_URL =
+    import.meta.env.VITE_API_URL || import.meta.env.VITE_API_URL_LOCAL;
 
 const PUBLIC_ENDPOINTS = [
     "/auth/login",
@@ -44,6 +45,11 @@ let refreshSubscribers: ((token: string) => void)[] = [];
 
 function onTokenRefreshed(token: string) {
     refreshSubscribers.forEach((cb) => cb(token));
+    refreshSubscribers = [];
+}
+
+/* 🔧 [SỬA] thêm xử lý refresh fail */
+function onRefreshFailed() {
     refreshSubscribers = [];
 }
 
@@ -95,7 +101,7 @@ api.interceptors.response.use(
         }
 
         /* =============================
-           2. Không refresh nếu chưa login
+           2. Chưa login → reject
         ============================= */
 
         const accessToken = localStorage.getItem("accessToken");
@@ -104,47 +110,42 @@ api.interceptors.response.use(
         }
 
         /* =============================
-           3. Refresh token failed → logout
+           3. BẮT 401 LÀ UNAUTHORIZED
+           🔧 [SỬA] bỏ check code === TOKEN_EXPIRED
         ============================= */
 
-        if (originalRequest.url.includes("/auth/refresh")) {
-            cleanupAndRedirect();
-            return Promise.reject(error);
-        }
+        const isUnauthorized = error.response?.status === 401;
 
-        /* =============================
-           4. Chỉ refresh khi token hết hạn
-        ============================= */
-
-        const isTokenExpired =
-            error.response?.status === 401 &&
-            // ⬇️ Nếu backend có code riêng thì check thêm
-            (error.response.data as any)?.code === "TOKEN_EXPIRED";
-
-        if (!isTokenExpired || originalRequest._retry) {
+        if (!isUnauthorized || originalRequest._retry) {
             return Promise.reject(error);
         }
 
         originalRequest._retry = true;
 
         /* =============================
-           5. Đang refresh → queue request
+           4. Đang refresh → queue request
         ============================= */
 
         if (isRefreshing) {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 addRefreshSubscriber((newToken) => {
+                    if (!newToken) {
+                        reject(error);
+                        return;
+                    }
+
                     originalRequest.headers = {
                         ...originalRequest.headers,
                         Authorization: `Bearer ${newToken}`,
                     };
+
                     resolve(api(originalRequest));
                 });
             });
         }
 
         /* =============================
-           6. Thực hiện refresh
+           5. Thực hiện refresh
         ============================= */
 
         isRefreshing = true;
@@ -174,6 +175,8 @@ api.interceptors.response.use(
 
             return api(originalRequest);
         } catch (refreshError) {
+            /* Refresh fail → clear queue + logout */
+            onRefreshFailed();
             cleanupAndRedirect();
             return Promise.reject(refreshError);
         } finally {
@@ -205,6 +208,7 @@ function cleanupAndRedirect() {
 ============================= */
 
 export default api;
+
 
 export const cloudinaryRoot = import.meta.env.VITE_PATH_CLOUDINARY
 export const cloudinaryThumbnail = "https://res.cloudinary.com/dz1o0fpi6/image/upload/w_200,h_200,c_fill,g_auto,f_auto,q_auto:eco,fl_strip_profile/v1762183131/"

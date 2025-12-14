@@ -40,7 +40,7 @@ export const AuthSlice = createSlice({
             }
         },
 
-        setUserData: (state, action: PayloadAction<{ userData: userData['user'] }>) => {
+        setUserData: (state, action: PayloadAction<{ userData: userData['user'] | {} }>) => {
             if (Object.keys(action.payload.userData).length > 0) {
                 state.user = action.payload.userData
             } else state.user = {}

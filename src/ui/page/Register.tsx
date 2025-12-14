@@ -17,6 +17,13 @@ const RegisterForm: React.FC = () => {
 
     const handleRegister = async () => {
         const signin = await AuthService.signup(name, email, password, confirmPassword)
+
+        if (signin) {
+            setName("")
+            setEmail("")
+            setPassword("")
+            setConfirmPassword("")
+        }
     }
 
     return (
@@ -89,7 +96,7 @@ const RegisterForm: React.FC = () => {
             <span className="flex flex-col items-center-safe gap-3">
                 <button className="w-full h-[40px] bg-mainLightBlue text-white !rounded-small" onClick={handleRegister}>
                     Đăng ký
-                    </button>
+                </button>
                 <IonRouterLink href={routeConfig.login.root} className="!text-csNormal !text-mainDarkBlue italic underline">Đã có tài khoản?</IonRouterLink>
             </span>
         </div>

@@ -40,16 +40,18 @@ const MainLayout: React.FC = () => {
 
     // Get species data 
     useEffect(() => {
-        (async () => {
-            const pending = toastConfig({
-                toastMessage: 'Đang tải dữ liệu',
-                pending: true
-            })
-            const getSpeciesData = await speciesService.getSpeciesShortDetail()
-            toast.dismiss(pending)
-            dispatch(setSpecies(getSpeciesData))
-        })()
-    }, [])
+        if (showTabs) {
+            (async () => {
+                const pending = toastConfig({
+                    toastMessage: 'Đang tải dữ liệu',
+                    pending: true
+                })
+                const getSpeciesData = await speciesService.getSpeciesShortDetail()
+                toast.dismiss(pending)
+                dispatch(setSpecies(getSpeciesData))
+            })()
+        }
+    }, [showTabs])
 
     return (
         <>

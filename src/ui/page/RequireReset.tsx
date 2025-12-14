@@ -1,6 +1,7 @@
 import React, { lazy, useState } from "react"
 import { IonRouterLink } from "@ionic/react"
 import { routeConfig } from "../../config/routeConfig"
+import { AuthService } from "../../services/authService"
 
 // Layout
 const AuthenLayout = lazy(() => import("../layout/AuthenLayout"))
@@ -8,7 +9,7 @@ const AuthenLayout = lazy(() => import("../layout/AuthenLayout"))
 // Popup Component
 const ResetInfoPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="fixed inset-0 bg-[rgba(0,0,0,0.75)] flex justify-center items-center z-50">
             <div className="bg-white p-8 rounded-main shadow-lg text-center flex flex-col gap-4 items-center w-[90%] max-w-md">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-12 text-mainGreen">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
@@ -25,23 +26,25 @@ const ResetInfoPopup: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
 
 const RequireResetForm: React.FC = () => {
-    const [showPopup, setShowPopup] = useState(false);
+    const [showPopup, setShowPopup] = useState<boolean>(false);
+    const [email, setEmail] = useState<string>("")
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        // Here you would typically handle the API call to send the reset email
-        setShowPopup(true);
+    const handleSubmit = async () => {
+        const requireReset = await AuthService.requireResetPassword(email)
+
+        if (requireReset) {
+            setShowPopup(true);
+        }
     }
 
     const handleClosePopup = () => {
         setShowPopup(false);
-        // Optionally, redirect the user after closing the popup, e.g., back to login
     }
 
     return (
         <>
             {showPopup && <ResetInfoPopup onClose={handleClosePopup} />}
-            <form onSubmit={handleSubmit} className="shadowForm h-fit w-full bg-white p-5 rounded-main flex flex-col gap-4">
+            <div className="shadowForm h-fit w-full bg-white p-5 rounded-main flex flex-col gap-4">
                 <span className="flex flex-col items-center-safe text-center gap-2">
                     {/* Lock Icon */}
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 text-gray-500">
@@ -56,14 +59,24 @@ const RequireResetForm: React.FC = () => {
 
                 <span className="flex flex-col gap-1">
                     <p className="text-csNormal font-semibold">Email<b className="text-mainRed">*</b></p>
-                    <input required type="email" placeholder="Nhập email..." className="w-full h-[40px] !text-csNormal border-[0.5px] border-lightGray px-2.5 rounded-small" />
+                    <input
+                        required
+                        type="email" placeholder="Nhập email..." className="w-full h-[40px] !text-csNormal border-[0.5px] border-lightGray px-2.5 rounded-small"
+                        value={email}
+                        onChange={(e) => { setEmail(e.target.value) }}
+                    />
                 </span>
 
                 <span className="flex flex-col items-center-safe gap-3 mt-4">
-                    <button type="submit" className="w-full h-[40px] bg-mainLightBlue text-white !rounded-small">Gửi yêu cầu</button>
-                    <IonRouterLink routerLink={routeConfig.login.root} className="!text-csNormal !text-mainDarkBlue italic underline">Quay lại đăng nhập</IonRouterLink>
+                    <button
+                        type="submit" className="w-full h-[40px] bg-mainLightBlue text-white !rounded-small"
+                        onClick={handleSubmit}
+                    >
+                        Gửi yêu cầu
+                    </button>
+                    <IonRouterLink href={routeConfig.login.root} className="!text-csNormal !text-mainDarkBlue italic underline">Quay lại đăng nhập</IonRouterLink>
                 </span>
-            </form>
+            </div>
         </>
     )
 }
