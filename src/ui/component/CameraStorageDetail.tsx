@@ -2,9 +2,14 @@ import React from "react"
 import { motion } from "framer-motion"
 
 // Images
-import Logo from "../../assets/SinhVatBienVN.png"
 import { useConfirm } from "../../hooks/ConfirmForm"
 import { MapContainer, Marker, TileLayer } from "react-leaflet"
+import { useDispatch, useSelector } from "react-redux"
+import { RootState } from "../../redux/store"
+import { MapResizeHandler, MyPositionMarker } from "../page/Map"
+import { cloudinaryRoot } from "../../config/gateway"
+import { ContributionService } from "../../services/contributionService"
+import { setContributionDetail, setContributionDetailId } from "../../redux/state/contributionReducer"
 
 interface CameraStorageDetail_interface {
     toggleCameraStorageDetail: () => void
@@ -12,9 +17,21 @@ interface CameraStorageDetail_interface {
 
 const CameraStorageDetail: React.FC<CameraStorageDetail_interface> = ({ toggleCameraStorageDetail }) => {
     const confirm = useConfirm()
+    const contributionDetailData = useSelector((state: RootState) => state.contribution.contributionDetail)
+    const user = useSelector((state: RootState) => state.auth.user)
+    const dispatch = useDispatch()
 
-    const handleDelete = () => {
-        confirm()
+    const handleDelete = async () => {
+        const confirmDelete = await confirm({ title: `Xóa`, message: "Bạn muốn xóa mục này?" })
+
+        if (confirmDelete && contributionDetailData) {
+            const isDelete = await ContributionService.deleteContribution([contributionDetailData.id], user?.id)
+            if (isDelete) {
+                dispatch(setContributionDetailId({ id: null }))
+                dispatch(setContributionDetail({ contributionData: null }))
+                toggleCameraStorageDetail()
+            }
+        }
     }
 
     return (
@@ -41,43 +58,50 @@ const CameraStorageDetail: React.FC<CameraStorageDetail_interface> = ({ toggleCa
 
             <div className="flex-1 h-0 overflow-auto flex flex-col gap-2.5 px-mainTwoSidePadding pt-0.5">
                 <div className="h-fit w-full">
-                    <p className="text-csNormal font-medium text-gray">Ngày tạo: 25/10/2025</p>
+                    <p className="text-csNormal font-medium text-gray">Ngày tạo: {contributionDetailData && new Date(contributionDetailData?.created_at).toLocaleString("vi-VN")}</p>
                 </div>
 
                 <div className="h-fit w-full">
                     <span className="mainShadow !h-[200px] flex-shrink-0 flex justify-center items-center p-2.5 rounded-main overflow-hidden">
-                        <img src={Logo} className="h-full" />
+                        <img src={cloudinaryRoot + contributionDetailData?.thumbnail} className="object-cover object-center" />
                     </span>
                 </div>
 
                 <div className="h-fit w-full flex flex-col items-center-safe py-2.5">
-                    <h4 className="!leading-0 !font-medium uppercase">Tiêu đề bức ảnh</h4>
+                    <h4 className="!leading-0 !font-medium uppercase">{contributionDetailData?.title}</h4>
                 </div>
 
                 <div className="h-fit w-full">
-                    <p className="text-gray text-justify pl-2.5">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                    </p>
+                    <h4>Mô tả</h4>
+                    <span className="w-full">
+                        <p className="text-gray text-justify pl-2.5">{contributionDetailData?.body}</p>
+                    </span>
                 </div>
 
-                <div className="h-fit w-full">
-                    <h4>Vị trí bức ảnh</h4>
-                    <MapContainer
-                        center={[10.330353, 107.089426]}
-                        zoom={12}
-                        style={{ height: "300px", width: "100%", position: "relative" }}
-                        className="z-0"
-                        // ref={mapRef}
-                        zoomControl={false}
-                    >
-                        <TileLayer
-                            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-                            attribution="&copy; OpenStreetMap contributors &copy; CARTO"
-                        />
+                {contributionDetailData?.is_contibuted && contributionDetailData.latitude && contributionDetailData.longtitude && (
+                    <div className="h-fit w-full">
+                        <h4>Vị trí bức ảnh</h4>
 
-                        <Marker position={[10.330353, 107.089426]} />
-                    </MapContainer>
-                </div>
+                        <div className="mainShadow h-fit">
+                            <MapContainer
+                                center={[contributionDetailData.latitude, contributionDetailData.longtitude]}
+                                zoom={12}
+                                style={{ height: "300px", width: "100%", position: "relative" }}
+                                className="z-0"
+                                // ref={mapRef}
+                                zoomControl={false}
+                            >
+                                <MapResizeHandler />
+                                <TileLayer
+                                    url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                                    attribution="&copy; OpenStreetMap contributors &copy; CARTO"
+                                />
+
+                                <MyPositionMarker position={[contributionDetailData.latitude, contributionDetailData.longtitude]} />
+                            </MapContainer>
+                        </div>
+                    </div>
+                )}
             </div>
         </motion.div>
     )

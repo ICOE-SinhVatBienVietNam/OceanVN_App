@@ -65,8 +65,10 @@ export class SpeciesService {
     // Get all species for rendering on the map
     async getSpeciesShortDetail(): Promise<SpeciesShortDetail[]> {
         try {
-            const species: SpeciesShortDetail[] = await api.get('/species/get-all-short')
-            return species
+            const { data, status } = await api.get('/species/get-all-short')
+            if (status === 200) {
+                return data as SpeciesShortDetail[]
+            } else return []
         } catch (error) {
             console.error(error)
             return []
@@ -76,8 +78,10 @@ export class SpeciesService {
     // Get one species base on ID
     async getSpeciesID(id: string): Promise<Species_Type | undefined> {
         try {
-            const speciesDetail: Species_Type = await api.get('/species/' + id)
-            return speciesDetail
+            const { data, status } = await api.get('/species/' + id)
+            if (status === 200) {
+                return data as Species_Type
+            } else return undefined
         } catch (error) {
             console.error(error)
             return undefined

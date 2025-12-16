@@ -14,7 +14,10 @@ import { toastConfig } from "../../config/toastConfig"
 import QuestCommunity from "../component/QuestCommunity"
 import QuestDetail from "../component/QuestDetail"
 import QuestionForm from "../component/QuestionForm"
-import { IonPage } from "@ionic/react"
+import { IonPage, useIonRouter } from "@ionic/react"
+import { routeConfig } from "../../config/routeConfig"
+import { useSelector } from "react-redux"
+import { RootState } from "../../redux/store"
 
 const QuestionCard: React.FC<{
     id: number,
@@ -65,6 +68,25 @@ const QuestionCard: React.FC<{
     )
 }
 
+const QuestUnAuth: React.FC = () => {
+    const router = useIonRouter()
+
+    return (
+        <div className="fixed top-0 left-0 z-50 h-full w-full bg-[rgba(255,255,255,0.5)] backdrop-blur-md flex items-center-safe px-mainTwoSidePadding">
+            <span className="mainShadow w-full bg-white flex flex-col items-center-safe py-5 px-3.5">
+                <h1 className="w-fit leading-none!">Xin chào</h1>
+                <p className="text-csMedium font-medium text-gray">Tính năng này yêu cầu đăng nhập</p>
+                <button
+                    className="w-full bg-mainLightBlue text-csMedium text-white font-medium rounded-small! py-3.5! mt-5"
+                    onClick={() => { router.push(routeConfig.login.root, "root") }}
+                >
+                    Đăng nhập
+                </button>
+            </span>
+        </div>
+    )
+}
+
 
 type differentConnections = {
     label: string,
@@ -75,6 +97,7 @@ const Quest: React.FC = () => {
     // State
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [selectedItems, setSelectedItems] = useState<number[]>([])
+    const isAuth = useSelector((state: RootState) => state.auth.isAuth)
 
     // Different connection
     const differentConnections = useRef<differentConnections[]>([
@@ -125,6 +148,7 @@ const Quest: React.FC = () => {
     return (
         <IonPage>
             <div className="relative h-full w-full flex flex-col gap-2.5 px-mainTwoSidePadding overflow-auto pt-2.5">
+                {!isAuth && <QuestUnAuth />}
                 <>
                     <div className="w-full flex-col">
                         <span className="flex items-center justify-between">

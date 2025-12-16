@@ -6,6 +6,7 @@ import React, { lazy, Suspense } from "react"
 import wave from "../../assets/Wave.png"
 import oceavn from "../../assets/SinhVatBienVN.png"
 import { Link, Redirect, Route } from "react-router-dom"
+import { Bounce, ToastContainer } from "react-toastify"
 
 interface WrapperProps {
     form: React.ComponentType<any>; // nhận component bất kỳ
@@ -31,6 +32,20 @@ const AuthenLayout: React.FC<WrapperProps> = ({ form: Form }) => {
                     </div>
                 </div>
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                limit={4}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Bounce}
+            />
         </IonPage>
     )
 }

@@ -48,6 +48,7 @@ import { AuthCheckPopupProvider } from './hooks/AuthCheck';
 
 // Config
 import { routeConfig } from './config/routeConfig';
+import Auth from './hooks/Auth';
 
 setupIonicReact();
 
@@ -59,6 +60,7 @@ const App: React.FC = () => (
       <IonReactRouter>
         <AuthCheckPopupProvider>
           <Suspense fallback={<div>Loading...</div>}>
+            <Auth />
             <IonRouterOutlet>
               {/* Starter */}
               <Route exact path={routeConfig.intro.root} children={<Introduction />}></Route>
