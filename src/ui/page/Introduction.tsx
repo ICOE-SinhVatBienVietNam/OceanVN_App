@@ -44,8 +44,9 @@ const Introduction: React.FC = () => {
 
                 <img src={wave} />
 
-                <div className="absolute h-fit w-full flex justify-center-safe bottom-5 left-1/2 translate-x-[-50%]">
+                <div className="absolute h-fit w-full flex flex-col items-center-safe bottom-5 left-1/2 translate-x-[-50%]">
                     <p className="text-white text-csSmall">Copyright © 2025 Bản quyền thuộc về Sinh vật biển Việt Nam</p>
+                    <p className="text-csSmall font-medium text-lightGray">Thiết kế và phát triển bởi <a className="font-bold underline italic text-mainDarkBlue!" href="https://github.com/duy08k4">dDev</a></p>
                 </div>
             </div>
         </IonPage>
