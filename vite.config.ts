@@ -22,12 +22,29 @@ export default defineConfig({
         short_name: 'SVBVN',
         description: 'Nơi chia sẻ kiến thức về các sinh vật biển ở Việt Nam',
         theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        scope: '/',
+        start_url: '/',
         icons: [
-          {
-            src: 'favicon.png',
-            sizes: '512x512',
-            type: 'image/png'
-          }
+            {
+                src: 'favicon.png',
+                sizes: '192x192',
+                type: 'image/png',
+                purpose: 'any'
+            },
+            {
+                src: 'favicon.png',
+                sizes: '512x512',
+                type: 'image/png',
+                purpose: 'any'
+            },
+            {
+                src: 'favicon.png',
+                sizes: '512x512',
+                type: 'image/png',
+                purpose: 'maskable'
+            }
         ]
       }
     })

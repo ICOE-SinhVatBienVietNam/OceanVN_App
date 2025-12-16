@@ -83,7 +83,7 @@ const MoreInfo: React.FC = () => {
         const confirmInstall = await confirm({ title: "Cài đặt ứng dụng", message: "" })
 
         if (confirmInstall) {
-            triggerInstall
+            triggerInstall()
         }
     }
 
