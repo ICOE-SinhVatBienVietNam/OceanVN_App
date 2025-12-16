@@ -18,17 +18,18 @@ const AuthenLayout: React.FC<WrapperProps> = ({ form: Form }) => {
         <IonPage>
             <div className="relative h-full w-full flex items-end-safe">
                 <img src={wave} className="w-full" />
-                <div className="absolute top-0 left-0 h-full w-full flex flex-col item gap-5 pt-15">
+                <div className="absolute top-0 left-0 h-full w-full flex flex-col item gap-5 pt-7">
                     <span className="flex flex-col items-center-safe">
-                        <img src={oceavn} className="w-[25%]" />
+                        <img src={oceavn} className="w-[20%]" />
                     </span>
 
                     <span className="flex-1 w-full flex justify-center-safe px-5">
                         <Form />
                     </span>
 
-                    <div className="absolute h-fit w-full flex justify-center-safe bottom-5 left-1/2 translate-x-[-50%]">
+                    <div className="absolute h-fit w-full flex flex-col items-center-safe bottom-5 left-1/2 translate-x-[-50%]">
                         <p className="text-white text-csSmall">Copyright © 2025 Bản quyền thuộc về Sinh vật biển Việt Nam</p>
+                        <p className="text-csSmall font-medium text-lightGray">Thiết kế và phát triển bởi <a className="font-bold underline italic text-mainDarkBlue!" href="https://github.com/duy08k4">dDev</a></p>
                     </div>
                 </div>
             </div>

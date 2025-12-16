@@ -230,7 +230,7 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm, im
                     }
                 }
 
-                await ContributionService.createContribution(
+                const success = await ContributionService.createContribution(
                     user.id,
                     data.publicIds[0],
                     imageName,
@@ -241,23 +241,13 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm, im
                 );
 
                 toast.dismiss(pending)
-                if (data && data.publicIds.length > 0) {
-                    toggleForm({
-                        toastMessage: `Đã ${isContribute ? "đóng góp" : "lưu ảnh"}`,
-                        toastType: "success"
-                    });
-
-                    return
+                if (success) {
+                    toggleForm();
                 }
-
-                toggleForm({
-                    toastMessage: "Không thể lưu ảnh",
-                    toastType: "error"
-                });
 
             } catch (error) {
                 console.error("Lỗi khi xử lý ảnh:", error);
-                toggleForm({
+                toastConfig({
                     toastMessage: "Lỗi khi xử lý ảnh",
                     toastType: "error"
                 });

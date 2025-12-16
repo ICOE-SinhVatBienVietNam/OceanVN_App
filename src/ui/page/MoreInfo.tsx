@@ -119,7 +119,7 @@ const MoreInfo: React.FC = () => {
                             <p className="text-csMedium font-medium">Nhóm sinh vật biển Việt Nam</p>
                         </a>
 
-                        <a href="" className="flex items-end-safe gap-3.5 border border-lighterGray mainShadow py-5 px-3.5 rounded-small hover:bg-lighterGray! transition-all">
+                        {/* <a href="" className="flex items-end-safe gap-3.5 border border-lighterGray mainShadow py-5 px-3.5 rounded-small hover:bg-lighterGray! transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
                                 <path d="M10.5 18.75a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z" />
                                 <path fillRule="evenodd" d="M8.625.75A3.375 3.375 0 0 0 5.25 4.125v15.75a3.375 3.375 0 0 0 3.375 3.375h6.75a3.375 3.375 0 0 0 3.375-3.375V4.125A3.375 3.375 0 0 0 15.375.75h-6.75ZM7.5 4.125C7.5 3.504 8.004 3 8.625 3H9.75v.375c0 .621.504 1.125 1.125 1.125h2.25c.621 0 1.125-.504 1.125-1.125V3h1.125c.621 0 1.125.504 1.125 1.125v15.75c0 .621-.504 1.125-1.125 1.125h-6.75A1.125 1.125 0 0 1 7.5 19.875V4.125Z" clipRule="evenodd" />
@@ -127,13 +127,14 @@ const MoreInfo: React.FC = () => {
 
 
                             <p className="text-csMedium font-medium">Ứng dụng</p>
-                        </a>
+                        </a> */}
                     </div>
                 </div>
 
                 <div className="h-fit w-full flex flex-col items-center-safe border-t border-lightGray py-3.5 mt-3.5">
                     <p className="text-csNormal">Copyright © 2025</p>
                     <p className="text-csNormal">Bản quyền thuộc về Sinh vật biển Việt Nam</p>
+                    <p className="text-csNormal font-medium text-gray">Thiết kế và phát triển bởi <a className="font-bold underline italic" href="https://github.com/duy08k4">dDev</a></p>
                 </div>
             </div>
         </IonPage>
