@@ -1,3 +1,4 @@
+import axios from "axios";
 import { toast } from "react-toastify";
 import api from "../config/gateway";
 import { toastConfig } from "../config/toastConfig";
@@ -6,9 +7,9 @@ import { store } from "../redux/store";
 
 export class AuthService {
     // Authentication
-    static async auth() {
+    static async auth(signal?: AbortSignal) {
         try {
-            const { data, status } = await api.get("/auth/me")
+            const { data, status } = await api.get("/auth/me", { signal })
 
             if (status === 200 || status === 201) {
                 const userData = data as userData['user']
@@ -22,9 +23,13 @@ export class AuthService {
             store.dispatch(setAuth({ auth: false }))
 
             return false
-        } catch (error) {
-            store.dispatch(setUserData({ userData: null }))
-            store.dispatch(setAuth({ auth: false }))
+        } catch (error: any) {
+            if (axios.isCancel(error)) {
+                console.log('Auth request canceled:', error.message);
+            } else {
+                store.dispatch(setUserData({ userData: null }))
+                store.dispatch(setAuth({ auth: false }))
+            }
             return false
         }
     }

@@ -115,7 +115,8 @@ export class ContributionService {
         limit: number = 20,
         is_share: boolean = false,
         search?: string,
-        sort_by: "DESC" | "ASC" = "DESC"
+        sort_by: "DESC" | "ASC" = "DESC",
+        signal?: AbortSignal
     ) {
         if (!userId || !page) {
             console.error("Invalid data")
@@ -140,7 +141,8 @@ export class ContributionService {
                     is_share,
                     search,
                     sort_by,
-                }
+                },
+                signal
             })
 
             if (status === 200 || status === 201) {
