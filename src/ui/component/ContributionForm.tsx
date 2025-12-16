@@ -215,6 +215,8 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm, im
                     }
                 })
 
+                console.log(data)
+
                 let latitude: number | undefined;
                 let longtitude: number | undefined;
 

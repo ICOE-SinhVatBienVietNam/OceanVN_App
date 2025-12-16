@@ -97,8 +97,9 @@ export class ContributionService {
             })
 
             return false
-        } catch (error) {
-            console.error(error)
+        } catch (error: any) {
+            alert(error)
+            console.error('Error in createContribution:', error.response?.data || error.message || error);
             toastConfig({
                 toastType: "error",
                 toastMessage: `Không thể ${isContribute ? "tạo đóng góp" : "lưu ảnh"}`
