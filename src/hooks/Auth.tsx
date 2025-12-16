@@ -4,22 +4,25 @@ import { AuthService, isTokenValid } from "../services/authService";
 import { routeConfig } from "../config/routeConfig";
 import { toastConfig } from "../config/toastConfig";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const Auth = () => {
     const router = useIonRouter();
-    const pathname = router.routeInfo.pathname
-    const mainPath = pathname.startsWith('/main');
-    const loginPath = pathname.startsWith('/login');
-    const registerPath = pathname.startsWith('/register');
+    const pathname = router.routeInfo.pathname;
+    const isAuth = useSelector((state: RootState) => state.auth.isAuth);
 
     useEffect(() => {
+        const controller = new AbortController();
         (async () => {
             const protectedRoute =
                 pathname === routeConfig.main.camera ||
                 pathname === routeConfig.main.quest ||
                 pathname === routeConfig.main.moreInfo;
 
-            if (!protectedRoute) return;
+            if (!protectedRoute || isAuth) {
+                return;
+            }
 
             const accessToken = localStorage.getItem("accessToken");
             const refreshToken = localStorage.getItem("refreshToken");
@@ -32,12 +35,11 @@ const Auth = () => {
             })
 
             if (accessToken && refreshToken && expiresAt && isTokenValid(parseInt(expiresAt))) {
-                auth = await AuthService.auth();
+                auth = await AuthService.auth(controller.signal);
             }
 
             if (!auth) {
                 if (
-                    mainPath &&
                     (pathname === routeConfig.main.camera ||
                         pathname === routeConfig.main.quest)
                 ) {
@@ -51,7 +53,11 @@ const Auth = () => {
 
             toast.dismiss(pending)
         })();
-    }, [pathname]);
+
+        return () => {
+            controller.abort();
+        }
+    }, [pathname, isAuth]);
 
 
     return null

@@ -137,19 +137,27 @@ const Camera: React.FC = () => {
     const debounceSearch = useDebounce(search, 1000)
 
     useEffect(() => {
+        const controller = new AbortController();
         dispatch(resetData());
         if (user) {
             (async () => {
-                await ContributionService.getContribution(user.id, 1, 10, !isSaved, debounceSearch, "DESC");
+                await ContributionService.getContribution(user.id, 1, 10, !isSaved, debounceSearch, "DESC", controller.signal);
             })();
+        }
+        return () => {
+            controller.abort();
         }
     }, [isSaved, user, dispatch, debounceSearch]);
 
     useEffect(() => {
         if (!user || page === 1) return;
+        const controller = new AbortController();
         (async () => {
-            await ContributionService.getContribution(user.id, page, 10, !isSaved, debounceSearch, "DESC");
+            await ContributionService.getContribution(user.id, page, 10, !isSaved, debounceSearch, "DESC", controller.signal);
         })();
+        return () => {
+            controller.abort();
+        }
     }, [user, page, dispatch, debounceSearch]);
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {

@@ -97,8 +97,8 @@ export class ContributionService {
             })
 
             return false
-        } catch (error) {
-            console.error(error)
+        } catch (error: any) {
+            console.error('Error in createContribution:', error.response?.data || error.message || error);
             toastConfig({
                 toastType: "error",
                 toastMessage: `Không thể ${isContribute ? "tạo đóng góp" : "lưu ảnh"}`
@@ -115,7 +115,8 @@ export class ContributionService {
         limit: number = 20,
         is_share: boolean = false,
         search?: string,
-        sort_by: "DESC" | "ASC" = "DESC"
+        sort_by: "DESC" | "ASC" = "DESC",
+        signal?: AbortSignal
     ) {
         if (!userId || !page) {
             console.error("Invalid data")
@@ -140,7 +141,8 @@ export class ContributionService {
                     is_share,
                     search,
                     sort_by,
-                }
+                },
+                signal
             })
 
             if (status === 200 || status === 201) {
