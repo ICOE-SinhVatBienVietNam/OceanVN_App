@@ -50,12 +50,15 @@ import { AuthCheckPopupProvider } from './hooks/AuthCheck';
 import { routeConfig } from './config/routeConfig';
 import Auth from './hooks/Auth';
 
+import PwaUpdatePrompt from './ui/component/PwaUpdatePrompt';
+
 setupIonicReact();
 
 // App
 const App: React.FC = () => (
   <IonApp>
     <ConfirmProvider>
+      <PwaUpdatePrompt />
       <ScreenSizeWarningPopup />
       <IonReactRouter>
         <AuthCheckPopupProvider>
