@@ -63,27 +63,35 @@ export interface SpeciesShortDetail {
 
 export class SpeciesService {
     // Get all species for rendering on the map
-    async getSpeciesShortDetail(): Promise<SpeciesShortDetail[]> {
+    async getSpeciesShortDetail(signal?: AbortSignal): Promise<SpeciesShortDetail[]> {
         try {
-            const { data, status } = await api.get('/species/get-all-short')
+            const { data, status } = await api.get('/species/get-all-short', { signal })
             if (status === 200) {
                 return data as SpeciesShortDetail[]
             } else return []
         } catch (error) {
-            console.error(error)
+            if (axios.isCancel(error)) {
+                console.log('Request canceled:', error.message);
+            } else {
+                console.error(error)
+            }
             return []
         }
     }
 
     // Get one species base on ID
-    async getSpeciesID(id: string): Promise<Species_Type | undefined> {
+    async getSpeciesID(id: string, signal?: AbortSignal): Promise<Species_Type | undefined> {
         try {
-            const { data, status } = await api.get('/species/' + id)
+            const { data, status } = await api.get('/species/' + id, { signal })
             if (status === 200) {
                 return data as Species_Type
             } else return undefined
         } catch (error) {
-            console.error(error)
+            if (axios.isCancel(error)) {
+                console.log('Request canceled:', error.message);
+            } else {
+                console.error(error)
+            }
             return undefined
         }
     }

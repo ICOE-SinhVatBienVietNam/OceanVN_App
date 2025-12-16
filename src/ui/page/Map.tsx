@@ -10,7 +10,7 @@ import L from "leaflet";
 import SpeciesList from "../component/SpeciesList";
 import SpeciesDetail from "../component/SpeciesDetail";
 import { useParams } from "react-router";
-import { IonPage, useIonRouter } from "@ionic/react";
+import { IonPage, useIonRouter, useIonViewDidEnter } from "@ionic/react";
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -127,11 +127,11 @@ export const MyPositionMarker: React.FC<{ position: [number, number] }> = ({
 // Map resize
 export const MapResizeHandler: React.FC = () => {
   const map = useMap();
-  useEffect(() => {
+  useIonViewDidEnter(() => {
     setTimeout(() => {
       map.invalidateSize();
     }, 100);
-  }, [map]);
+  });
   return null;
 };
 

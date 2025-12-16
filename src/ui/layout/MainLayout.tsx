@@ -41,16 +41,20 @@ const MainLayout: React.FC = () => {
 
     // Get species data 
     useEffect(() => {
+        const controller = new AbortController();
         if (showTabs) {
             (async () => {
                 const pending = toastConfig({
                     toastMessage: 'Đang tải dữ liệu',
                     pending: true
                 })
-                const getSpeciesData = await speciesService.getSpeciesShortDetail()
+                const getSpeciesData = await speciesService.getSpeciesShortDetail(controller.signal)
                 toast.dismiss(pending)
                 dispatch(setSpecies(getSpeciesData))
             })()
+        }
+        return () => {
+            controller.abort();
         }
     }, [showTabs])
 

@@ -71,9 +71,21 @@ const Unauthorise: React.FC = () => {
     )
 }
 
+import { usePwaInstall } from "../../hooks/usePwaInstall"
+
 const MoreInfo: React.FC = () => {
     const auth = useSelector((state: RootState) => state.auth.isAuth)
     const user = useSelector((state: RootState) => state.auth.user)
+    const { canInstall, triggerInstall } = usePwaInstall()
+    const confirm = useConfirm()
+
+    const handleInstall = async () => {
+        const confirmInstall = await confirm({ title: "Cài đặt ứng dụng", message: "" })
+
+        if (confirmInstall) {
+            triggerInstall()
+        }
+    }
 
     return (
         <IonPage>
@@ -116,8 +128,19 @@ const MoreInfo: React.FC = () => {
                             </svg>
 
 
-                            <p className="text-csMedium font-medium">Nhóm sinh vật biển Việt Nam</p>
+                            <p className="text-csMedium font-medium">Nhóm sinh vật biển Việt Nam nè</p>
                         </a>
+
+
+                        {canInstall && (
+                            <button onClick={handleInstall} className="flex items-end-safe gap-3.5 border bg-mainLightBlueRGB mainShadow py-5! px-3.5! rounded-small hover:bg-lighterGray! transition-all w-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5 fill-mainDarkBlue">
+                                    <path d="M12 1.5a.75.75 0 0 1 .75.75V7.5h-1.5V2.25A.75.75 0 0 1 12 1.5ZM11.25 7.5v5.69l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V7.5h3.75a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3h3.75Z" />
+                                </svg>
+
+                                <p className="text-csMedium font-medium text-mainDarkBlue">Cài đặt ứng dụng</p>
+                            </button>
+                        )}
 
                         {/* <a href="" className="flex items-end-safe gap-3.5 border border-lighterGray mainShadow py-5 px-3.5 rounded-small hover:bg-lighterGray! transition-all">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5">
