@@ -98,7 +98,6 @@ export class ContributionService {
 
             return false
         } catch (error: any) {
-            alert(error)
             console.error('Error in createContribution:', error.response?.data || error.message || error);
             toastConfig({
                 toastType: "error",
