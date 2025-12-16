@@ -22,6 +22,7 @@ import { setSpecies } from "../../redux/state/speciesReducer";
 // Service
 import { SpeciesService } from "../../services/speciesService";
 import { toastConfig } from "../../config/toastConfig";
+import LocationTracker from "../component/LocationTracking";
 const speciesService = new SpeciesService()
 
 export type ToastType = {
@@ -57,6 +58,7 @@ const MainLayout: React.FC = () => {
         <>
             {showTabs && (
                 <>
+                    <LocationTracker />
                     <IonTabs>
                         <IonRouterOutlet className="z-0">
                             {/* Map */}

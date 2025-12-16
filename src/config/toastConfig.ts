@@ -6,7 +6,7 @@ export const toastConfig = (toastData: ToastType) => {
 
   const options = {
     position: "top-right" as ToastPosition,
-    autoClose: autoclose ? autoclose : 3000,
+    autoClose: autoclose ? autoclose : 5000,
     hideProgressBar: false,
     closeOnClick: true,
     pauseOnHover: true,

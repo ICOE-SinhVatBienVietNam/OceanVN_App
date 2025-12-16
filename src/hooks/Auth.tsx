@@ -1,8 +1,9 @@
 import { useIonRouter } from "@ionic/react";
 import { useEffect } from "react";
-import { AuthService } from "../services/authService";
+import { AuthService, isTokenValid } from "../services/authService";
 import { routeConfig } from "../config/routeConfig";
 import { toastConfig } from "../config/toastConfig";
+import { toast } from "react-toastify";
 
 const Auth = () => {
     const router = useIonRouter();
@@ -13,29 +14,45 @@ const Auth = () => {
 
     useEffect(() => {
         (async () => {
-            const auth = await AuthService.auth()
+            const protectedRoute =
+                pathname === routeConfig.main.camera ||
+                pathname === routeConfig.main.quest ||
+                pathname === routeConfig.main.moreInfo;
+
+            if (!protectedRoute) return;
+
+            const accessToken = localStorage.getItem("accessToken");
+            const refreshToken = localStorage.getItem("refreshToken");
+            const expiresAt = localStorage.getItem("expires_at");
+
+            let auth = false;
+            let pending = toastConfig({
+                toastMessage: "Đang xác thực người dùng",
+                pending: true
+            })
+
+            if (accessToken && refreshToken && expiresAt && isTokenValid(parseInt(expiresAt))) {
+                auth = await AuthService.auth();
+            }
 
             if (!auth) {
-                if (mainPath && (pathname === routeConfig.main.camera || pathname === routeConfig.main.quest)) {
-                    if (localStorage.getItem("refreshToken") && localStorage.getItem("accessToken")) {
-                        toastConfig({
-                            toastType: 'error',
-                            toastMessage: "Phiên đăng nhập hết hạn"
-                        })
-                    } else {
-                        toastConfig({
-                            toastType: 'info',
-                            toastMessage: "Vui lòng đăng nhập tài khoản"
-                        })
-                    }
-                }
-            } else {
-                if (loginPath || registerPath) {
-                    router.push(routeConfig.main.map)
+                if (
+                    mainPath &&
+                    (pathname === routeConfig.main.camera ||
+                        pathname === routeConfig.main.quest)
+                ) {
+                    toastConfig({
+                        toastType: "info",
+                        toastMessage: "Vui lòng đăng nhập tài khoản"
+                    });
+                    localStorage.clear();
                 }
             }
-        })()
-    }, [pathname])
+
+            toast.dismiss(pending)
+        })();
+    }, [pathname]);
+
 
     return null
 }

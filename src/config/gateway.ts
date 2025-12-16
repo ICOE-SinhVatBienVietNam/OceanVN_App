@@ -1,6 +1,8 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import { routeConfig } from "./routeConfig";
 import { toastConfig } from "./toastConfig";
+import { store } from "../redux/store";
+import { setAuth, setUserData } from "../redux/state/authReducer";
 
 interface AxiosRequestConfigWithRetry extends AxiosRequestConfig {
     _retry?: boolean;
@@ -193,13 +195,14 @@ function cleanupAndRedirect() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
 
-    toastConfig({
-        toastType: "error",
-        toastMessage: "Phiên đăng nhập đã hết hạn",
-    });
-
     setTimeout(() => {
-        window.location.replace(routeConfig.login.root);
+        toastConfig({
+            toastType: "error",
+            toastMessage: "Phiên đăng nhập đã hết hạn",
+        });
+
+        store.dispatch(setAuth({ auth: false }))
+        store.dispatch(setUserData({ userData: null }))
     }, 0);
 }
 
@@ -220,3 +223,4 @@ export const noImageURL = "https://res.cloudinary.com/dz1o0fpi6/image/upload/w_2
 // f_auto → Cloudinary tự chuyển định dạng (WebP/AVIF) → nhẹ hơn JPEG/PNG
 // q_auto:eco → nén cực mạnh, giảm dung lượng
 // fl_strip_profile → loại bỏ metadata thừa (EXIF…)
+// Không làm ảnh hưởng ảnh gốc

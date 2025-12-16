@@ -18,12 +18,12 @@ export class AuthService {
                 return true
             }
 
-            store.dispatch(setUserData({ userData: {} }))
+            store.dispatch(setUserData({ userData: null }))
             store.dispatch(setAuth({ auth: false }))
-            
+
             return false
         } catch (error) {
-            store.dispatch(setUserData({ userData: {} }))
+            store.dispatch(setUserData({ userData: null }))
             store.dispatch(setAuth({ auth: false }))
             return false
         }
@@ -59,7 +59,7 @@ export class AuthService {
             const { data, status } = await api.post("/auth/sign-in", { email, password })
             toast.dismiss(pending)
 
-            if (status === 201) {
+            if (status === 200 || status === 201) {
                 const userData = data as userData
 
                 if (userData.user.banned) {
@@ -84,6 +84,7 @@ export class AuthService {
 
                     localStorage.setItem("accessToken", userData.accessToken)
                     localStorage.setItem("refreshToken", userData.refreshToken)
+                    localStorage.setItem("expires_at", userData.expires_at.toString())
 
                     store.dispatch(setUserData({ userData: userData.user }))
                     store.dispatch(setAuth({ auth: true }))
@@ -115,6 +116,14 @@ export class AuthService {
             toastConfig({
                 toastType: 'error',
                 toastMessage: 'Vui lòng điền đầy đủ thông tin'
+            })
+            return false
+        }
+
+        if (name.trim().length < 8) {
+            toastConfig({
+                toastType: 'error',
+                toastMessage: 'Tên có độ dài tối thiểu 8 ký tự'
             })
             return false
         }
@@ -186,6 +195,13 @@ export class AuthService {
         finally {
             localStorage.removeItem("accessToken")
             localStorage.removeItem("lastSOSTimestamp")
+            store.dispatch(setUserData({ userData: null }))
+            store.dispatch(setAuth({ auth: false }))
+
+            toastConfig({
+                toastType: "success",
+                toastMessage: "Đã thoát tài khoản"
+            })
         }
     }
 
@@ -283,4 +299,9 @@ export class AuthService {
             return false
         }
     }
+}
+
+export function isTokenValid(expires_at: number): boolean {
+    const now = Math.floor(Date.now() / 1000);
+    return now < expires_at;
 }

@@ -17,17 +17,20 @@ export type userData = {
         banned: boolean,
         created_at: string,
         updated_at: string
-    }
+    },
+    expires_at: number
 }
 
 export interface AuthState {
     isAuth: boolean
-    user: userData['user'] | {}
+    user: userData['user'] | null
+    userPosition?: [number, number]
 }
 
 const initialState: AuthState = {
     isAuth: false,
-    user: {}
+    user: null,
+    userPosition: undefined
 }
 
 export const AuthSlice = createSlice({
@@ -40,17 +43,23 @@ export const AuthSlice = createSlice({
             }
         },
 
-        setUserData: (state, action: PayloadAction<{ userData: userData['user'] | {} }>) => {
-            if (Object.keys(action.payload.userData).length > 0) {
-                state.user = action.payload.userData
-            } else state.user = {}
+        setUserData: (
+            state,
+            action: PayloadAction<{ userData: userData['user'] | null }>
+        ) => {
+            state.user = action.payload.userData;
+        },
+
+        setPosition: (state, action: PayloadAction<{ lat: number, lng: number } | null>) => {
+            state.userPosition = action.payload ? [action.payload.lat, action.payload.lng] : undefined
         }
     },
 })
 
 export const {
     setAuth,
-    setUserData
+    setUserData,
+    setPosition
 } = AuthSlice.actions
 
 export default AuthSlice.reducer
