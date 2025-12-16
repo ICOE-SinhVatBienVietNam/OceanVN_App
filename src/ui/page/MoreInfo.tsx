@@ -3,18 +3,56 @@ import React from "react"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
-import { IonPage, IonRouterLink } from "@ionic/react"
+import { IonPage, useIonRouter } from "@ionic/react"
 import defaultAvatar from "../../assets/userDefault.avif"
+import { routeConfig } from "../../config/routeConfig"
+import { useSelector } from "react-redux"
+import { RootState } from "../../redux/store"
+import { userData } from "../../redux/state/authReducer"
+import { AuthService } from "../../services/authService"
+import { useConfirm } from "../../hooks/ConfirmForm"
 
 // Authorise
-const Authorise: React.FC = () => {
+interface Authorise {
+    userData: userData['user']
+}
+const Authorise: React.FC<Authorise> = ({ userData }) => {
+    const confirm = useConfirm()
+    const handleSignout = async () => {
+        const confirmSignout = await confirm({ title: "Đăng xuất", message: "Bạn muốn tiếp tục thoát tài khoản?" })
+        if (confirmSignout) {
+            await AuthService.signout()
+        }
+    }
+
     return (
-        <div></div>
+        <div className="h-fit w-full flex items-center-safe gap-3.5">
+            <span className="h-[80px] aspect-square overflow-hidden rounded-full border-2 border-mainRed">
+                <img src={defaultAvatar} alt="defaultAvartar" />
+            </span>
+
+            <span className="flex-1 h-full flex flex-col">
+                <h3 className="leading-none!">{userData.name}</h3>
+                <p className="flex gap-1.5 text-csNormal text-gray">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-4 fill-gray">
+                        <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
+                        <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
+                    </svg>
+
+                    {userData.email}
+                </p>
+                <button className="w-full bg-mainRedRGB text-csMedium font-medium text-mainRed py-2.5! rounded-main! transition-all mt-3.5" onClick={handleSignout}>
+                    Đăng xuất
+                </button>
+            </span>
+        </div>
     )
 }
 
 // Unauthorise
 const Unauthorise: React.FC = () => {
+    const router = useIonRouter()
+
     return (
         <div className="h-fit w-full flex items-center-safe gap-3.5">
             <span className="h-[80px] aspect-square overflow-hidden rounded-full border-2 border-mainLightBlue">
@@ -22,7 +60,10 @@ const Unauthorise: React.FC = () => {
             </span>
 
             <span className="flex-1 h-full flex items-center-safe">
-                <button className="w-full bg-mainLightBlue text-csMedium font-medium text-white py-5! rounded-main! transition-all hover:bg-mainDarkBlue">
+                <button
+                    className="w-full bg-mainLightBlue text-csMedium font-medium text-white py-5! rounded-main! transition-all hover:bg-mainDarkBlue"
+                    onClick={() => { router.push(routeConfig.login.root, "root") }}
+                >
                     Tham gia cộng đồng
                 </button>
             </span>
@@ -31,6 +72,9 @@ const Unauthorise: React.FC = () => {
 }
 
 const MoreInfo: React.FC = () => {
+    const auth = useSelector((state: RootState) => state.auth.isAuth)
+    const user = useSelector((state: RootState) => state.auth.user)
+
     return (
         <IonPage>
             <div className="relative h-full w-full flex bg-white flex-col gap-2.5 px-mainTwoSidePadding overflow-auto pt-2.5">
@@ -45,7 +89,11 @@ const MoreInfo: React.FC = () => {
                     </span>
                 </div>
 
-                <Unauthorise />
+                {auth && user ? (
+                    <Authorise userData={user} />
+                ) : (
+                    <Unauthorise />
+                )}
 
                 <div className="flex-1 w-full flex flex-col gap-3.5 mt-5">
                     <div className="">

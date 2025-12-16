@@ -54,7 +54,7 @@ export const ConfirmProvider = ({ children }: { children: ReactNode }) => {
                         <div className="flex justify-center gap-3">
                             <button
                                 onClick={handleCancel}
-                                className="flex-1 px-4! py-3.5! rounded-main! text-csNormal font-medium border border-gray-300 text-gray-700 hover:bg-gray-100 transition"
+                                className="flex-1 px-4! py-3.5! rounded-main! text-csNormal font-medium border bg-lighterGray border-gray-300 text-gray-700 hover:bg-gray-100 transition"
                             >
                                 Hủy
                             </button>

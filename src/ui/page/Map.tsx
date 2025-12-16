@@ -37,6 +37,7 @@ import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { routeConfig } from "../../config/routeConfig";
 import { Capacitor } from "@capacitor/core";
 import MyPosition from "../../assets/svg/MyPosition.svg";
+import { setPosition } from "../../redux/state/authReducer";
 
 // Zoom button
 const ZoomButton: React.FC = () => {
@@ -108,7 +109,7 @@ const PinMarker: React.FC<PinMarkerProps> = ({
   return <Marker position={position} icon={icon} />;
 };
 
-const MyPositionMarker: React.FC<{ position: [number, number] }> = ({
+export const MyPositionMarker: React.FC<{ position: [number, number] }> = ({
   position,
 }) => {
   const icon = L.divIcon({
@@ -124,36 +125,13 @@ const MyPositionMarker: React.FC<{ position: [number, number] }> = ({
 };
 
 // Map resize
-const MapResizeHandler: React.FC = () => {
+export const MapResizeHandler: React.FC = () => {
   const map = useMap();
   useEffect(() => {
     setTimeout(() => {
       map.invalidateSize();
     }, 100);
   }, [map]);
-  return null;
-};
-
-// Map Interaction Handler
-const MapInteractionHandler: React.FC<{ stopTracking: () => void }> = ({
-  stopTracking,
-}) => {
-  const map = useMap();
-
-  useEffect(() => {
-    const handleInteraction = () => {
-      stopTracking();
-    };
-
-    map.on("dragstart", handleInteraction);
-    map.on("zoomstart", handleInteraction);
-
-    return () => {
-      map.off("dragstart", handleInteraction);
-      map.off("zoomstart", handleInteraction);
-    };
-  }, [map, stopTracking]);
-
   return null;
 };
 
@@ -175,16 +153,7 @@ const Map: React.FC = () => {
 
   // Layer
   const [layer, setLayer] = useState<number>(0);
-  const [userPosition, setUserPosition] = useState<[number, number] | null>(
-    null
-  );
   const [isTracking, setIsTracking] = useState<boolean>(false);
-  const trackingRef = useRef(isTracking);
-  useEffect(() => {
-    trackingRef.current = isTracking;
-  }, [isTracking]);
-  const watchIdRef = useRef<number | null>(null);
-  const isFirstTimeRef = useRef<boolean>(true);
 
   const mapLayers = useRef<Array<{ layer: string; attribution: string }>>([
     {
@@ -218,6 +187,21 @@ const Map: React.FC = () => {
       setIsSpeciesLocation(true);
     }
   }, [speciesDetail]);
+
+  // userPosition now comes from Redux
+  const userPosition = useSelector((state: RootState) => state.auth.userPosition);
+
+  const centerOnUser = () => {
+    if (userPosition && mapRef.current) {
+      mapRef.current.flyTo(userPosition, 15)
+    } else {
+      toastConfig({
+        toastMessage: "Chưa thể xác định vị trí của bạn.",
+        toastType: "error",
+      })
+    }
+  }
+
 
   // SpeciesDetail
   const [isSpeciesDetail, setIsSpeciesDeatail] = useState<boolean>(false);
@@ -311,65 +295,6 @@ const Map: React.FC = () => {
     }
   };
 
-  const stopTracking = () => {
-    if (watchIdRef.current !== null) {
-      navigator.geolocation.clearWatch(watchIdRef.current);
-      watchIdRef.current = null;
-    }
-    setIsTracking(false);
-  };
-
-  const startTracking = () => {
-    if (Capacitor.getPlatform() === "web" && isFirstTimeRef.current) {
-      toastConfig({
-        toastMessage:
-          "Lưu ý: Độ chính xác vị trí của bạn trên web có thể bị ảnh hưởng. Toạ độ các loài không thay đổi.",
-        toastType: "info",
-      });
-      isFirstTimeRef.current = false;
-    }
-
-    if (navigator.geolocation) {
-      setIsTracking(true);
-      watchIdRef.current = navigator.geolocation.watchPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          const newPosition: [number, number] = [latitude, longitude];
-          setUserPosition(newPosition);
-          if (trackingRef.current) {
-            mapRef.current?.flyTo(newPosition, 15);
-          }
-        },
-        () => {
-          toastConfig({
-            toastMessage: "Không thể lấy vị trí của bạn",
-            toastType: "error",
-          });
-          stopTracking();
-        }
-      );
-    } else {
-      toastConfig({
-        toastMessage: "Trình duyệt không hỗ trợ định vị",
-        toastType: "error",
-      });
-    }
-  };
-
-  const toggleTracking = () => {
-    if (isTracking) {
-      stopTracking();
-    } else {
-      startTracking();
-    }
-  };
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      stopTracking();
-    };
-  }, []);
 
   return (
     <IonPage>
@@ -383,7 +308,6 @@ const Map: React.FC = () => {
           zoomControl={false}
         >
           <MapResizeHandler />
-          <MapInteractionHandler stopTracking={stopTracking} />
           <TileLayer
             url={mapLayers.current[layer].layer}
             attribution={mapLayers.current[layer].attribution}
@@ -446,7 +370,7 @@ const Map: React.FC = () => {
 
               <button
                 className="mainShadow h-fit aspect-square bg-white !rounded-full !p-3.5"
-                onClick={toggleTracking}
+                onClick={centerOnUser}
               >
                 <i
                   className={`fas fa-crosshairs ${isTracking ? "text-mainLightBlue" : ""

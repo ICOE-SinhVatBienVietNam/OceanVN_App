@@ -37,6 +37,8 @@ const Introduction = lazy(() => import("./ui/page/Introduction"))
 const Login = lazy(() => import("./ui/page/Login"))
 const Register = lazy(() => import("./ui/page/Register"))
 import SpeciesShare from './ui/page/SpeciesShare';
+import ForgetPassword from './ui/page/ForgetPassword';
+import RequireReset from './ui/page/RequireReset';
 // Layout
 import MainLayout from './ui/layout/MainLayout';
 
@@ -46,6 +48,7 @@ import { AuthCheckPopupProvider } from './hooks/AuthCheck';
 
 // Config
 import { routeConfig } from './config/routeConfig';
+import Auth from './hooks/Auth';
 
 setupIonicReact();
 
@@ -57,6 +60,7 @@ const App: React.FC = () => (
       <IonReactRouter>
         <AuthCheckPopupProvider>
           <Suspense fallback={<div>Loading...</div>}>
+            <Auth />
             <IonRouterOutlet>
               {/* Starter */}
               <Route exact path={routeConfig.intro.root} children={<Introduction />}></Route>
@@ -64,6 +68,8 @@ const App: React.FC = () => (
               {/* Auth */}
               <Route path={routeConfig.login.root} children={<Login />}></Route>
               <Route path={routeConfig.register.root} children={<Register />}></Route>
+              <Route path={routeConfig.requireResetPassword.root} children={<RequireReset />}></Route>
+              <Route path={routeConfig.forgotPassword.root} children={<ForgetPassword />}></Route>
 
               {/* Main */}
               <Route path="/main/*" children={<MainLayout />}></Route>

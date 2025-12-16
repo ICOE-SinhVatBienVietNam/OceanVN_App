@@ -1,12 +1,16 @@
 import React, { useState } from "react"
 import { MapContainer, TileLayer, useMapEvents } from "react-leaflet"
+import { MapResizeHandler } from "../page/Map";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 interface SnapMap_interface {
-    getPosition: () => void
+    getPosition: (lat: number, lng: number) => void
 }
 
 const SnapMap: React.FC<SnapMap_interface> = ({ getPosition }) => {
-    const initialCenter = { lat: 10.8231, lng: 106.6297 };
+    const userPosition = useSelector((state: RootState) => state.auth.userPosition)
+    const initialCenter = userPosition ? { lat: userPosition[0], lng: userPosition[1] } : { lat: 10.8231, lng: 106.6297 };
     const [center, setCenter] = useState(initialCenter);
 
     function MapMoveEvents() {
@@ -22,13 +26,14 @@ const SnapMap: React.FC<SnapMap_interface> = ({ getPosition }) => {
         <div className="absolute top-0 left-0 h-full w-full bg-white flex flex-col px-mainTwoSidePadding py-2.5">
             <div className="flex-1 h-0 w-full">
                 <MapContainer
-                    center={[10.8231, 106.6297]}
-                    zoom={12}
+                    center={center}
+                    zoom={14}
                     style={{ height: "100%", width: "100%", position: "relative" }}
                     className="z-0"
                     // ref={mapRef}
                     zoomControl={false}
                 >
+                    <MapResizeHandler />
                     <MapMoveEvents />
                     <TileLayer
                         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -46,7 +51,7 @@ const SnapMap: React.FC<SnapMap_interface> = ({ getPosition }) => {
             <div className="">
                 <span className="w-full flex flex-col gap-2.5">
                     <button
-                        onClick={getPosition}
+                        onClick={() => { getPosition(center.lat, center.lng) }}
                         className="w-full bg-mainRed !text-csBig text-white flex items-center-safe justify-center-safe gap-2 !py-2.5 !rounded-small"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-5 fill-white">
@@ -58,8 +63,8 @@ const SnapMap: React.FC<SnapMap_interface> = ({ getPosition }) => {
                     <span className="">
                         <p className="text-csBig font-medium">Hệ tọa độ: WGS84</p>
                         <span className="flex gap-5">
-                            <p className="text-csNormal"><b>Kinh độ:</b> {center.lng.toFixed(6)}</p>
-                            <p className="text-csNormal"><b>Vĩ độ:</b> {center.lat.toFixed(6)}</p>
+                            <p className="text-csNormal"><b>Kinh độ:</b> {center.lng.toFixed(10)}</p>
+                            <p className="text-csNormal"><b>Vĩ độ:</b> {center.lat.toFixed(10)}</p>
                         </span>
                     </span>
                 </span>
