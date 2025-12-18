@@ -148,13 +148,14 @@ const SpeciesList: React.FC<SpeciesList_interface> = ({
     // Data
     const speciesListDiscovered = useSelector((state: RootState) => state.species.speciesListDiscovered)
     const filterTitle = useRef<Partial<Record<keyof SpeciesShortDetail, string>>>({
+        group: "Nhóm",
         genus: "Giống",
         threatened_symbol: "Mức độ bảo tồn"
     });
 
 
     const filterSections = useMemo<FilterSection[]>(() => {
-        const filterKeys: (keyof Pick<SpeciesShortDetail, 'genus' | 'threatened_symbol'>)[] = ["threatened_symbol", 'genus'];
+        const filterKeys: (keyof Pick<SpeciesShortDetail, 'group' | 'genus' | 'threatened_symbol'>)[] = ["group", "threatened_symbol", 'genus'];
 
         return filterKeys.reduce((acc, key) => {
             const uniqueValues = Array.from(new Set(speciesListDiscovered.map(s => s[key]).filter((v): v is string => !!v)));
