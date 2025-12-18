@@ -80,12 +80,18 @@ const Discover: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState<string>("");
 
     const filterTitle = useRef<Partial<Record<keyof SpeciesShortDetail, string>>>({
+        group: "Nhóm",
+        phylum: "Ngành",
+        class: "Lớp",
+        order: "Bộ",
         genus: "Giống",
-        threatened_symbol: "Mức độ bảo tồn"
+        threatened_symbol: "Mức độ bảo tồn",
     });
 
     const filterSections = useMemo<FilterSection[]>(() => {
-        const filterKeys: (keyof Pick<SpeciesShortDetail, 'group' | 'phylum' | 'genus' | 'threatened_symbol'>)[] = ['threatened_symbol', 'group', 'phylum', 'genus'];
+        const filterKeys: (keyof Pick<SpeciesShortDetail, 'group' | 'phylum' | 'genus' | 'threatened_symbol' | "class" | "order">)[] = [
+            'group', 'threatened_symbol', 'phylum', "class", "order", 'genus'
+        ];
 
         return filterKeys.reduce((acc, key) => {
             const uniqueValues = Array.from(new Set(speciesData.map(s => s[key]).filter((v): v is string => !!v)));
