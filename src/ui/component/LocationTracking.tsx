@@ -1,13 +1,24 @@
 import { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toastConfig } from '../../config/toastConfig';
 import { Capacitor } from '@capacitor/core';
 import { setPosition } from '../../redux/state/authReducer';
+import { RootState } from '../../redux/store';
+import HarversineFormula from '../../modules/HarversineFormula';
 
 const LocationTracker: React.FC = () => {
     const dispatch = useDispatch();
     const watchIdRef = useRef<number | null>(null);
     const isFirstTimeRef = useRef<boolean>(true);
+    const recentPosition = useSelector(
+        (state: RootState) => state.auth.userPosition
+    );
+
+    const recentPositionRef = useRef<typeof recentPosition>(null);
+
+    useEffect(() => {
+        recentPositionRef.current = recentPosition;
+    }, [recentPosition]);
 
     const startTracking = () => {
         if (Capacitor.getPlatform() === "web" && isFirstTimeRef.current) {
@@ -23,15 +34,13 @@ const LocationTracker: React.FC = () => {
             watchIdRef.current = navigator.geolocation.watchPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
-                    dispatch(setPosition({ lat: latitude, lng: longitude }));
+                    if (recentPositionRef.current && HarversineFormula(recentPositionRef.current[0], recentPositionRef.current[1], latitude, longitude) >= 10) {
+                        dispatch(setPosition({ lat: latitude, lng: longitude }));
+                    }
+
+                    if (!recentPositionRef.current) dispatch(setPosition({ lat: latitude, lng: longitude }));
                 },
                 (error) => {
-                    console.error("Error getting location:", error);
-                    toastConfig({
-                        toastMessage: "Không thể lấy vị trí của bạn",
-                        toastType: "error",
-                    });
-                    // Optionally clear position if error occurs
                     dispatch(setPosition(null));
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -58,7 +67,7 @@ const LocationTracker: React.FC = () => {
         return () => {
             stopTracking();
         };
-    }, []); // Run once on mount, cleanup on unmount
+    }, []);
 
     return null; // This component doesn't render anything
 };

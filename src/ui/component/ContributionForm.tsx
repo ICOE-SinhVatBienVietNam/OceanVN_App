@@ -97,27 +97,20 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm, im
     const [imageName, setImageName] = useState<string>("")
     const [imageDescription, setImageDescription] = useState<string>("")
 
-    const [imageNameError, setImageNameError] = useState<boolean>(false)
-    const [imageDescriptionError, setImageDescriptionError] = useState<boolean>(false)
-
     const imageNameChange = (value: string) => {
         if (value.length > 100) {
-            setImageNameError(true)
             return
         }
 
         setImageName(value)
-        setImageNameError(false)
     }
 
     const imageDescriptionChange = (value: string) => {
         if (value.trim().split(" ").length - 1 >= 100) {
-            setImageDescriptionError(true)
             return
         }
 
         setImageDescription(value)
-        setImageDescriptionError(false)
     }
 
     // ConfirmForm
@@ -144,8 +137,6 @@ const ContributionForm: React.FC<ContributionForm_interface> = ({ toggleForm, im
 
     const handleConfirmForm = async (type?: typePosition_type) => {
         if (isSaving) return;
-
-        if (imageNameError || imageDescriptionError) return;
 
         if (isContribute) {
             if (!type) {

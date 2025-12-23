@@ -78,7 +78,7 @@ const CameraStorageDetail: React.FC<CameraStorageDetail_interface> = ({ toggleCa
                     </span>
                 </div>
 
-                {contributionDetailData?.is_contibuted && contributionDetailData.latitude && contributionDetailData.longtitude && (
+                {contributionDetailData?.is_contributed && contributionDetailData.latitude && contributionDetailData.longtitude && (
                     <div className="h-fit w-full">
                         <h4>Vị trí bức ảnh</h4>
 
