@@ -5,7 +5,8 @@ import { routeConfig } from "../config/routeConfig";
 import { toastConfig } from "../config/toastConfig";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store";
+import { RootState, store } from "../redux/store";
+import { setAuth, setUserData } from "../redux/state/authReducer";
 
 const Auth = () => {
     const router = useIonRouter();
@@ -29,12 +30,18 @@ const Auth = () => {
             const expiresAt = localStorage.getItem("expires_at");
 
             let auth = false;
-            let pending = toastConfig({
-                toastMessage: "Đang xác thực người dùng",
-                pending: true
-            })
+            if (accessToken && refreshToken && expiresAt) {
+                if (isTokenValid(parseInt(expiresAt))) {
+                    auth = true;
+                    // store.dispatch(setAuth({ auth: true }));
+                } else {
+                    const pending = toastConfig({
+                        toastMessage: "Đang xác thực người dùng",
+                        pending: true
+                    });
+                    toast.dismiss(pending);
+                }
 
-            if (accessToken && refreshToken && expiresAt && isTokenValid(parseInt(expiresAt))) {
                 auth = await AuthService.auth(controller.signal);
             }
 
@@ -47,11 +54,11 @@ const Auth = () => {
                         toastType: "info",
                         toastMessage: "Vui lòng đăng nhập tài khoản"
                     });
-                    localStorage.clear();
+                    localStorage.clear()
+                    store.dispatch(setUserData({ userData: null }));
+                    store.dispatch(setAuth({ auth: false }));
                 }
             }
-
-            toast.dismiss(pending)
         })();
 
         return () => {

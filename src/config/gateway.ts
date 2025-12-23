@@ -164,9 +164,13 @@ api.interceptors.response.use(
 
             const newAccessToken = res.data.accessToken;
             const newRefreshToken = res.data.refresh_token;
+            const newExpiresAt = res.data.expires_at;
 
             localStorage.setItem("accessToken", newAccessToken);
             localStorage.setItem("refreshToken", newRefreshToken);
+            if (newExpiresAt) {
+                localStorage.setItem("expires_at", newExpiresAt.toString());
+            }
 
             onTokenRefreshed(newAccessToken);
 
@@ -177,10 +181,27 @@ api.interceptors.response.use(
 
             return api(originalRequest);
         } catch (refreshError) {
-            /* Refresh fail → clear queue + logout */
-            onRefreshFailed();
-            cleanupAndRedirect();
-            return Promise.reject(refreshError);
+            const axiosError = refreshError as AxiosError
+
+            // 1. Client tự huỷ request → KHÔNG logout
+            if (
+                axios.isCancel(axiosError) ||
+                axiosError.code === 'ERR_CANCELED'
+            ) {
+                onRefreshFailed()
+                return Promise.reject(refreshError)
+            }
+
+            // 2. Không phải Unauthorized → KHÔNG logout
+            if (axiosError.response?.status !== 401) {
+                onRefreshFailed()
+                return Promise.reject(refreshError)
+            }
+
+            // 3. Chỉ refresh fail + 401 mới logout
+            onRefreshFailed()
+            cleanupAndRedirect()
+            return Promise.reject(refreshError)
         } finally {
             isRefreshing = false;
         }
@@ -194,16 +215,14 @@ api.interceptors.response.use(
 function cleanupAndRedirect() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("expires_at");
+    store.dispatch(setUserData({ userData: null }))
+    store.dispatch(setAuth({ auth: false }))
 
-    setTimeout(() => {
-        toastConfig({
-            toastType: "error",
-            toastMessage: "Phiên đăng nhập đã hết hạn",
-        });
-
-        store.dispatch(setAuth({ auth: false }))
-        store.dispatch(setUserData({ userData: null }))
-    }, 0);
+    toastConfig({
+        toastType: "error",
+        toastMessage: "Phiên đăng nhập đã hết hạn",
+    });
 }
 
 /* =============================

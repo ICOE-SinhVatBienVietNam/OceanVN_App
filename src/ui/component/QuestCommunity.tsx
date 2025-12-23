@@ -1,29 +1,40 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 // Motion
 import { motion } from "framer-motion"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
+import { useDispatch, useSelector } from "react-redux"
+import { questionPagination, resetPublicQuestions, setQuestionDetailId } from "../../redux/state/questionReducer"
+import { QuestionService } from "../../services/questionService"
+import { RootState } from "../../redux/store"
+import { useDebounce } from "../../hooks/Debounce"
+import { cloudinaryThumbnail } from "../../config/gateway"
 
 // Component
 const QuestionCard: React.FC<{
-    id: number,
+    id: string,
+    questionData: questionPagination,
     openDetail: () => void
-}> = ({ id, openDetail }) => {
+}> = ({ id, openDetail, questionData }) => {
+    const dispatch = useDispatch()
+
+    const handleClick = () => {
+        openDetail()
+        dispatch(setQuestionDetailId(id))
+    }
 
     return (
-        <span className="relative mainShadow h-[120px] min-w-[30%] flex-1 flex gap-2.5 rounded-small px-2.5" onClick={openDetail}>
+        <span className="relative mainShadow h-fit min-w-[30%] flex gap-2.5 rounded-small px-2.5" onClick={handleClick}>
             <span className="h-full w-[60px] shrink-0 flex justify-center-safe items-center-safe">
-                <img src={Logo} className="w-full" />
+                <img src={questionData.thumbnail ? cloudinaryThumbnail + questionData.thumbnail : Logo} className="w-full" />
             </span>
 
             <span className="flex-1 h-full flex flex-col gap-1.5 py-3.5">
                 <span className="flex-1 min-w-0 flex flex-col justify-between">
-                    <h6 className="!leading-none my-0!">Tiêu đề câu hỏi</h6>
-                    <p className="!line-clamp-2 text-csSmall text-gray">
-                        Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v ...
-                    </p>
+                    <h6 className="!leading-none my-0!">{questionData.title}</h6>
+                    <p className="!line-clamp-2 text-csSmall text-gray">{questionData.body}</p>
                 </span>
 
                 <span className="h-fit flex-1 flex items-center-safe gap-2.5">
@@ -32,12 +43,12 @@ const QuestionCard: React.FC<{
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
                         </svg>
 
-                        27/10/2025
+                        {new Date(questionData.created_at).toLocaleString("vi-VN").split(" ")[1]}
                     </p>
 
                     <span className="w-fit h-fit flex items-center gap-1.5">
                         <i className="fas fa-user text-csTiny"></i>
-                        <p className="h-fit flex-1 flex items-center-safe gap-1.5 text-csSmall text-mainRed font-medium">Nguyen Van A</p>
+                        <p className="h-fit flex-1 flex items-center-safe gap-1.5 text-csSmall text-mainRed font-medium">{questionData.createByUser.name}</p>
                     </span>
                 </span>
 
@@ -60,6 +71,40 @@ const QuestCommunity: React.FC<QuestCommunity_interface> = ({ toggleQuestCommuni
         }, 200)
     }
 
+    const [search, setSearch] = useState<string>("")
+    const debounceSearch = useDebounce(search, 1000)
+
+    // State
+    const user = useSelector((state: RootState) => state.auth.user)
+    const paginationInfo = useSelector((state: RootState) => state.question.publicPagination)
+    const paginationData = useSelector((state: RootState) => state.question.publicData)
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        const controller = new AbortController();
+        dispatch(resetPublicQuestions());
+        if (user) {
+            (async () => {
+                await QuestionService.questionPagination(1, 15, undefined, debounceSearch, "DESC", true, controller.signal);
+            })();
+        }
+        return () => {
+            controller.abort();
+        }
+    }, [user, dispatch, debounceSearch]);
+
+    useEffect(() => {
+        if (!user || paginationInfo.page === 1) return;
+        const controller = new AbortController();
+        (async () => {
+            await QuestionService.questionPagination(paginationInfo.page, 15, undefined, debounceSearch, "DESC", true, controller.signal);
+
+        })();
+        return () => {
+            controller.abort();
+        }
+    }, [user, paginationInfo, dispatch, debounceSearch]);
+
     return (
         <motion.div
             initial={{ x: !isCloseQuestCommunity ? "100%" : 0 }}
@@ -81,7 +126,10 @@ const QuestCommunity: React.FC<QuestCommunity_interface> = ({ toggleQuestCommuni
                                 </svg>
                             </button>
 
-                            <h2 className="leading-none! mb-1.5">Cộng đồng</h2>
+                            <span className="">
+                                <h2 className="leading-none!">Cộng đồng</h2>
+                                <p className="text-csNormal text-mainRed font-medium">Số lượng: {paginationInfo.total} câu hỏi</p>
+                            </span>
                         </span>
                     </span>
 
@@ -95,14 +143,16 @@ const QuestCommunity: React.FC<QuestCommunity_interface> = ({ toggleQuestCommuni
                                 className="!text-csNormal h-full w-full outline-none"
                                 type="text"
                                 placeholder="Tìm kiếm..."
+                                onChange={(e) => { setSearch(e.target.value) }}
                             />
                         </span>
                     </span>
                 </span>
 
-                <span className="w-full flex-1 h-0 overflow-auto flex flex-col justify-between gap-2.5 px-0.5 py-2.5">
-                    {Array(20).fill(0).map((_, index) => {
-                        return <QuestionCard key={index} id={index} openDetail={openDetail} />
+                <span className="w-full flex-1 h-0 overflow-auto flex flex-col gap-2.5 px-0.5 py-2.5">
+                    {paginationData.map((question) => {
+                        return <QuestionCard key={question.id} questionData={question} id={question.id} openDetail={openDetail} />
+
                     })}
                 </span>
             </div>
