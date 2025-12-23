@@ -79,6 +79,7 @@ export class ContributionService {
             })
 
             if (status === 200 || status === 201) {
+                console.log(data)
                 if (data?.id) {
                     store.dispatch(addData({ data }))
                 }
@@ -146,7 +147,6 @@ export class ContributionService {
             })
 
             if (status === 200 || status === 201) {
-                console.log(data)
                 store.dispatch(pushData({ data: data.data }))
                 store.dispatch(setPage(data.pagination.page))
                 store.dispatch(setTotalPage(data.pagination.totalPages))
@@ -160,15 +160,17 @@ export class ContributionService {
             console.error(statusText)
             toastConfig({
                 toastType: "error",
-                toastMessage: "Không tìm thấy dữ liệu"
+                toastMessage: "Không tìm thấy dữ liệu nè"
             })
 
             return false
         } catch (error) {
             toast.dismiss(pending)
+            if (signal?.aborted) return false
+            
             toastConfig({
                 toastType: "error",
-                toastMessage: "Không tìm thấy dữ liệu"
+                toastMessage: "Không tìm thấy dữ liệu ở đây"
             })
             console.error(error)
 

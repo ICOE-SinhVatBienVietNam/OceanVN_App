@@ -26,11 +26,12 @@ export class AuthService {
         } catch (error: any) {
             if (axios.isCancel(error)) {
                 console.log('Auth request canceled:', error.message);
+                return true
             } else {
                 store.dispatch(setUserData({ userData: null }))
                 store.dispatch(setAuth({ auth: false }))
+                return false
             }
-            return false
         }
     }
 
@@ -193,12 +194,14 @@ export class AuthService {
     // Sign out
     public static async signout() {
         try {
-            const { } = await api.post("/auth/signout", {
+            const { } = await api.post("/auth/sign-out", {
                 authorization: localStorage.getItem("accessToken")
             })
         }
         finally {
             localStorage.removeItem("accessToken")
+            localStorage.removeItem("refreshToken")
+            localStorage.removeItem("expires_at")
             localStorage.removeItem("lastSOSTimestamp")
             store.dispatch(setUserData({ userData: null }))
             store.dispatch(setAuth({ auth: false }))

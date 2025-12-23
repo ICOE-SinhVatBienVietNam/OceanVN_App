@@ -4,12 +4,14 @@ import { configureStore } from '@reduxjs/toolkit'
 import speciesReducer from './state/speciesReducer'
 import authReducer from './state/authReducer'
 import contributionReducer from './state/contributionReducer'
+import questionReducer from './state/questionReducer'
 
 export const store = configureStore({
     reducer: {
         species: speciesReducer,
         auth: authReducer,
-        contribution: contributionReducer
+        contribution: contributionReducer,
+        question: questionReducer
     }
 })
 

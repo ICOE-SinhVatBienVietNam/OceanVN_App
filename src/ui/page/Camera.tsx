@@ -60,7 +60,7 @@ const Card: React.FC<{
                 </span>
 
                 <span className="w-full h-fit flex flex-col gap-1">
-                    {cardData.is_contibuted ? (
+                    {cardData.is_contributed ? (
                         <p className="w-full text-csSmall min-sm:text-csNormal text-mainRed font-medium flex items-center gap-1">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-3 fill-mainRed">
                                 <path fillRule="evenodd" d="M10.5 3.75a6 6 0 0 0-5.98 6.496A5.25 5.25 0 0 0 6.75 20.25H18a4.5 4.5 0 0 0 2.206-8.423 3.75 3.75 0 0 0-4.133-4.303A6.001 6.001 0 0 0 10.5 3.75Zm2.03 5.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.72-1.72v4.94a.75.75 0 0 0 1.5 0v-4.94l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3Z" clipRule="evenodd" />
@@ -87,7 +87,7 @@ const Card: React.FC<{
                             <path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z" clipRule="evenodd" />
                         </svg>
 
-                        {new Date(cardData.created_at).toLocaleString("vi-VN")}
+                        {new Date(cardData.created_at).toLocaleString("vi-VN").split(" ")[1]}
                     </p>
                 </span>
             </span>

@@ -1,5 +1,5 @@
 // Import libraries
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 
 // Images
 import Logo from "../../assets/SinhVatBienVN.png"
@@ -14,28 +14,38 @@ import { toastConfig } from "../../config/toastConfig"
 import QuestCommunity from "../component/QuestCommunity"
 import QuestDetail from "../component/QuestDetail"
 import QuestionForm from "../component/QuestionForm"
-import { IonPage, useIonRouter } from "@ionic/react"
+import { IonPage, IonRouterLink, useIonRouter } from "@ionic/react"
 import { routeConfig } from "../../config/routeConfig"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
+import { questionPagination, resetPersonalQuestions, setQuestionDetailId } from "../../redux/state/questionReducer"
+import { QuestionService } from "../../services/questionService"
+import { useDebounce } from "../../hooks/Debounce"
+import { cloudinaryThumbnail } from "../../config/gateway"
+import { toast } from "react-toastify"
+import { useConfirm } from "../../hooks/ConfirmForm"
 
 const QuestionCard: React.FC<{
-    id: number,
+    data: questionPagination,
+    id: string,
     isDeleting: boolean,
     isSelected: boolean,
-    onSelect: (id: number) => void,
+    onSelect: (id: string) => void,
     toggleQuestDetailForm: () => void
-}> = ({ id, isDeleting, isSelected, onSelect, toggleQuestDetailForm }) => {
+}> = ({ data, id, isDeleting, isSelected, onSelect, toggleQuestDetailForm }) => {
+    const dispatch = useDispatch()
+
     const handleClick = () => {
         if (isDeleting) {
             onSelect(id)
         } else {
             toggleQuestDetailForm()
+            dispatch(setQuestionDetailId(id))
         }
     }
 
     return (
-        <span className="relative mainShadow h-[120px] min-w-[30%] flex-1 flex gap-2.5 rounded-small px-2.5" onClick={handleClick}>
+        <span className="relative mainShadow h-[fit] min-w-[30%] flex gap-2.5 rounded-small px-2.5" onClick={handleClick}>
             {isDeleting && (
                 <input
                     type="checkbox"
@@ -45,15 +55,13 @@ const QuestionCard: React.FC<{
                 />
             )}
             <span className="h-full w-[60px] shrink-0 flex justify-center-safe items-center-safe">
-                <img src={Logo} className="w-full" />
+                <img src={data.thumbnail ? cloudinaryThumbnail + data.thumbnail : Logo} className="w-full" />
             </span>
 
             <span className="flex-1 h-full flex flex-col gap-1.5 py-3.5">
                 <span className="flex-1 min-w-0 flex flex-col justify-between">
-                    <h6 className="!leading-none my-0!">Tiêu đề câu hỏi</h6>
-                    <p className="!line-clamp-2 text-csSmall text-gray">
-                        Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v Nội dung câu hỏi hẹ hẹ :v ...
-                    </p>
+                    <h6 className="!leading-none my-0!">{data.title}</h6>
+                    <p className="!line-clamp-2 text-csSmall text-gray">{data.body}</p>
                 </span>
 
                 <p className="h-fit flex-1 flex items-center-safe gap-1.5 text-csTiny">
@@ -61,7 +69,7 @@ const QuestionCard: React.FC<{
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
                     </svg>
 
-                    27/10/2025
+                    {new Date(data.created_at).toLocaleString("vi-VN").split(" ")[1]}
                 </p>
             </span>
         </span>
@@ -90,21 +98,56 @@ const QuestUnAuth: React.FC = () => {
 
 type differentConnections = {
     label: string,
-    thumbnail: string
+    thumbnail: string,
+    path: string
 }
 
 const Quest: React.FC = () => {
     // State
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
-    const [selectedItems, setSelectedItems] = useState<number[]>([])
+    const [selectedItems, setSelectedItems] = useState<string[]>([])
     const isAuth = useSelector((state: RootState) => state.auth.isAuth)
+
+    const [search, setSearch] = useState<string>("")
+    const debounceSearch = useDebounce(search, 1000)
+
+    const paginationData = useSelector((state: RootState) => state.question.personalData) // Personal
+    const paginationInfo = useSelector((state: RootState) => state.question.personalPagination)
+
+    const user = useSelector((state: RootState) => state.auth.user)
+    const dispatch = useDispatch()
+    const confirm = useConfirm()
 
     // Different connection
     const differentConnections = useRef<differentConnections[]>([
-        { label: "Gmail", thumbnail: Gmail_logo },
-        { label: "Facebook", thumbnail: Facebook_logo },
-        { label: "Zalo", thumbnail: Zalo_logo },
+        { label: "Facebook", thumbnail: Facebook_logo, path: "https://www.facebook.com/MarineBiologyOfVietnam" },
     ])
+
+    // Load data
+    useEffect(() => {
+        const controller = new AbortController();
+        dispatch(resetPersonalQuestions());
+        if (user) {
+            (async () => {
+                await QuestionService.questionPagination(1, 10, user.id, debounceSearch, "DESC", undefined, controller.signal);
+            })();
+        }
+        return () => {
+            controller.abort();
+        }
+    }, [user, dispatch, debounceSearch]);
+
+    useEffect(() => {
+        if (!user || paginationInfo.page === 1) return;
+        const controller = new AbortController();
+        (async () => {
+            await QuestionService.questionPagination(paginationInfo.page, 10, user.id, debounceSearch, "DESC", undefined, controller.signal);
+
+        })();
+        return () => {
+            controller.abort();
+        }
+    }, [user, paginationInfo, dispatch, debounceSearch]);
 
     // Toggle
     const toggleIsDeleting = () => {
@@ -128,19 +171,27 @@ const Quest: React.FC = () => {
     }
 
     // Handler
-    const handleSelectItem = (id: number) => {
+    const handleSelectItem = (id: string) => {
         setSelectedItems(prev =>
             prev.includes(id) ? prev.filter(itemId => itemId !== id) : [...prev, id]
         )
     }
 
-    const handleDelete = () => {
-        console.log("Xóa các mục:", selectedItems)
+    const handleDelete = async () => {
+        if (selectedItems.length === 0 || !user) return
 
-        toastConfig({
-            toastType: "success",
-            toastMessage: `Đã xóa ${selectedItems.length} mục thành công`
+        const confirmDeleteQuestion = await confirm({ title: `Xóa ${selectedItems.length} mục`, message: "Hành động không thể hoàn tác" })
+
+        if (!confirmDeleteQuestion) return
+
+        let pending = toastConfig({
+            pending: true,
+            toastMessage: "Đang xóa các mục"
         })
+
+        await QuestionService.deleteQuestion(user?.id, selectedItems)
+
+        toast.dismiss(pending)
 
         toggleIsDeleting()
     }
@@ -158,13 +209,13 @@ const Quest: React.FC = () => {
                         <span className="w-full flex justify-start gap-5 overflow-x-auto p-0.5">
                             {differentConnections.current.map((connection, index) => {
                                 return (
-                                    <span key={index} className="h-fit w-[60px] flex flex-col items-center-safe gap-1.5">
+                                    <IonRouterLink href="" key={index} className="h-fit w-[60px] flex flex-col items-center-safe gap-1.5">
                                         <span className="mainShadow w-full aspect-square bg-white flex justify-center-safe items-center-safe p-3.5 rounded-full">
                                             <img className="w-full" src={connection.thumbnail} />
                                         </span>
 
                                         <p className="text-csNormal text-nowrap font-medium">{connection.label}</p>
-                                    </span>
+                                    </IonRouterLink>
                                 )
                             })}
                         </span>
@@ -175,7 +226,7 @@ const Quest: React.FC = () => {
                             <span className="w-full flex justify-between items-center-safe">
                                 <span className="">
                                     <h2 className="leading-none! mb-1.5">Câu hỏi của tôi</h2>
-                                    <p className="text-csNormal text-mainRed font-medium">Số lượng: 20 câu hỏi</p>
+                                    <p className="text-csNormal text-mainRed font-medium">Số lượng: {paginationInfo.total} câu hỏi</p>
                                 </span>
 
                                 <span className="h-fit w-fit">
@@ -198,6 +249,7 @@ const Quest: React.FC = () => {
                                         className="!text-csNormal h-full w-full outline-none"
                                         type="text"
                                         placeholder="Tìm kiếm..."
+                                        onChange={(e) => { setSearch(e.target.value) }}
                                     />
                                 </span>
 
@@ -211,9 +263,9 @@ const Quest: React.FC = () => {
                             </span>
                         </span>
 
-                        <span className="w-full flex-1 h-0 overflow-auto flex flex-col justify-between gap-2.5 px-0.5 py-2.5">
-                            {Array(20).fill(0).map((_, index) => {
-                                return <QuestionCard key={index} id={index} isDeleting={isDeleting} isSelected={selectedItems.includes(index)} onSelect={handleSelectItem} toggleQuestDetailForm={toggleQuestDetail} />
+                        <span className="w-full flex-1 h-0 overflow-auto flex flex-col  gap-2.5 px-0.5 py-2.5">
+                            {paginationData.length > 0 && paginationData.map((data) => {
+                                return <QuestionCard key={data.id} data={data} id={data.id} isDeleting={isDeleting} isSelected={selectedItems.includes(data.id)} onSelect={handleSelectItem} toggleQuestDetailForm={toggleQuestDetail} />
                             })}
                         </span>
 
@@ -241,7 +293,7 @@ const Quest: React.FC = () => {
                                         disabled={selectedItems.length === 0}
                                         className="mainShadow w-full h-fit py-2.5! bg-mainRed rounded-main text-csNormal font-semibold text-white disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {`Xóa(${selectedItems.length})`}
+                                        {`Xóa (${selectedItems.length})`}
                                     </button>
                                 </div>
                             </div>

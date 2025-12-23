@@ -10,7 +10,7 @@ export type ContributionDetailData = {
     title: string,
     body: string,
     thumbnail: string,
-    is_contibuted: boolean,
+    is_contributed: boolean,
     is_viewed: boolean,
     latitude: string | null,
     longtitude: string | null,
@@ -36,7 +36,7 @@ export type ContributionData = {
     title: string,
     body: string,
     thumbnail: string,
-    is_contibuted: boolean,
+    is_contributed: boolean,
     is_viewed: boolean,
     latitude?: number,
     longtitude?: number,
@@ -85,9 +85,9 @@ export const ContributionSlice = createSlice({
 
             if (state.data.some(d => d.id === item.id)) return;
 
-            const getTypeData = state.data[0].is_contibuted
+            const getTypeData = state.data[0].is_contributed
 
-            if (getTypeData !== item.is_contibuted) return;
+            if (getTypeData !== item.is_contributed) return;
 
             state.data.unshift(item);
 
@@ -142,14 +142,11 @@ export const ContributionSlice = createSlice({
         removeDataById: (state, action: PayloadAction<{ id: string }>) => {
             const idToRemove = action.payload.id;
 
-            // Xóa item khỏi data hiện tại
             state.data = state.data.filter(item => item.id !== idToRemove);
 
-            // Cập nhật tổng số item và tổng page
             state.total = Math.max(state.total - 1, 0);
             state.totalPage = Math.max(Math.ceil(state.total / state.limit), 1);
 
-            // Nếu contributionDetail trùng với id vừa xóa → reset
             if (state.contributionDetail?.id === idToRemove) {
                 state.contributionDetail = null;
                 state.contributionDetailId = null;

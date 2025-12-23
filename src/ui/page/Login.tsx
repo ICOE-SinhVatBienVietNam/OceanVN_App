@@ -22,7 +22,11 @@ const LoginForm: React.FC = () => {
         if (signin) {
             setEmail("")
             setPassword("")
-            router.push(routeConfig.main.map)
+            if (router.canGoBack()) {
+                router.goBack()
+            } else {
+                router.push(routeConfig.main.map)
+            }
         }
     }
 
