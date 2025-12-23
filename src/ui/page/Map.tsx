@@ -354,11 +354,6 @@ const Map: React.FC = () => {
           {/* Option */}
           <span className="absolute z-[1000] bottom-10 right-2.5 flex flex-col gap-7.5">
             <ZoomButton />
-            <span className="flex flex-col gap-2.5">
-              <button className="mainShadow h-fit aspect-square bg-white !rounded-full !p-3.5">
-                <i className="fas fa-fish"></i>
-              </button>
-            </span>
 
             <span className="flex flex-col gap-2.5">
               <button
