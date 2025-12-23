@@ -2,10 +2,8 @@
 import React, { useEffect, useRef, useState } from "react"
 
 // Images
-import Logo from "../../assets/SinhVatBienVN.png"
 import Facebook_logo from "../../assets/Facebook.png"
-import Zalo_logo from "../../assets/zalo.png"
-import Gmail_logo from "../../assets/Gmail.png"
+import Logo from "../../assets/SinhVatBienVN.png"
 
 // Config
 import { toastConfig } from "../../config/toastConfig"
@@ -209,7 +207,7 @@ const Quest: React.FC = () => {
                         <span className="w-full flex justify-start gap-5 overflow-x-auto p-0.5">
                             {differentConnections.current.map((connection, index) => {
                                 return (
-                                    <IonRouterLink href="" key={index} className="h-fit w-[60px] flex flex-col items-center-safe gap-1.5">
+                                    <IonRouterLink href={connection.path} key={index} className="h-fit w-[60px] flex flex-col items-center-safe gap-1.5">
                                         <span className="mainShadow w-full aspect-square bg-white flex justify-center-safe items-center-safe p-3.5 rounded-full">
                                             <img className="w-full" src={connection.thumbnail} />
                                         </span>
