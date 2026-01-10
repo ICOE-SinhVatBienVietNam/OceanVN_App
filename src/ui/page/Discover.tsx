@@ -8,10 +8,12 @@ import SpeciesDetail from "../component/SpeciesDetail"
 import { IonPage } from "@ionic/react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
-import { SpeciesShortDetail } from "../../services/speciesService"
-import { cloudinaryRoot, cloudinaryThumbnail, noImageURL } from "../../config/gateway"
-import { setSpeciesDetailID } from "../../redux/state/speciesReducer"
+import { SpeciesService, SpeciesShortDetail } from "../../services/speciesService"
+import { cloudinaryThumbnail, noImageURL } from "../../config/gateway"
+import { setSpecies, setSpeciesDetailID } from "../../redux/state/speciesReducer"
 import { threatenedSpecies } from "../../config/threatenedSpecies"
+import { toast } from "react-toastify"
+import { toastConfig } from "../../config/toastConfig"
 
 type Selections = Record<string, string[]>;
 
@@ -74,6 +76,9 @@ export const Discover_Card: React.FC<Card_interface> = React.memo(({ speciesDeat
 
 // Main component
 const Discover: React.FC = () => {
+    // Redux
+    const dispatch = useDispatch()
+
     // SpeciesData
     const speciesData = useSelector((state: RootState) => state.species.speciesList)
     const [selections, setSelections] = useState<Selections>({});
@@ -167,15 +172,54 @@ const Discover: React.FC = () => {
         virtuosoRef.current?.scrollTo({ top: 0 })
     }, [size])
 
+    // Reload
+    const isReload = useRef(false);
+    const [isReloading, setIsReloading] = useState(false);
+
+    const reloadSpeciesData = async () => {
+        if (isReload.current) return;
+
+        isReload.current = true;
+        setIsReloading(true);
+
+        const controller = new AbortController();
+        const pending = toastConfig({
+            toastMessage: "Đang tải dữ liệu",
+            pending: true,
+        });
+
+        try {
+            const data =
+                await new SpeciesService().getSpeciesShortDetail(controller.signal);
+
+            dispatch(setSpecies(data));
+        } finally {
+            isReload.current = false;
+            setIsReloading(false);
+            toast.dismiss(pending);
+        }
+    };
+
 
     return (
         <IonPage>
             <div className="h-full w-full px-mainTwoSidePadding overflow-auto">
                 <div className="w-full h-full flex flex-col">
                     <span className="sticky top-0 left-0 z-10 flex flex-col bg-white pb-2.5">
-                        <span className="w-full py-2.5">
-                            <h2 className="leading-5!">Dữ liệu sinh vật biển</h2>
-                            <p className="text-csSmall font-medium text-mainRed">Số lượng: {filteredSpecies.length} loài</p>
+                        <span className="w-full py-2.5 flex items-center-safe justify-between">
+                            <span>
+                                <h2 className="leading-5!">Dữ liệu sinh vật biển</h2>
+                                <p className="text-csSmall font-medium text-mainRed">Số lượng: {filteredSpecies.length} loài</p>
+                            </span>
+
+                            <span>
+                                <button className={`mainShadow !p-2.5 !rounded-small ${isReloading && 'bg-lightGray!'}`} onClick={reloadSpeciesData} disabled={isReloading}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
+
+                                </button>
+                            </span>
 
                         </span>
 
