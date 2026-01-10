@@ -15,7 +15,7 @@ import { IonPage, useIonRouter, useIonViewDidEnter } from "@ionic/react";
 // Redux
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { setSpeciesDiscovered } from "../../redux/state/speciesReducer";
+import { setSpecies, setSpeciesDiscovered } from "../../redux/state/speciesReducer";
 
 // Config
 import { cloudinaryRoot } from "../../config/gateway";
@@ -35,9 +35,6 @@ import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { routeConfig } from "../../config/routeConfig";
-import { Capacitor } from "@capacitor/core";
-import MyPosition from "../../assets/svg/MyPosition.svg";
-import { setPosition } from "../../redux/state/authReducer";
 
 // Zoom button
 const ZoomButton: React.FC = () => {
@@ -295,6 +292,34 @@ const Map: React.FC = () => {
     }
   };
 
+  // Reload
+  const isReload = useRef(false);
+  const [isReloading, setIsReloading] = useState(false);
+
+  const reloadSpeciesData = async () => {
+    if (isReload.current) return;
+
+    isReload.current = true;
+    setIsReloading(true);
+
+    const controller = new AbortController();
+    const pending = toastConfig({
+      toastMessage: "Đang tải dữ liệu",
+      pending: true,
+    });
+
+    try {
+      const data =
+        await new SpeciesService().getSpeciesShortDetail(controller.signal);
+
+      dispatch(setSpecies(data));
+    } finally {
+      isReload.current = false;
+      setIsReloading(false);
+      toast.dismiss(pending);
+    }
+  };
+
 
   return (
     <IonPage>
@@ -353,6 +378,14 @@ const Map: React.FC = () => {
 
           {/* Option */}
           <span className="absolute z-[1000] bottom-10 right-2.5 flex flex-col gap-7.5">
+            <button
+              className={`mainShadow h-fit aspect-square bg-white ${isReloading && 'bg-lightGray!'} !rounded-full !p-3.5`}
+              onClick={reloadSpeciesData}
+              disabled={isReloading}
+            >
+              <i className="fa-solid fa-arrows-rotate"></i>
+            </button>
+
             <ZoomButton />
 
             <span className="flex flex-col gap-2.5">
